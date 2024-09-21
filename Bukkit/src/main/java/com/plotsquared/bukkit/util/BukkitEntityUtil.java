@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
-
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -54,18 +53,13 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
-
 import java.util.Objects;
-
 public class BukkitEntityUtil {
-
     public static final com.sk89q.worldedit.world.entity.EntityType FAKE_ENTITY_TYPE =
             new com.sk89q.worldedit.world.entity.EntityType("plotsquared:fake");
-
     public static boolean entityDamage(Entity damager, Entity victim) {
         return entityDamage(damager, victim, null);
     }
-
     public static boolean entityDamage(Entity damager, Entity victim, EntityDamageEvent.DamageCause cause) {
         Location dloc = BukkitUtil.adapt(damager.getLocation());
         Location vloc = BukkitUtil.adapt(victim.getLocation());
@@ -79,7 +73,6 @@ public class BukkitEntityUtil {
         if (dArea == null && vArea == null) {
             return true;
         }
-
         Plot dplot;
         if (dArea != null) {
             dplot = dArea.getPlot(dloc);
@@ -92,7 +85,6 @@ public class BukkitEntityUtil {
         } else {
             vplot = null;
         }
-
         Plot plot;
         String stub;
         boolean isPlot = true;
@@ -104,7 +96,6 @@ public class BukkitEntityUtil {
             stub = "road";
             isPlot = false;
         } else {
-            // Prioritize plots for close to seamless pvp zones
             if (victim.getTicksLived() > damager.getTicksLived()) {
                 if (dplot == null || !(victim instanceof Player)) {
                     if (vplot == null) {
@@ -134,15 +125,14 @@ public class BukkitEntityUtil {
         }
         boolean roadFlags = vArea != null ? vArea.isRoadFlags() : dArea.isRoadFlags();
         PlotArea area = vArea != null ? vArea : dArea;
-
         Player player;
-        if (damager instanceof Player) { // attacker is player
+        if (damager instanceof Player) {
             player = (Player) damager;
         } else if (damager instanceof Projectile projectile) {
             ProjectileSource shooter = projectile.getShooter();
-            if (shooter instanceof Player) { // shooter is player
+            if (shooter instanceof Player) {
                 player = (Player) shooter;
-            } else { // shooter is not player
+            } else {
                 if (shooter instanceof BlockProjectileSource) {
                     Location sLoc = BukkitUtil
                             .adapt(((BlockProjectileSource) shooter).getBlock().getLocation());
@@ -150,22 +140,18 @@ public class BukkitEntityUtil {
                 }
                 player = null;
             }
-        } else { // Attacker is not player
+        } else {
             player = null;
         }
         if (player != null) {
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-
             final com.sk89q.worldedit.world.entity.EntityType entityType;
-
-            // Create a fake entity type if the type does not have a name
             if (victim.getType().getName() == null) {
                 entityType = FAKE_ENTITY_TYPE;
             } else {
                 entityType = BukkitAdapter.adapt(victim.getType());
             }
-
-            if (EntityCategories.HANGING.contains(entityType)) { // hanging
+            if (EntityCategories.HANGING.contains(entityType)) {
                 if (plot != null && (plot.getFlag(HangingBreakFlag.class) || plot
                         .isAdded(plotPlayer.getUUID()))) {
                     if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
@@ -231,7 +217,7 @@ public class BukkitEntityUtil {
                     }
                     return false;
                 }
-            } else if (EntityCategories.TAMEABLE.contains(entityType)) { // victim is tameable
+            } else if (EntityCategories.TAMEABLE.contains(entityType)) {
                 if (isPlot) {
                     if (plot.getFlag(TamedAttackFlag.class) || plot.getFlag(PveFlag.class) || plot
                             .isAdded(plotPlayer.getUUID())) {
@@ -284,7 +270,7 @@ public class BukkitEntityUtil {
                     );
                     return false;
                 }
-            } else if (EntityCategories.ANIMAL.contains(entityType)) { // victim is animal
+            } else if (EntityCategories.ANIMAL.contains(entityType)) {
                 if (isPlot) {
                     if (plot.getFlag(AnimalAttackFlag.class) || plot.getFlag(PveFlag.class) || plot
                             .isAdded(plotPlayer.getUUID())) {
@@ -309,9 +295,9 @@ public class BukkitEntityUtil {
                     return false;
                 }
             } else if (EntityCategories.VEHICLE
-                    .contains(entityType)) { // Vehicles are managed in vehicle destroy event
+                    .contains(entityType)) {
                 return true;
-            } else { // victim is something else
+            } else {
                 if (isPlot) {
                     if (plot.getFlag(PveFlag.class) || plot.isAdded(plotPlayer.getUUID())) {
                         return true;
@@ -339,7 +325,6 @@ public class BukkitEntityUtil {
                 .equals(dplot.getOwnerAbs(), vplot.getOwnerAbs()))) {
             return vplot != null && vplot.getFlag(PveFlag.class);
         }
-        //disable the firework damage. too much of a headache to support at the moment.
         if (vplot != null) {
             if (EntityDamageEvent.DamageCause.ENTITY_EXPLOSION == cause
                     && damager.getType() == EntityType.FIREWORK) {
@@ -352,29 +337,22 @@ public class BukkitEntityUtil {
         return ((vplot != null && vplot.getFlag(PveFlag.class)) || !(damager instanceof Arrow
                 && !(victim instanceof Creature)));
     }
-
     public static boolean checkEntity(Entity entity, Plot plot) {
         if (plot == null || !plot.hasOwner() || plot.getFlags().isEmpty() && plot.getArea()
                 .getFlagContainer().getFlagMap().isEmpty()) {
             return false;
         }
-
         final com.sk89q.worldedit.world.entity.EntityType entityType =
                 BukkitAdapter.adapt(entity.getType());
-
         if (EntityCategories.PLAYER.contains(entityType)) {
             return false;
         }
-
         if (EntityCategories.PROJECTILE.contains(entityType) || EntityCategories.OTHER
                 .contains(entityType) || EntityCategories.HANGING.contains(entityType)) {
             return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                     MiscCapFlag.MISC_CAP_UNLIMITED
             );
         }
-
-        // Has to go go before vehicle as horses are both
-        // animals and vehicles
         if (EntityCategories.ANIMAL.contains(entityType) || EntityCategories.VILLAGER
                 .contains(entityType) || EntityCategories.TAMEABLE.contains(entityType)) {
             return EntityUtil
@@ -382,21 +360,17 @@ public class BukkitEntityUtil {
                             AnimalCapFlag.ANIMAL_CAP_UNLIMITED
                     );
         }
-
         if (EntityCategories.HOSTILE.contains(entityType)) {
             return EntityUtil
                     .checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED, MobCapFlag.MOB_CAP_UNLIMITED,
                             HostileCapFlag.HOSTILE_CAP_UNLIMITED
                     );
         }
-
         if (EntityCategories.VEHICLE.contains(entityType)) {
             return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED,
                     VehicleCapFlag.VEHICLE_CAP_UNLIMITED
             );
         }
-
         return EntityUtil.checkEntity(plot, EntityCapFlag.ENTITY_CAP_UNLIMITED);
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.player;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.permissions.PermissionHandler;
@@ -28,19 +27,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.UUID;
-
 /**
  * Player manager providing {@link BukkitPlayer Bukkit players}
  */
 @Singleton
 public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
-
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final PermissionHandler permissionHandler;
-
     @Inject
     public BukkitPlayerManager(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -51,11 +46,10 @@ public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
         this.eventDispatcher = eventDispatcher;
         this.permissionHandler = permissionHandler;
     }
-
     @NonNull
     @Override
     public BukkitPlayer getPlayer(final @NonNull Player object) {
-        if (object.getUniqueId().version() == 2) { // not a real player
+        if (object.getUniqueId().version() == 2) {
             return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, object, false, this.permissionHandler);
         }
         if (!object.isOnline()) {
@@ -63,7 +57,6 @@ public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
         }
         return getPlayer(object.getUniqueId());
     }
-
     @Override
     public @NonNull BukkitPlayer createPlayer(final @NonNull UUID uuid) {
         final Player player = Bukkit.getPlayer(uuid);
@@ -72,7 +65,6 @@ public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
         }
         return new BukkitPlayer(this.plotAreaManager, this.eventDispatcher, player, false, this.permissionHandler);
     }
-
     @Nullable
     @Override
     public BukkitOfflinePlayer getOfflinePlayer(final @Nullable UUID uuid) {
@@ -81,11 +73,9 @@ public class BukkitPlayerManager extends PlayerManager<BukkitPlayer, Player> {
         }
         return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(uuid), this.permissionHandler);
     }
-
     @NonNull
     @Override
     public BukkitOfflinePlayer getOfflinePlayer(final @NonNull String username) {
         return new BukkitOfflinePlayer(Bukkit.getOfflinePlayer(username), this.permissionHandler);
     }
-
 }

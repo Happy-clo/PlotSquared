@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -46,13 +45,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Set;
 import java.util.UUID;
-
 @SuppressWarnings("unused")
 public class HighFreqBlockEventListener implements Listener {
-
     private static final Set<Material> PISTONS = Set.of(
             Material.PISTON,
             Material.STICKY_PISTON
@@ -61,23 +57,19 @@ public class HighFreqBlockEventListener implements Listener {
             Material.TURTLE_EGG,
             Material.TURTLE_SPAWN_EGG
     );
-
     private final PlotAreaManager plotAreaManager;
     private final WorldEdit worldEdit;
-
     @Inject
     public HighFreqBlockEventListener(final @NonNull PlotAreaManager plotAreaManager, final @NonNull WorldEdit worldEdit) {
         this.plotAreaManager = plotAreaManager;
         this.worldEdit = worldEdit;
     }
-
     public static void sendBlockChange(final org.bukkit.Location bloc, final BlockData data) {
         TaskManager.runTaskLater(() -> {
             String world = bloc.getWorld().getName();
             int x = bloc.getBlockX();
             int z = bloc.getBlockZ();
             int distance = Bukkit.getViewDistance() * 16;
-
             for (final PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
                 Location location = player.getLocation();
                 if (location.getWorldName().equals(world)) {
@@ -89,7 +81,6 @@ public class HighFreqBlockEventListener implements Listener {
             }
         }, TaskTime.ticks(3L));
     }
-
     @EventHandler
     public void onRedstoneEvent(BlockRedstoneEvent event) {
         Block block = event.getBlock();
@@ -148,7 +139,6 @@ public class HighFreqBlockEventListener implements Listener {
             event.setNewCurrent(0);
         }
     }
-
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPhysicsEvent(BlockPhysicsEvent event) {
         Block block = event.getBlock();
@@ -197,5 +187,4 @@ public class HighFreqBlockEventListener implements Listener {
             }
         }
     }
-
 }

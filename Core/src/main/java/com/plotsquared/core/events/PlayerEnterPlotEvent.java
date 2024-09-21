@@ -17,12 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
-
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-
 public class PlayerEnterPlotEvent extends PlotPlayerEvent {
-
     /**
      * PlayerEnterPlotEvent: Called when a player enters a plot
      *
@@ -32,5 +29,4 @@ public class PlayerEnterPlotEvent extends PlotPlayerEvent {
     public PlayerEnterPlotEvent(PlotPlayer<?> player, Plot plot) {
         super(player, plot);
     }
-
 }

@@ -17,20 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
-
 import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public abstract class QueueProvider {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotSquared.class.getSimpleName());
-
     public static QueueProvider of(final @NonNull Class<? extends QueueCoordinator> primary) {
         return new QueueProvider() {
-
             @Override
             public QueueCoordinator getNewQueue(@NonNull World world) {
                 try {
@@ -49,7 +44,6 @@ public abstract class QueueProvider {
             }
         };
     }
-
     /**
      * Get a queue for the given world
      *
@@ -57,5 +51,4 @@ public abstract class QueueProvider {
      * @return new QueueCoordinator
      */
     public abstract QueueCoordinator getNewQueue(@NonNull World world);
-
 }

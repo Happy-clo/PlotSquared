@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.generator;
-
 import com.plotsquared.bukkit.queue.GenChunk;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
@@ -49,23 +48,17 @@ import org.bukkit.generator.WorldInfo;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
 import static java.util.function.Predicate.not;
-
 public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrapper<ChunkGenerator> {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitPlotGenerator.class.getSimpleName());
-
     @SuppressWarnings("unused")
     public final boolean PAPER_ASYNC_SAFE = true;
-
     private final PlotAreaManager plotAreaManager;
     private final IndependentPlotGenerator plotGenerator;
     private final ChunkGenerator platformGenerator;
@@ -75,11 +68,9 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     private final BiomeProvider biomeProvider;
     private List<BlockPopulator> populators;
     private boolean loaded = false;
-
     private PlotArea lastPlotArea;
     private int lastChunkX = Integer.MIN_VALUE;
     private int lastChunkZ = Integer.MIN_VALUE;
-
     public BukkitPlotGenerator(
             final @NonNull String name,
             final @NonNull IndependentPlotGenerator generator,
@@ -100,7 +91,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         this.useNewGenerationMethods = PlotSquared.platform().serverVersion()[1] >= 19;
         this.biomeProvider = new BukkitPlotBiomeProvider();
     }
-
     public BukkitPlotGenerator(final String world, final ChunkGenerator cg, final @NonNull PlotAreaManager plotAreaManager) {
         if (cg instanceof BukkitPlotGenerator) {
             throw new IllegalArgumentException("ChunkGenerator: " + cg
@@ -115,27 +105,22 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         this.useNewGenerationMethods = PlotSquared.platform().serverVersion()[1] >= 19;
         this.biomeProvider = null;
     }
-
     @Override
     public void augment(PlotArea area) {
         BukkitAugmentedGenerator.get(BukkitUtil.getWorld(area.getWorldName()));
     }
-
     @Override
     public boolean isFull() {
         return this.full;
     }
-
     @Override
     public IndependentPlotGenerator getPlotGenerator() {
         return this.plotGenerator;
     }
-
     @Override
     public ChunkGenerator getPlatformGenerator() {
         return this.platformGenerator;
     }
-
     @Override
     public @NonNull List<BlockPopulator> getDefaultPopulators(@NonNull World world) {
         try {
@@ -157,10 +142,7 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         }
         return toAdd;
     }
-
-    // Extracted to synchronized method for thread-safety, preventing multiple internal world load calls
     private synchronized void checkLoaded(@NonNull World world) {
-        // Do not attempt to load configurations until WorldEdit has a platform ready.
         if (!PlotSquared.get().isWeInitialised()) {
             return;
         }
@@ -183,15 +165,13 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             this.loaded = true;
         }
     }
-
-    @SuppressWarnings("deprecation") // Kept for compatibility with <=1.17.1
+    @SuppressWarnings("deprecation")
     private void setSpawnLimits(@NonNull World world, int limit) {
         world.setAmbientSpawnLimit(limit);
         world.setAnimalSpawnLimit(limit);
         world.setMonsterSpawnLimit(limit);
         world.setWaterAnimalSpawnLimit(limit);
     }
-
     @Override
     public void generateNoise(
             @NotNull final WorldInfo worldInfo,
@@ -207,20 +187,15 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         int minY = chunkData.getMinHeight();
         int maxY = chunkData.getMaxHeight();
         GenChunk result = new GenChunk(minY, maxY);
-        // Set the chunk location
         result.setChunk(new ChunkWrapper(worldInfo.getName(), chunkX, chunkZ));
-        // Set the result data
         result.setChunkData(chunkData);
         result.result = null;
-
-        // Catch any exceptions (as exceptions usually thrown)
         try {
             generate(BlockVector2.at(chunkX, chunkZ), worldInfo.getName(), result, false);
         } catch (Throwable e) {
             LOGGER.error("Error attempting to generate chunk.", e);
         }
     }
-
     @Override
     public void generateSurface(
             @NotNull final WorldInfo worldInfo,
@@ -233,7 +208,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             platformGenerator.generateSurface(worldInfo, random, chunkX, chunkZ, chunkData);
         }
     }
-
     @Override
     public void generateBedrock(
             @NotNull final WorldInfo worldInfo,
@@ -246,7 +220,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             platformGenerator.generateBedrock(worldInfo, random, chunkX, chunkZ, chunkData);
         }
     }
-
     @Override
     public void generateCaves(
             @NotNull final WorldInfo worldInfo,
@@ -259,7 +232,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             platformGenerator.generateCaves(worldInfo, random, chunkX, chunkZ, chunkData);
         }
     }
-
     @Override
     public @Nullable BiomeProvider getDefaultBiomeProvider(@NotNull final WorldInfo worldInfo) {
         if (platformGenerator != this) {
@@ -267,7 +239,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         }
         return biomeProvider;
     }
-
     @Override
     public int getBaseHeight(
             @NotNull final WorldInfo worldInfo,
@@ -278,18 +249,16 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
     ) {
         PlotArea area = getPlotArea(worldInfo.getName(), x, z);
         if (area instanceof ClassicPlotWorld cpw) {
-            // Default to plot height being the heighest point before decoration (i.e. roads, walls etc.)
             return cpw.PLOT_HEIGHT;
         }
         return super.getBaseHeight(worldInfo, random, x, z, heightMap);
     }
-
     /**
      * The entire method is deprecated, but kept for compatibility with versions lower than or equal to 1.16.2.
      * The method will be removed in future versions, because WorldEdit and FastAsyncWorldEdit only support the latest point
      * release.
      */
-    @SuppressWarnings("deprecation") // The entire method is deprecated, but kept for compatibility with <=1.16.2
+    @SuppressWarnings("deprecation")
     @Override
     @Deprecated(since = "7.0.0")
     public @NonNull ChunkData generateChunkData(
@@ -299,11 +268,9 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             if (this.platformGenerator != this) {
                 return this.platformGenerator.generateChunkData(world, random, x, z, biome);
             } else {
-                // Throw exception to be caught by the server that indicates the new generation API is being used.
                 throw new UnsupportedOperationException("Using new generation methods. This method is unsupported.");
             }
         }
-
         int minY = BukkitWorld.getMinWorldHeight(world);
         int maxY = BukkitWorld.getMaxWorldHeight(world);
         GenChunk result = new GenChunk(minY, maxY);
@@ -319,16 +286,11 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                 return result.getChunkData();
             }
         }
-        // Set the chunk location
         result.setChunk(new ChunkWrapper(world.getName(), x, z));
-        // Set the result data
         result.setChunkData(createChunkData(world));
         result.biomeGrid = biome;
         result.result = null;
-
-        // Catch any exceptions (as exceptions usually thrown)
         try {
-            // Fill the result data if necessary
             if (this.platformGenerator != this) {
                 return this.platformGenerator.generateChunkData(world, random, x, z, biome);
             } else {
@@ -337,18 +299,14 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         } catch (Throwable e) {
             LOGGER.error("Error attempting to load world into PlotSquared.", e);
         }
-        // Return the result data
         return result.getChunkData();
     }
-
     private void generate(BlockVector2 loc, String world, ZeroedDelegateScopedQueueCoordinator result, boolean biomes) {
-        // Load if improperly loaded
         if (!this.loaded) {
             synchronized (this) {
                 PlotSquared.get().loadWorld(world, this);
             }
         }
-        // Process the chunk
         if (ChunkManager.preProcessChunk(loc, result)) {
             return;
         }
@@ -356,37 +314,29 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         try {
             this.plotGenerator.generateChunk(result, area, biomes);
         } catch (Throwable e) {
-            // Recover from generator error
             LOGGER.error("Error attempting to generate chunk.", e);
         }
         ChunkManager.postProcessChunk(loc, result);
     }
-
     @Override
     public boolean canSpawn(final @NonNull World world, final int x, final int z) {
         return true;
     }
-
     public boolean shouldGenerateCaves() {
         return false;
     }
-
     public boolean shouldGenerateDecorations() {
         return false;
     }
-
     public boolean isParallelCapable() {
         return true;
     }
-
     public boolean shouldGenerateMobs() {
         return false;
     }
-
     public boolean shouldGenerateStructures() {
         return true;
     }
-
     @Override
     public String toString() {
         if (this.platformGenerator == this) {
@@ -398,7 +348,6 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
             return this.platformGenerator.getClass().getName();
         }
     }
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -406,17 +355,12 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         }
         return toString().equals(obj.toString()) || toString().equals(obj.getClass().getName());
     }
-
     public String getLevelName() {
         return this.levelName;
     }
-
     private synchronized PlotArea getPlotArea(String name, int chunkX, int chunkZ) {
-        // Load if improperly loaded
         if (!this.loaded) {
             PlotSquared.get().loadWorld(name, this);
-            // Do not set loaded to true as we want to ensure spawn limits are set when "loading" is actually able to be
-            // completed properly.
         }
         if (lastPlotArea != null && name.equals(this.levelName) && chunkX == lastChunkX && chunkZ == lastChunkZ) {
             return lastPlotArea;
@@ -436,14 +380,11 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
         this.lastChunkZ = chunkZ;
         return this.lastPlotArea = area;
     }
-
     /**
      * Biome provider should never need to be accessed outside of this class.
      */
     private final class BukkitPlotBiomeProvider extends BiomeProvider {
-
         private static final List<Biome> BIOMES;
-
         static {
             Set<Biome> disabledBiomes = EnumSet.of(Biome.CUSTOM);
             if (PlotSquared.platform().serverVersion()[1] <= 19) {
@@ -456,18 +397,14 @@ public class BukkitPlotGenerator extends ChunkGenerator implements GeneratorWrap
                     .filter(not(disabledBiomes::contains))
                     .toList();
         }
-
         @Override
         public @NotNull Biome getBiome(@NotNull final WorldInfo worldInfo, final int x, final int y, final int z) {
             PlotArea area = getPlotArea(worldInfo.getName(), x >> 4, z >> 4);
             return BukkitAdapter.adapt(plotGenerator.getBiome(area, x, y, z));
         }
-
         @Override
         public @NotNull List<Biome> getBiomes(@NotNull final WorldInfo worldInfo) {
-            return BIOMES; // Allow all biomes
+            return BIOMES;
         }
-
     }
-
 }

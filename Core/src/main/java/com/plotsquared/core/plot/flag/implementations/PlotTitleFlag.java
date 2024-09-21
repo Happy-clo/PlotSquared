@@ -17,18 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.PlotTitle;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.StringMan;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
-
     public static final PlotTitleFlag TITLE_FLAG_DEFAULT = new PlotTitleFlag(PlotTitle.CONFIGURED);
-
     /**
      * Construct a new flag instance.
      *
@@ -41,7 +37,6 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
                 TranslatableCaption.of("flags.flag_description_title")
         );
     }
-
     @Override
     public PlotTitleFlag parse(@NonNull String input) throws FlagParseException {
         if (input.equals("CONFIGURED")) {
@@ -50,9 +45,7 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
         if (!input.contains("\"")) {
             return new PlotTitleFlag(new PlotTitle(input, ""));
         }
-
         var split = StringMan.splitMessage(input);
-
         if (split.isEmpty() || split.size() > 2) {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_title"));
         }
@@ -64,7 +57,6 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
         }
         return new PlotTitleFlag(value);
     }
-
     @Override
     public PlotTitleFlag merge(@NonNull PlotTitle newValue) {
         if (getValue().title().isEmpty() && getValue().subtitle().isEmpty()) {
@@ -77,7 +69,6 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
             return this;
         }
     }
-
     @Override
     public String toString() {
         if (getValue() == PlotTitle.CONFIGURED) {
@@ -85,20 +76,16 @@ public class PlotTitleFlag extends PlotFlag<PlotTitle, PlotTitleFlag> {
         }
         return "\"" + getValue().title() + "\" \"" + getValue().subtitle() + "\"";
     }
-
     @Override
     public boolean isValuedPermission() {
         return false;
     }
-
     @Override
     public String getExample() {
         return "\"A Title\" \"The subtitle\"";
     }
-
     @Override
     protected PlotTitleFlag flagOf(@NonNull PlotTitle value) {
         return new PlotTitleFlag(value);
     }
-
 }

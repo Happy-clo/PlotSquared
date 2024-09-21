@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
-
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -26,16 +25,13 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 /**
  * Offsets input coordinates and delegates to a parent queue
  */
 public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordinator {
-
     private final boolean[][] canPlace;
     private final int blockX;
     private final int blockZ;
-
     public LocationOffsetDelegateQueueCoordinator(
             final boolean[][] canPlace,
             final int blockX,
@@ -47,7 +43,6 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
         this.blockX = blockX;
         this.blockZ = blockZ;
     }
-
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull BlockState id) {
         try {
@@ -59,7 +54,6 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
         }
         return false;
     }
-
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull BaseBlock id) {
         try {
@@ -71,13 +65,11 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
         }
         return false;
     }
-
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
         final BlockVector3 blockVector3 = BlockVector3.at(x + blockX, y, z + blockZ);
         return this.setBlock(x, y, z, pattern.applyBlock(blockVector3));
     }
-
     @Override
     public boolean setBiome(int x, int z, @NonNull BiomeType biome) {
         try {
@@ -89,7 +81,6 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
         }
         return false;
     }
-
     @Override
     public boolean setBiome(int x, int y, int z, @NonNull BiomeType biome) {
         try {
@@ -101,7 +92,6 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
         }
         return false;
     }
-
     @Override
     public boolean setTile(int x, int y, int z, @NonNull CompoundTag tag) {
         try {
@@ -113,5 +103,4 @@ public class LocationOffsetDelegateQueueCoordinator extends DelegateQueueCoordin
         }
         return false;
     }
-
 }

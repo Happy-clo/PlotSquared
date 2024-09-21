@@ -17,12 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.serialization;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 /**
  * Represents an "alias" that a {@link ConfigurationSerializable} may be
  * stored as.
@@ -40,7 +38,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface SerializableAs {
-
     /**
      * This is the name your class will be stored and retrieved as.
      * <p>
@@ -50,5 +47,4 @@ public @interface SerializableAs {
      * @return Name to serialize the class as.
      */
     String value();
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.queue;
-
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.schematic.StateWrapper;
 import com.plotsquared.bukkit.util.BukkitBlockUtil;
@@ -49,18 +48,14 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.BlockData;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
-
 public class BukkitQueueCoordinator extends BasicQueueCoordinator {
-
     private static final SideEffectSet NO_SIDE_EFFECT_SET;
     private static final SideEffectSet EDGE_SIDE_EFFECT_SET;
     private static final SideEffectSet LIGHTING_SIDE_EFFECT_SET;
     private static final SideEffectSet EDGE_LIGHTING_SIDE_EFFECT_SET;
-
     static {
         NO_SIDE_EFFECT_SET = SideEffectSet.none().with(SideEffect.LIGHTING, SideEffect.State.OFF).with(
                 SideEffect.NEIGHBORS,
@@ -76,35 +71,29 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                 SideEffect.State.ON
         );
     }
-
     private org.bukkit.World bukkitWorld;
     @Inject
     private ChunkCoordinatorBuilderFactory chunkCoordinatorBuilderFactory;
     @Inject
     private ChunkCoordinatorFactory chunkCoordinatorFactory;
     private ChunkCoordinator chunkCoordinator;
-
     @Inject
     public BukkitQueueCoordinator(@NonNull World world) {
         super(world);
     }
-
     @Override
     public BlockState getBlock(int x, int y, int z) {
         Block block = getBukkitWorld().getBlockAt(x, y, z);
         return BukkitBlockUtil.get(block);
     }
-
     @Override
     public void start() {
         chunkCoordinator.start();
     }
-
     @Override
     public void cancel() {
         chunkCoordinator.cancel();
     }
-
     @Override
     public boolean enqueue() {
         final Clipboard regenClipboard;
@@ -149,7 +138,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                         }
                     }
                 }
-                // Allow regen and then blocks to be placed (plot schematic etc)
                 if (localChunk == null) {
                     return;
                 }
@@ -163,7 +151,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             continue;
                         }
                         BaseBlock block = blocksLayer[j];
-
                         if (block != null) {
                             int lx = ChunkUtil.getX(j);
                             int lz = ChunkUtil.getZ(j);
@@ -232,7 +219,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                         .build();
         return super.enqueue();
     }
-
     /**
      * Set a block to the world. First tries WNA but defaults to normal block setting methods if that fails
      */
@@ -252,7 +238,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
                             || getWorld().getBlock(loc).getBlockType().getMaterial().getLightValue() > 0;
                     break;
                 default:
-                    // Can only be "all"
                     lighting = true;
             }
             SideEffectSet sideEffectSet;
@@ -263,10 +248,8 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             }
             getWorld().setBlock(loc, block, sideEffectSet);
         } catch (WorldEditException ignored) {
-            // Fallback to not so nice method
             BlockData blockData = BukkitAdapter.adapt(block);
             Block existing;
-            // Assume a chunk object has been given only when it should have been.
             if (getChunkObject() instanceof Chunk chunkObject) {
                 existing = chunkObject.getBlock(x & 15, y, z & 15);
             } else {
@@ -276,29 +259,24 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             if (BukkitBlockUtil.get(existing).equals(existingBaseBlock) && existing.getBlockData().matches(blockData)) {
                 return;
             }
-
             if (existing.getState() instanceof Container) {
                 ((Container) existing.getState()).getInventory().clear();
             }
-
             existing.setType(BukkitAdapter.adapt(block.getBlockType()), false);
             existing.setBlockData(blockData, false);
             if (block.hasNbtData()) {
                 CompoundTag tag = block.getNbtData();
                 StateWrapper sw = new StateWrapper(tag);
-
                 sw.restoreTag(existing);
             }
         }
     }
-
     private org.bukkit.World getBukkitWorld() {
         if (bukkitWorld == null) {
             bukkitWorld = Bukkit.getWorld(getWorld().getName());
         }
         return bukkitWorld;
     }
-
     private boolean isEdge(int layer, int x, int y, int z, BlockVector2 blockVector2, LocalChunk localChunk) {
         int layerIndex = (layer - localChunk.getMinSection());
         if (layer == localChunk.getMinSection() || layerIndex == localChunk.getBaseblocks().length - 1) {
@@ -359,7 +337,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         }
         return z < 15 && baseBlocks[ChunkUtil.getJ(x, y, z + 1)] == null;
     }
-
     private boolean isEdgeRegen(int x, int z, BlockVector2 blockVector2) {
         if (x == 0) {
             LocalChunk localChunkX = getBlockChunks().get(blockVector2.withX(blockVector2.getX() - 1));
@@ -379,7 +356,6 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
         }
         return false;
     }
-
     private SideEffectSet getSideEffectSet(SideEffectState state) {
         if (getSideEffectSet() != null) {
             return getSideEffectSet();
@@ -391,12 +367,10 @@ public class BukkitQueueCoordinator extends BasicQueueCoordinator {
             case EDGE_LIGHTING -> EDGE_LIGHTING_SIDE_EFFECT_SET;
         };
     }
-
     private enum SideEffectState {
         NONE,
         EDGE,
         LIGHTING,
         EDGE_LIGHTING
     }
-
 }

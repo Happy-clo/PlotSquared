@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.RunnableVal2;
@@ -25,7 +24,6 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 @CommandDeclaration(command = "toggle",
         aliases = {"attribute"},
         permission = "plots.toggle",
@@ -33,11 +31,9 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
         requiredType = RequiredType.NONE,
         category = CommandCategory.SETTINGS)
 public class Toggle extends Command {
-
     public Toggle() {
         super(MainCommand.getInstance(), true);
     }
-
     @CommandDeclaration(command = "chatspy",
             aliases = {"spy"},
             permission = "plots.admin.command.chatspy")
@@ -58,7 +54,6 @@ public class Toggle extends Command {
             );
         }
     }
-
     @CommandDeclaration(command = "worldedit",
             aliases = {"we", "wea"},
             permission = "plots.worldedit.bypass")
@@ -79,7 +74,6 @@ public class Toggle extends Command {
             );
         }
     }
-
     @CommandDeclaration(command = "chat",
             permission = "plots.toggle.chat")
     public void chat(
@@ -99,7 +93,6 @@ public class Toggle extends Command {
             );
         }
     }
-
     @CommandDeclaration(command = "clear-confirmation",
             permission = "plots.admin.command.autoclear")
     public void clearConfirmation(
@@ -119,7 +112,6 @@ public class Toggle extends Command {
             );
         }
     }
-
     @CommandDeclaration(command = "titles",
             permission = "plots.toggle.titles")
     public void titles(
@@ -139,7 +131,6 @@ public class Toggle extends Command {
             );
         }
     }
-
     @CommandDeclaration(command = "time",
             permission = "plots.toggle.time")
     public void time(
@@ -159,7 +150,6 @@ public class Toggle extends Command {
             );
         }
     }
-
     @CommandDeclaration(command = "debug",
             permission = "plots.toggle.debug")
     public void debug(
@@ -180,7 +170,6 @@ public class Toggle extends Command {
         }
         player.refreshDebug();
     }
-
     public boolean toggle(PlotPlayer<?> player, String key) {
         if (player.getAttribute(key)) {
             player.removeAttribute(key);
@@ -190,5 +179,4 @@ public class Toggle extends Command {
             return false;
         }
     }
-
 }

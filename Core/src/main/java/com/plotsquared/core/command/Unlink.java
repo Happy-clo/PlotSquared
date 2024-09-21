@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotUnlinkEvent;
@@ -33,7 +32,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 @CommandDeclaration(command = "unlink",
         aliases = {"u", "unmerge"},
         usage = "/plot unlink [createroads]",
@@ -41,14 +39,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
         category = CommandCategory.SETTINGS,
         confirmation = true)
 public class Unlink extends SubCommand {
-
     private final EventDispatcher eventDispatcher;
-
     @Inject
     public Unlink(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -79,7 +74,6 @@ public class Unlink extends SubCommand {
         } else {
             createRoad = true;
         }
-
         PlotUnlinkEvent event = this.eventDispatcher
                 .callUnlink(plot.getArea(), plot, createRoad, createRoad,
                         PlotUnlinkEvent.REASON.PLAYER_COMMAND
@@ -111,5 +105,4 @@ public class Unlink extends SubCommand {
         }
         return true;
     }
-
 }

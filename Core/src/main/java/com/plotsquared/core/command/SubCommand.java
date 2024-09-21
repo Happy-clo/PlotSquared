@@ -17,13 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
-
 import java.util.concurrent.CompletableFuture;
-
 /**
  * SubCommand class
  *
@@ -31,16 +28,13 @@ import java.util.concurrent.CompletableFuture;
  * @deprecated In favor of normal Command class
  */
 public abstract class SubCommand extends Command {
-
     public SubCommand() {
         super(MainCommand.getInstance(), true);
     }
-
     public SubCommand(Argument<?>... arguments) {
         this();
         setRequiredArguments(arguments);
     }
-
     @Override
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
@@ -49,7 +43,5 @@ public abstract class SubCommand extends Command {
     ) {
         return CompletableFuture.completedFuture(onCommand(player, args));
     }
-
     public abstract boolean onCommand(PlotPlayer<?> player, String[] args);
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.inject;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -25,9 +24,7 @@ import com.plotsquared.bukkit.permissions.BukkitPermissionHandler;
 import com.plotsquared.bukkit.permissions.VaultPermissionHandler;
 import com.plotsquared.core.permissions.PermissionHandler;
 import org.bukkit.Bukkit;
-
 public class PermissionModule extends AbstractModule {
-
     @Provides
     @Singleton
     PermissionHandler providePermissionHandler() {
@@ -39,5 +36,4 @@ public class PermissionModule extends AbstractModule {
         }
         return new BukkitPermissionHandler();
     }
-
 }

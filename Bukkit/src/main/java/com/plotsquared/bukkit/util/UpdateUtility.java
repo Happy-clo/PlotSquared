@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
@@ -31,31 +30,24 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-
 public class UpdateUtility implements Listener {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + UpdateUtility.class.getSimpleName());
-
     public static PlotVersion internalVersion;
     public static String spigotVersion;
     public static boolean hasUpdate;
     private static BukkitTask task;
     public final JavaPlugin javaPlugin;
     private boolean notify = true;
-
     @Inject
     public UpdateUtility(final JavaPlugin javaPlugin) {
         this.javaPlugin = javaPlugin;
         internalVersion = PlotSquared.get().getVersion();
     }
-
     @SuppressWarnings({"deprecation", "DefaultCharset"})
-    // Suppress Json deprecation, we can't use features from gson 2.8.1 and newer yet
     public void updateChecker() {
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(this.javaPlugin, () -> {
             try {
@@ -72,7 +64,6 @@ public class UpdateUtility implements Listener {
                 LOGGER.error("Unable to check for updates. Error: {}", e.getMessage());
                 return;
             }
-
             if (internalVersion.isLaterVersion(spigotVersion)) {
                 LOGGER.info("There appears to be a PlotSquared update available!");
                 LOGGER.info("You are running version {}, the latest version is {}",
@@ -89,9 +80,7 @@ public class UpdateUtility implements Listener {
             }
         }, 0L, (long) Settings.UpdateChecker.POLL_RATE * 60 * 20);
     }
-
     private void cancelTask() {
         Bukkit.getScheduler().runTaskLater(javaPlugin, () -> task.cancel(), 20L);
     }
-
 }

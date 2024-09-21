@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.world;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.collection.ArrayUtil;
@@ -33,14 +32,11 @@ import com.plotsquared.core.util.SetupUtils;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 @Singleton
 public class SinglePlotAreaManager extends DefaultPlotAreaManager {
-
     private final SinglePlotArea[] array;
     private SinglePlotArea area;
     private PlotArea[] all;
-
     @Inject
     public SinglePlotAreaManager(
             final @NonNull EventDispatcher eventDispatcher,
@@ -58,17 +54,14 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
                 new SingleWorldGenerator(this).specify("CheckingPlotSquaredGenerator")
         );
     }
-
     public SinglePlotArea getArea() {
         return area;
     }
-
     public void setArea(final @NonNull SinglePlotArea area) {
         this.area = area;
         array[0] = area;
         all = ArrayUtil.concatAll(super.getAllPlotAreas(), array);
     }
-
     public boolean isWorld(final @NonNull String id) {
         char[] chars = id.toCharArray();
         if (chars.length == 1 && chars[0] == '*') {
@@ -105,7 +98,6 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         }
         return mode == 3;
     }
-
     @Override
     public @Nullable PlotArea getApplicablePlotArea(final @Nullable Location location) {
         if (location == null) {
@@ -116,7 +108,6 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
                 area :
                 super.getApplicablePlotArea(location);
     }
-
     @Override
     public @Nullable PlotArea getPlotArea(final @NonNull String world, final @NonNull String id) {
         PlotArea found = super.getPlotArea(world, id);
@@ -125,7 +116,6 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         }
         return isWorld(world) || world.equals("*") ? area : super.getPlotArea(world, id);
     }
-
     @Override
     public @Nullable PlotArea getPlotArea(final @NonNull Location location) {
         PlotArea found = super.getPlotArea(location);
@@ -134,7 +124,6 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         }
         return isWorld(location.getWorldName()) || location.getWorldName().equals("*") ? area : null;
     }
-
     @Override
     public @NonNull PlotArea[] getPlotAreas(final @NonNull String world, final @NonNull CuboidRegion region) {
         PlotArea[] found = super.getPlotAreas(world, region);
@@ -143,17 +132,14 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         }
         return isWorld(world) || world.equals("*") ? array : all.length == 0 ? noPlotAreas : found;
     }
-
     @Override
     public @NonNull PlotArea[] getAllPlotAreas() {
         return all;
     }
-
     @Override
     public @NonNull String[] getAllWorlds() {
         return super.getAllWorlds();
     }
-
     @Override
     public void addPlotArea(final @NonNull PlotArea area) {
         if (area == this.area) {
@@ -162,7 +148,6 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         super.addPlotArea(area);
         all = ArrayUtil.concatAll(super.getAllPlotAreas(), array);
     }
-
     @Override
     public void removePlotArea(final @NonNull PlotArea area) {
         if (area == this.area) {
@@ -170,15 +155,12 @@ public class SinglePlotAreaManager extends DefaultPlotAreaManager {
         }
         super.removePlotArea(area);
     }
-
     @Override
     public boolean addWorld(final @NonNull String worldName) {
         return super.addWorld(worldName);
     }
-
     @Override
     public void removeWorld(final @NonNull String worldName) {
         super.removeWorld(worldName);
     }
-
 }

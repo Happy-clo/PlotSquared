@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.destroystokyo.paper.MaterialTags;
 import com.google.common.base.Charsets;
 import com.google.inject.Inject;
@@ -151,20 +150,17 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
-
 /**
  * Player Events involving plots.
  */
 @SuppressWarnings("unused")
 public class PlayerEventListener implements Listener {
-
     private static final Set<Material> MINECARTS = Set.of(
             Material.MINECART,
             Material.TNT_MINECART,
@@ -206,14 +202,9 @@ public class PlayerEventListener implements Listener {
         }
         DYES = Set.copyOf(mutableDyes);
     }
-
     private static final Set<String> INTERACTABLE_MATERIALS;
-
     static {
-        // @formatter:off
         // "temporary" fix for https://hub.spigotmc.org/jira/browse/SPIGOT-7813
-        // can (and should) be removed when 1.21 support is dropped
-        // List of all interactable 1.21 materials
         INTERACTABLE_MATERIALS = Material.CHEST.isInteractable() ? null :  Set.of(
                 "REDSTONE_ORE", "DEEPSLATE_REDSTONE_ORE", "CHISELED_BOOKSHELF", "DECORATED_POT", "CHEST", "CRAFTING_TABLE",
                 "FURNACE", "JUKEBOX", "OAK_FENCE", "SPRUCE_FENCE", "BIRCH_FENCE", "JUNGLE_FENCE", "ACACIA_FENCE", "CHERRY_FENCE",
@@ -268,19 +259,15 @@ public class PlayerEventListener implements Listener {
                 "GREEN_CANDLE_CAKE", "RED_CANDLE_CAKE", "BLACK_CANDLE_CAKE", "CAVE_VINES", "CAVE_VINES_PLANT",
                 "POTTED_AZALEA_BUSH", "POTTED_FLOWERING_AZALEA_BUSH"
         );
-        // @formatter:on
     }
-
     private final EventDispatcher eventDispatcher;
     private final WorldEdit worldEdit;
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;
-    // To prevent recursion
     private boolean tmpTeleport = true;
     private Field fieldPlayer;
     private PlayerMoveEvent moveTmp;
     private String internalVersion;
-
     {
         try {
             fieldPlayer = PlayerEvent.class.getDeclaredField("player");
@@ -289,7 +276,6 @@ public class PlayerEventListener implements Listener {
             e.printStackTrace();
         }
     }
-
     @Inject
     public PlayerEventListener(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -302,7 +288,6 @@ public class PlayerEventListener implements Listener {
         this.plotAreaManager = plotAreaManager;
         this.plotListener = plotListener;
     }
-
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onBlockBreak(final BlockBreakEvent event) {
         Location location = BukkitUtil.adapt(event.getBlock().getLocation());
@@ -315,7 +300,6 @@ public class PlayerEventListener implements Listener {
             event.setDropItems(plot.getFlag(TileDropFlag.class));
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerDyeSign(PlayerInteractEvent event) {
         ItemStack itemStack = event.getItem();
@@ -339,7 +323,7 @@ public class PlayerEventListener implements Listener {
                     return;
                 }
                 if (plot.isAdded(event.getPlayer().getUniqueId())) {
-                    return; // allow for added players
+                    return;
                 }
                 if (!plot.getFlag(EditSignFlag.class)
                         && !event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString())) {
@@ -349,7 +333,6 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(ignoreCancelled = true)
     public void onEffect(@NonNull EntityPotionEffectEvent event) {
         if (Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW ||
@@ -357,7 +340,6 @@ public class PlayerEventListener implements Listener {
                 !(event.getEntity() instanceof Player player)) {
             return;
         }
-
         UUID uuid = player.getUniqueId();
         PotionEffect effect = event.getNewEffect();
         if (effect == null) {
@@ -367,12 +349,11 @@ public class PlayerEventListener implements Listener {
                 plotListener.addEffect(uuid, name, -1);
             }
         } else {
-            long expiresAt = System.currentTimeMillis() + effect.getDuration() * 50L; //Convert ticks to milliseconds
+            long expiresAt = System.currentTimeMillis() + effect.getDuration() * 50L;
             String name = effect.getType().getName();
             plotListener.addEffect(uuid, name, expiresAt);
         }
     }
-
     @EventHandler
     public void onVehicleEntityCollision(VehicleEntityCollisionEvent e) {
         if (e.getVehicle().getType() == EntityType.BOAT) {
@@ -383,22 +364,17 @@ public class PlayerEventListener implements Listener {
                     Plot plot = player.getCurrentPlot();
                     if (plot != null) {
                         if (!plot.isAdded(player.getUUID())) {
-                            //Here the event is only canceled if the player is not the owner
-                            //of the property on which he is located.
                             e.setCancelled(true);
                         }
                     } else {
                         e.setCancelled(true);
                     }
                 } else {
-                    //Here the event is cancelled too, otherwise you can move the
-                    //boat with EchoPets or other mobs running around on the plot.
                     e.setCancelled(true);
                 }
             }
         }
     }
-
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void playerCommand(PlayerCommandPreprocessEvent event) {
         String msg = event.getMessage().replace("/", "").toLowerCase(Locale.ROOT).trim();
@@ -414,7 +390,6 @@ public class PlayerEventListener implements Listener {
         }
         String[] parts = msg.split(" ");
         Plot plot = plotPlayer.getCurrentPlot();
-        // Check WorldEdit
         switch (parts[0]) {
             case "up", "worldedit:up" -> {
                 if (plot == null || (!plot.isAdded(plotPlayer.getUUID()) && !plotPlayer.hasPermission(
@@ -429,7 +404,6 @@ public class PlayerEventListener implements Listener {
         if (plot == null && !area.isRoadFlags()) {
             return;
         }
-
         List<String> blockedCommands = plot != null ?
                 plot.getFlag(BlockedCmdsFlag.class) :
                 area.getFlag(BlockedCmdsFlag.class);
@@ -439,7 +413,6 @@ public class PlayerEventListener implements Listener {
         if (plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_BLOCKED_CMDS)) {
             return;
         }
-        // When using namespaced commands, we're not interested in the namespace
         String part = parts[0];
         if (part.contains(":")) {
             String[] namespaced = part.split(":");
@@ -463,7 +436,6 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     private String replaceAliases(String msg, String part) {
         String s1 = part;
         Set<String> aliases = new HashSet<>();
@@ -495,7 +467,6 @@ public class PlayerEventListener implements Listener {
         }
         return msg;
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPreLogin(final AsyncPlayerPreLoginEvent event) {
         final UUID uuid;
@@ -510,17 +481,13 @@ public class PlayerEventListener implements Listener {
         }
         PlotSquared.get().getImpromptuUUIDPipeline().storeImmediately(event.getName(), uuid);
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    @SuppressWarnings("deprecation") // Paper deprecation
+    @SuppressWarnings("deprecation")
     public void onConnect(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         PlotSquared.platform().playerManager().removePlayer(player.getUniqueId());
         final PlotPlayer<Player> pp = BukkitUtil.adapt(player);
-
-        // we're stripping the country code as we don't want to differ between countries
         pp.setLocale(Locale.forLanguageTag(player.getLocale().substring(0, 2)));
-
         Location location = pp.getLocation();
         PlotArea area = location.getPlotArea();
         if (area != null) {
@@ -529,16 +496,12 @@ public class PlayerEventListener implements Listener {
                 plotListener.plotEntry(pp, plot);
             }
         }
-        // Delayed
-
-        // Async
         TaskManager.runTaskLaterAsync(() -> {
             if (!player.hasPlayedBefore() && player.isOnline()) {
                 player.saveData();
             }
             this.eventDispatcher.doJoinTask(pp);
         }, TaskTime.seconds(1L));
-
         if (pp.hasPermission(Permission.PERMISSION_ADMIN_UPDATE_NOTIFICATION.toString()) && Settings.Enabled_Components.UPDATE_NOTIFICATIONS
                 && PremiumVerification.isPremium() && UpdateUtility.hasUpdate) {
             Caption boundary = TranslatableCaption.of("update.update_boundary");
@@ -555,19 +518,16 @@ public class PlayerEventListener implements Listener {
             pp.sendMessage(boundary);
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void playerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         PlotPlayer<Player> pp = BukkitUtil.adapt(player);
         this.eventDispatcher.doRespawnTask(pp);
     }
-
-    @SuppressWarnings("deprecation") // We explicitly want #getHomeSynchronous here
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
-        //We need to account for bad plugins like NoCheatPlus that teleports player on/before login -_-
         if (!player.isOnline()) {
             return;
         }
@@ -576,7 +536,6 @@ public class PlayerEventListener implements Listener {
                      pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
             Plot lastPlot = lastPlotAccess.get().orElse(null);
             org.bukkit.Location to = event.getTo();
-            //noinspection ConstantConditions
             if (to != null) {
                 Location location = BukkitUtil.adapt(to);
                 PlotArea area = location.getPlotArea();
@@ -594,10 +553,6 @@ public class PlayerEventListener implements Listener {
                 Plot plot = area.getPlot(location);
                 if (plot != null) {
                     final boolean result = DenyTeleportFlag.allowsTeleport(pp, plot);
-                    // there is one possibility to still allow teleportation:
-                    // to is identical to the plot's home location, and untrusted-visit is true
-                    // i.e. untrusted-visit can override deny-teleport
-                    // this is acceptable, because otherwise it wouldn't make sense to have both flags set
                     if (result || (plot.getFlag(UntrustedVisitFlag.class) && plot.getHomeSynchronous().equals(BukkitUtil.adaptComplete(to)))) {
                         plotListener.plotEntry(pp, plot);
                     } else {
@@ -612,7 +567,6 @@ public class PlayerEventListener implements Listener {
         }
         playerMove(event);
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onWorldChanged(PlayerChangedWorldEvent event) {
         Player player = event.getPlayer();
@@ -625,24 +579,18 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void vehicleMove(VehicleMoveEvent event)
             throws IllegalAccessException {
         final org.bukkit.Location from = event.getFrom();
         final org.bukkit.Location to = event.getTo();
-
         int toX, toZ;
         if ((toX = MathMan.roundInt(to.getX())) != MathMan.roundInt(from.getX()) | (toZ = MathMan.roundInt(to.getZ())) != MathMan
                 .roundInt(from.getZ())) {
             Vehicle vehicle = event.getVehicle();
-
-            // Check allowed
             if (!vehicle.getPassengers().isEmpty()) {
                 Entity passenger = vehicle.getPassengers().get(0);
-
                 if (passenger instanceof final Player player) {
-                    // reset
                     if (moveTmp == null) {
                         moveTmp = new PlayerMoveEvent(null, from, to);
                     }
@@ -650,9 +598,7 @@ public class PlayerEventListener implements Listener {
                     moveTmp.setTo(to);
                     moveTmp.setCancelled(false);
                     fieldPlayer.set(moveTmp, player);
-
                     List<Entity> passengers = vehicle.getPassengers();
-
                     this.playerMove(moveTmp);
                     org.bukkit.Location dest;
                     if (moveTmp.isCancelled()) {
@@ -674,8 +620,6 @@ public class PlayerEventListener implements Listener {
                 }
                 if (Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
                     final com.sk89q.worldedit.world.entity.EntityType entityType = BukkitAdapter.adapt(vehicle.getType());
-                    // Horses etc are vehicles, but they're also animals
-                    // so this filters out all living entities
                     if (EntityCategories.VEHICLE.contains(entityType) && !EntityCategories.ANIMAL.contains(entityType)) {
                         List<MetadataValue> meta = vehicle.getMetadata("plot");
                         Plot toPlot = BukkitUtil.adapt(to).getPlot();
@@ -690,10 +634,8 @@ public class PlayerEventListener implements Listener {
                     }
                 }
             }
-
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void playerMove(PlayerMoveEvent event) {
         org.bukkit.Location from = event.getFrom();
@@ -702,11 +644,9 @@ public class PlayerEventListener implements Listener {
         if (MathMan.roundInt(from.getX()) != (x2 = MathMan.roundInt(to.getX()))) {
             Player player = event.getPlayer();
             BukkitPlayer pp = BukkitUtil.adapt(player);
-            // Cancel teleport
             if (TaskManager.removeFromTeleportQueue(pp.getName())) {
                 pp.sendMessage(TranslatableCaption.of("teleport.teleport_failed"));
             }
-            // Set last location
             Location location = BukkitUtil.adapt(to);
             try (final MetaDataAccess<Location> lastLocationAccess =
                          pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
@@ -773,7 +713,7 @@ public class PlayerEventListener implements Listener {
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.denied"));
-                } else if (MathMan.roundInt(from.getX()) <= border) { // Only send if they just moved out of the border
+                } else if (MathMan.roundInt(from.getX()) <= border) {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
             } else if (x2 < -border && this.tmpTeleport) {
@@ -783,7 +723,7 @@ public class PlayerEventListener implements Listener {
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.denied"));
-                } else if (MathMan.roundInt(from.getX()) >= -border) { // Only send if they just moved out of the border
+                } else if (MathMan.roundInt(from.getX()) >= -border) {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
             } else if (((x1 = MathMan.roundInt(from.getX())) >= border && x2 <= border) || (x1 <= -border && x2 >= -border)) {
@@ -796,11 +736,9 @@ public class PlayerEventListener implements Listener {
         if (MathMan.roundInt(from.getZ()) != (z2 = MathMan.roundInt(to.getZ()))) {
             Player player = event.getPlayer();
             BukkitPlayer pp = BukkitUtil.adapt(player);
-            // Cancel teleport
             if (TaskManager.removeFromTeleportQueue(pp.getName())) {
                 pp.sendMessage(TranslatableCaption.of("teleport.teleport_failed"));
             }
-            // Set last location
             Location location = BukkitUtil.adapt(to);
             try (final MetaDataAccess<Location> lastLocationAccess =
                          pp.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
@@ -868,7 +806,7 @@ public class PlayerEventListener implements Listener {
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.denied"));
-                } else if (MathMan.roundInt(from.getZ()) <= border) { // Only send if they just moved out of the border
+                } else if (MathMan.roundInt(from.getZ()) <= border) {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
             } else if (z2 < -border && this.tmpTeleport) {
@@ -878,7 +816,7 @@ public class PlayerEventListener implements Listener {
                     player.teleport(event.getTo());
                     this.tmpTeleport = true;
                     pp.sendMessage(TranslatableCaption.of("border.denied"));
-                } else if (MathMan.roundInt(from.getZ()) >= -border) { // Only send if they just moved out of the border
+                } else if (MathMan.roundInt(from.getZ()) >= -border) {
                     pp.sendMessage(TranslatableCaption.of("border.bypass.exited"));
                 }
             } else if (((z1 = MathMan.roundInt(from.getZ())) >= border && z2 <= border) || (z1 <= -border && z2 >= -border)) {
@@ -888,14 +826,12 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.LOW)
-    @SuppressWarnings("deprecation") // Paper deprecation
+    @SuppressWarnings("deprecation")
     public void onChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) {
             return;
         }
-
         BukkitPlayer plotPlayer = BukkitUtil.adapt(event.getPlayer());
         Location location = plotPlayer.getLocation();
         PlotArea area = location.getPlotArea();
@@ -964,7 +900,6 @@ public class PlayerEventListener implements Listener {
             );
         }
     }
-
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
@@ -977,7 +912,6 @@ public class PlayerEventListener implements Listener {
                 .hasPlotArea(entity.getWorld().getName())) {
             return;
         }
-
         HumanEntity clicker = event.getWhoClicked();
         if (!(clicker instanceof Player player)) {
             return;
@@ -1000,7 +934,6 @@ public class PlayerEventListener implements Listener {
         ItemMeta oldMeta = oldItem.getItemMeta();
         ItemStack newItem = event.getCursor();
         ItemMeta newMeta = newItem.getItemMeta();
-
         if (event.getClick() == ClickType.CREATIVE) {
             final Plot plot = pp.getCurrentPlot();
             if (plot != null) {
@@ -1022,7 +955,6 @@ public class PlayerEventListener implements Listener {
             }
             return;
         }
-
         String newLore = "";
         if (newMeta != null) {
             List<String> lore = newMeta.getLore();
@@ -1115,7 +1047,6 @@ public class PlayerEventListener implements Listener {
                     new ItemStack(newItem.getType(), newItem.getAmount(), newItem.getDurability()));
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteract(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
@@ -1185,9 +1116,8 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.LOW)
-    @SuppressWarnings("deprecation") // Paper deprecation
+    @SuppressWarnings("deprecation")
     public void onCancelledInteract(PlayerInteractEvent event) {
         if (event.isCancelled() && event.getAction() == Action.RIGHT_CLICK_AIR) {
             Player player = event.getPlayer();
@@ -1222,7 +1152,6 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -1235,7 +1164,6 @@ public class PlayerEventListener implements Listener {
         BlockType blocktype1;
         Block block = event.getClickedBlock();
         if (block == null) {
-            // We do not care in this case, the player is likely interacting with air ("nothing").
             return;
         }
         Location location = BukkitUtil.adapt(block.getLocation());
@@ -1245,36 +1173,27 @@ public class PlayerEventListener implements Listener {
                 eventType = PlayerBlockEventType.TRIGGER_PHYSICAL;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
             }
-
-            //todo rearrange the right click code. it is all over the place.
             case RIGHT_CLICK_BLOCK -> {
                 Material blockType = block.getType();
                 eventType = PlayerBlockEventType.INTERACT_BLOCK;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
-
                 if (INTERACTABLE_MATERIALS != null ? INTERACTABLE_MATERIALS.contains(blockType.name()) : blockType.isInteractable()) {
                     if (!player.isSneaking()) {
                         break;
                     }
                     ItemStack hand = player.getInventory().getItemInMainHand();
                     ItemStack offHand = player.getInventory().getItemInOffHand();
-
-                    // sneaking players interact with blocks if both hands are empty
                     if (hand.getType() == Material.AIR && offHand.getType() == Material.AIR) {
                         break;
                     }
                 }
-
                 Material type = event.getMaterial();
-
-                // in the following, lb needs to have the material of the item in hand i.e. type
                 switch (type.toString()) {
                     case "REDSTONE", "STRING", "PUMPKIN_SEEDS", "MELON_SEEDS", "COCOA_BEANS", "WHEAT_SEEDS", "BEETROOT_SEEDS",
                             "SWEET_BERRIES", "GLOW_BERRIES" -> {
                         return;
                     }
                     default -> {
-                        //eventType = PlayerBlockEventType.PLACE_BLOCK;
                         if (type.isBlock()) {
                             return;
                         }
@@ -1292,7 +1211,6 @@ public class PlayerEventListener implements Listener {
                     }
                 }
                 if (type.isEdible()) {
-                    //Allow all players to eat while also allowing the block place event to be fired
                     return;
                 }
                 if (type == Material.ARMOR_STAND) {
@@ -1314,13 +1232,9 @@ public class PlayerEventListener implements Listener {
             }
             case LEFT_CLICK_BLOCK -> {
                 Material blockType = block.getType();
-
-                // todo: when the code above is rearranged, it would be great to beautify this as well.
-                // will code this as a temporary, specific bug fix (for dragon eggs)
                 if (blockType != Material.DRAGON_EGG) {
                     return;
                 }
-
                 eventType = PlayerBlockEventType.INTERACT_BLOCK;
                 blocktype1 = BukkitAdapter.asBlockType(block.getType());
             }
@@ -1338,10 +1252,6 @@ public class PlayerEventListener implements Listener {
             event.setUseInteractedBlock(Event.Result.DENY);
         }
     }
-
-    // Boats can sometimes be placed on interactable blocks such as levers,
-    // see PS-175. Armor stands, minecarts and end crystals (the other entities
-    // supported by this event) don't have this issue.
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBoatPlace(EntityPlaceEvent event) {
         Player player = event.getPlayer();
@@ -1366,17 +1276,10 @@ public class PlayerEventListener implements Listener {
             event.setCancelled(true);
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
         BlockFace bf = event.getBlockFace();
-        // Note: a month after Bukkit 1.14.4 released, they added the API method
-        // PlayerBucketEmptyEvent#getBlock(), which returns the block the
-        // bucket contents is going to be placed at. Currently we determine this
-        // block ourselves to retain compatibility with 1.13.
         final Block block;
-        // if the block can be waterlogged, the event might waterlog the block
-        // sometimes
         if (event.getBlockClicked().getBlockData() instanceof Waterlogged waterlogged
                 && !waterlogged.isWaterlogged() && event.getBucket() != Material.LAVA_BUCKET) {
             block = event.getBlockClicked();
@@ -1434,7 +1337,6 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClose(InventoryCloseEvent event) {
         HumanEntity closer = event.getPlayer();
@@ -1443,7 +1345,6 @@ public class PlayerEventListener implements Listener {
         }
         PlotInventory.removePlotInventoryOpen(BukkitUtil.adapt(player));
     }
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onLeave(PlayerQuitEvent event) {
         TaskManager.removeFromTeleportQueue(event.getPlayer().getName());
@@ -1451,7 +1352,6 @@ public class PlayerEventListener implements Listener {
         pp.unregister();
         plotListener.logout(pp.getUUID());
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBucketFill(PlayerBucketFillEvent event) {
         Block blockClicked = event.getBlockClicked();
@@ -1505,7 +1405,6 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHangingPlace(HangingPlaceEvent event) {
         Block block = event.getBlock().getRelative(event.getBlockFace());
@@ -1564,10 +1463,8 @@ public class PlayerEventListener implements Listener {
             if (BukkitEntityUtil.checkEntity(event.getEntity(), plot)) {
                 event.setCancelled(true);
             }
-
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onHangingBreakByEntity(HangingBreakByEntityEvent event) {
         Entity remover = event.getRemover();
@@ -1661,7 +1558,6 @@ public class PlayerEventListener implements Listener {
             event.setCancelled(true);
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         if (event.getRightClicked().getType() == EntityType.UNKNOWN) {
@@ -1702,52 +1598,41 @@ public class PlayerEventListener implements Listener {
             final Entity entity = event.getRightClicked();
             final com.sk89q.worldedit.world.entity.EntityType entityType =
                     BukkitAdapter.adapt(entity.getType());
-
             FlagContainer flagContainer;
             if (plot == null) {
                 flagContainer = area.getRoadFlagContainer();
             } else {
                 flagContainer = plot.getFlagContainer();
             }
-
             if (EntityCategories.HOSTILE.contains(entityType) && flagContainer
                     .getFlag(HostileInteractFlag.class).getValue()) {
                 return;
             }
-
             if (EntityCategories.ANIMAL.contains(entityType) && flagContainer
                     .getFlag(AnimalInteractFlag.class).getValue()) {
                 return;
             }
-
-            // This actually makes use of the interface, so we don't use the
-            // category
             if (entity instanceof Tameable && ((Tameable) entity).isTamed() && flagContainer
                     .getFlag(TamedInteractFlag.class).getValue()) {
                 return;
             }
-
             if (EntityCategories.VEHICLE.contains(entityType) && flagContainer
                     .getFlag(VehicleUseFlag.class).getValue()) {
                 return;
             }
-
             if (EntityCategories.PLAYER.contains(entityType) && flagContainer
                     .getFlag(PlayerInteractFlag.class).getValue()) {
                 return;
             }
-
             if (EntityCategories.VILLAGER.contains(entityType) && flagContainer
                     .getFlag(VillagerInteractFlag.class).getValue()) {
                 return;
             }
-
             if ((EntityCategories.HANGING.contains(entityType) || EntityCategories.OTHER
                     .contains(entityType)) && flagContainer.getFlag(MiscInteractFlag.class)
                     .getValue()) {
                 return;
             }
-
             if (!pp.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER)) {
                 pp.sendMessage(
                         TranslatableCaption.of("permission.no_permission_event"),
@@ -1760,7 +1645,6 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVehicleDestroy(VehicleDestroyEvent event) {
         Location location = BukkitUtil.adapt(event.getVehicle().getLocation());
@@ -1820,7 +1704,6 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
@@ -1845,7 +1728,6 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler
     public void onItemPickup(EntityPickupItemEvent event) {
         LivingEntity ent = event.getEntity();
@@ -1870,7 +1752,6 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler
     public void onDeath(final PlayerDeathEvent event) {
         Location location = BukkitUtil.adapt(event.getEntity().getLocation());
@@ -1891,19 +1772,15 @@ public class PlayerEventListener implements Listener {
             event.setKeepInventory(true);
         }
     }
-
-    @SuppressWarnings("deprecation") // #getLocate is needed for Spigot compatibility
+    @SuppressWarnings("deprecation")
     @EventHandler
     public void onLocaleChange(final PlayerLocaleChangeEvent event) {
-        // The event is fired before the player is deemed online upon login
         if (!event.getPlayer().isOnline()) {
             return;
         }
         BukkitPlayer player = BukkitUtil.adapt(event.getPlayer());
-        // we're stripping the country code as we don't want to differ between countries
         player.setLocale(Locale.forLanguageTag(event.getLocale().substring(0, 2)));
     }
-
     @EventHandler
     public void onPortalEnter(PlayerPortalEvent event) {
         Location location = BukkitUtil.adapt(event.getPlayer().getLocation());
@@ -1923,7 +1800,6 @@ public class PlayerEventListener implements Listener {
             event.setCancelled(true);
         }
     }
-
     @EventHandler
     public void onPortalCreation(PortalCreateEvent event) {
         String world = event.getWorld().getName();
@@ -1941,8 +1817,8 @@ public class PlayerEventListener implements Listener {
             minZ = Math.min(state.getZ(), minZ);
             maxZ = Math.max(state.getZ(), maxZ);
         }
-        int y = event.getBlocks().get(0).getY(); // Don't need to worry about this too much
-        for (Location location : List.of( // We don't care about duplicate locations
+        int y = event.getBlocks().get(0).getY();
+        for (Location location : List.of(
                 Location.at(world, minX, y, minZ),
                 Location.at(world, minX, y, maxZ),
                 Location.at(world, maxX, y, minZ),
@@ -1977,7 +1853,6 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
     @EventHandler
     public void onPlayerTakeLecternBook(PlayerTakeLecternBookEvent event) {
         Player player = event.getPlayer();
@@ -2001,5 +1876,4 @@ public class PlayerEventListener implements Listener {
             }
         }
     }
-
 }

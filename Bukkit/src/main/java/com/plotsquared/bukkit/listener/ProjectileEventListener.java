@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -50,24 +49,17 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 @SuppressWarnings("unused")
 public class ProjectileEventListener implements Listener {
-
     private final PlotAreaManager plotAreaManager;
-
     @Inject
     public ProjectileEventListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onLingeringPotionSplash(LingeringPotionSplashEvent event) {
-        // Cancelling projectile hit events still results in area effect clouds.
-        // We need to cancel the splash events to get rid of those.
         onProjectileHit(event);
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPotionSplash(PotionSplashEvent event) {
         ThrownPotion damager = event.getPotion();
@@ -85,13 +77,9 @@ public class ProjectileEventListener implements Listener {
         if (count > 0 && count == event.getAffectedEntities().size()) {
             event.setCancelled(true);
         } else {
-            // Cancelling projectile hit events still results in potions
-            // splashing in the world. We need to cancel the splash events to
-            // avoid that.
             onProjectileHit(event);
         }
     }
-
     @EventHandler(ignoreCancelled = true)
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         Projectile entity = event.getEntity();
@@ -106,7 +94,6 @@ public class ProjectileEventListener implements Listener {
         }
         PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
-
         if (plot == null) {
             if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !pp.hasPermission(
                     Permission.PERMISSION_ADMIN_PROJECTILE_ROAD
@@ -154,7 +141,6 @@ public class ProjectileEventListener implements Listener {
             }
         }
     }
-
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         Projectile entity = event.getEntity();
@@ -177,12 +163,10 @@ public class ProjectileEventListener implements Listener {
                 } else if (PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true)) {
                     return;
                 }
-
                 entity.remove();
                 event.setCancelled(true);
                 return;
             }
-
             PlotPlayer<?> pp = BukkitUtil.adapt((Player) shooter);
             if (plot == null) {
                 if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !pp.hasPermission(
@@ -222,5 +206,4 @@ public class ProjectileEventListener implements Listener {
             }
         }
     }
-
 }

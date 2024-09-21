@@ -17,17 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.collection;
-
 import com.plotsquared.core.util.MathMan;
-
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
-
 public class FlatRandomCollection<T> extends RandomCollection<T> {
-
     private final T[] values;
-
     @SuppressWarnings("unchecked")
     public FlatRandomCollection(Map<T, Double> weights, Random random) {
         super(weights, random);
@@ -57,10 +52,8 @@ public class FlatRandomCollection<T> extends RandomCollection<T> {
         }
         this.values = (T[]) parsed.toArray();
     }
-
     @Override
     public T next() {
         return values[random.nextInt(values.length)];
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.plotsquared.bukkit.util.BukkitEntityUtil;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
@@ -49,16 +48,12 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.List;
-
 public class EntitySpawnListener implements Listener {
-
     private static final String KEY = "P2";
     private static boolean ignoreTP = false;
     private static boolean hasPlotArea = false;
     private static String areaName = null;
-
     public static void testNether(final Entity entity) {
         @NonNull World world = entity.getWorld();
         if (world.getEnvironment() != World.Environment.NETHER && world.getEnvironment() != World.Environment.THE_END) {
@@ -66,7 +61,6 @@ public class EntitySpawnListener implements Listener {
         }
         test(entity);
     }
-
     public static void testCreate(final Entity entity) {
         @NonNull World world = entity.getWorld();
         if (!world.getName().equals(areaName)) {
@@ -78,7 +72,6 @@ public class EntitySpawnListener implements Listener {
         }
         test(entity);
     }
-
     public static void test(Entity entity) {
         @NonNull World world = entity.getWorld();
         List<MetadataValue> meta = entity.getMetadata(KEY);
@@ -114,7 +107,6 @@ public class EntitySpawnListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void creatureSpawnEvent(EntitySpawnEvent event) {
         Entity entity = event.getEntity();
@@ -124,7 +116,6 @@ public class EntitySpawnListener implements Listener {
             return;
         }
         if (PaperLib.isPaper()) {
-            //noinspection ConstantValue - getEntitySpawnReason annotated as NotNull, but is not NotNull. lol.
             if (area.isSpawnCustom() && entity.getEntitySpawnReason() != null && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
                 return;
             }
@@ -166,7 +157,6 @@ public class EntitySpawnListener implements Listener {
             }
         }
     }
-
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
         @NonNull Chunk chunk = event.getChunk();
@@ -174,22 +164,18 @@ public class EntitySpawnListener implements Listener {
             testCreate(entity);
         }
     }
-
     @EventHandler
     public void onVehicle(VehicleUpdateEvent event) {
         testNether(event.getVehicle());
     }
-
     @EventHandler
     public void onVehicle(VehicleCreateEvent event) {
         testCreate(event.getVehicle());
     }
-
     @EventHandler
     public void onVehicle(VehicleBlockCollisionEvent event) {
         testNether(event.getVehicle());
     }
-
     @EventHandler
     public void onTeleport(EntityTeleportEvent event) {
         Entity entity = event.getEntity();
@@ -199,7 +185,6 @@ public class EntitySpawnListener implements Listener {
         final PlotArea fromArea = fromLocLocation.getPlotArea();
         Location toLocLocation = BukkitUtil.adapt(toLocation.getLocation());
         PlotArea toArea = toLocLocation.getPlotArea();
-
         if (toArea == null) {
             if (fromLocation.getType() == EntityType.SHULKER && fromArea != null) {
                 event.setCancelled(true);
@@ -209,7 +194,6 @@ public class EntitySpawnListener implements Listener {
         Plot toPlot = toArea.getOwnedPlot(toLocLocation);
         if (fromLocation.getType() == EntityType.SHULKER && fromArea != null) {
             final Plot fromPlot = fromArea.getOwnedPlot(fromLocLocation);
-
             if (fromPlot != null || toPlot != null) {
                 if ((fromPlot == null || !fromPlot.equals(toPlot)) && (toPlot == null || !toPlot.equals(fromPlot))) {
                     event.setCancelled(true);
@@ -221,17 +205,14 @@ public class EntitySpawnListener implements Listener {
             testNether(event.getEntity());
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void vehicleMove(VehicleMoveEvent event) {
         testNether(event.getVehicle());
     }
-
     @EventHandler
     public void spawn(CreatureSpawnEvent event) {
         if (event.getEntityType() == EntityType.ARMOR_STAND) {
             testCreate(event.getEntity());
         }
     }
-
 }

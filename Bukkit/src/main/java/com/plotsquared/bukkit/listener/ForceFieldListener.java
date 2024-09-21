@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
@@ -27,14 +26,11 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.implementations.ForcefieldFlag;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
 @SuppressWarnings("unused")
 public class ForceFieldListener {
-
     private static Set<PlotPlayer<?>> getNearbyPlayers(Player player, Plot plot) {
         Set<PlotPlayer<?>> players = new HashSet<>();
         for (Player nearPlayer : player.getNearbyEntities(5d, 5d, 5d).stream()
@@ -53,7 +49,6 @@ public class ForceFieldListener {
         }
         return players;
     }
-
     private static PlotPlayer<?> hasNearbyPermitted(Player player, Plot plot) {
         for (Player nearPlayer : player.getNearbyEntities(5d, 5d, 5d).stream()
                 .filter(entity -> entity instanceof Player)
@@ -71,7 +66,6 @@ public class ForceFieldListener {
         }
         return null;
     }
-
     private static Vector calculateVelocity(PlotPlayer<?> player, PlotPlayer<?> e) {
         Location playerLocation = player.getLocationFull();
         Location oPlayerLocation = e.getLocation();
@@ -101,7 +95,6 @@ public class ForceFieldListener {
         }
         return new Vector(x, y, z);
     }
-
     public static void handleForcefield(Player player, PlotPlayer<?> plotPlayer, Plot plot) {
         if (plot.getFlag(ForcefieldFlag.class)) {
             UUID uuid = plotPlayer.getUUID();
@@ -124,5 +117,4 @@ public class ForceFieldListener {
             }
         }
     }
-
 }

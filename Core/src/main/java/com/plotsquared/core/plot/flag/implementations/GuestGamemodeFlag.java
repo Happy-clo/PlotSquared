@@ -17,16 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.sk89q.worldedit.world.gamemode.GameMode;
 import com.sk89q.worldedit.world.gamemode.GameModes;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
-
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_CREATIVE =
             new GuestGamemodeFlag(GameModes.CREATIVE);
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_ADVENTURE =
@@ -37,7 +34,6 @@ public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
             new GuestGamemodeFlag(GameModes.SURVIVAL);
     public static final GuestGamemodeFlag GUEST_GAMEMODE_FLAG_DEFAULT =
             new GuestGamemodeFlag(GamemodeFlag.DEFAULT);
-
     /**
      * Construct a new flag instance.
      *
@@ -50,7 +46,6 @@ public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
                 TranslatableCaption.of("flags.flag_description_guest_gamemode")
         );
     }
-
     @Override
     public GuestGamemodeFlag parse(@NonNull String input) throws FlagParseException {
         return switch (input) {
@@ -61,22 +56,18 @@ public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
             default -> flagOf(GamemodeFlag.DEFAULT);
         };
     }
-
     @Override
     public GuestGamemodeFlag merge(@NonNull GameMode newValue) {
         return flagOf(newValue);
     }
-
     @Override
     public String toString() {
         return getValue().getId();
     }
-
     @Override
     public String getExample() {
         return "survival";
     }
-
     @Override
     protected GuestGamemodeFlag flagOf(@NonNull GameMode value) {
         return switch (value.getId()) {
@@ -87,5 +78,4 @@ public class GuestGamemodeFlag extends PlotFlag<GameMode, GuestGamemodeFlag> {
             default -> GUEST_GAMEMODE_FLAG_DEFAULT;
         };
     }
-
 }

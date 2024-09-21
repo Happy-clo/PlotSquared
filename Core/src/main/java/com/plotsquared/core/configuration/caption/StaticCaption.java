@@ -17,20 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
-
 import com.google.common.base.Preconditions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public final class StaticCaption implements Caption {
-
     private final String value;
-
     private StaticCaption(final String value) {
         this.value = value;
     }
-
     /**
      * Create a new static caption from the given text
      *
@@ -40,20 +35,16 @@ public final class StaticCaption implements Caption {
     public static @NonNull StaticCaption of(final @NonNull String text) {
         return new StaticCaption(Preconditions.checkNotNull(text, "Text may not be null"));
     }
-
     @Override
     public @NonNull String getComponent(@NonNull LocaleHolder localeHolder) {
-        return this.value; // can't be translated
+        return this.value;
     }
-
     @Override
     public @NonNull Component toComponent(@NonNull final LocaleHolder localeHolder) {
         return MiniMessage.miniMessage().deserialize(this.value);
     }
-
     @Override
     public @NonNull String toString() {
         return "StaticCaption(" + value + ")";
     }
-
 }

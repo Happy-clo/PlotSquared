@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.plot.world.SinglePlotArea;
@@ -30,17 +29,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
-
 import java.lang.reflect.Method;
-
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
-
 public class SingleWorldListener implements Listener {
-
     private final Method methodSetUnsaved;
     private Method methodGetHandleChunk;
     private Object objChunkStatusFull = null;
-
     public SingleWorldListener() throws Exception {
         ReflectionUtils.RefClass classCraftChunk = getRefClass("{cb}.CraftChunk");
         ReflectionUtils.RefClass classChunkAccess = getRefClass("net.minecraft.world.level.chunk.IChunkAccess");
@@ -57,7 +51,6 @@ public class SingleWorldListener implements Listener {
             }
         }
     }
-
     public void markChunkAsClean(Chunk chunk) {
         try {
             Object nmsChunk = objChunkStatusFull != null
@@ -68,7 +61,6 @@ public class SingleWorldListener implements Listener {
             e.printStackTrace();
         }
     }
-
     private void handle(ChunkEvent event) {
         World world = event.getWorld();
         String name = world.getName();
@@ -82,21 +74,12 @@ public class SingleWorldListener implements Listener {
         int x = event.getChunk().getX();
         int z = event.getChunk().getZ();
         if (x < 16 && x > -16 && z < 16 && z > -16) {
-            // Allow spawn to generate
             return;
         }
         markChunkAsClean(event.getChunk());
     }
-
-    //    @EventHandler
-    //    public void onPopulate(ChunkPopulateEvent event) {
-    //        handle(event);
-    //    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChunkLoad(ChunkLoadEvent event) {
         // disable this for now, should address https://github.com/IntellectualSites/PlotSquared/issues/4413
-        // handle(event);
     }
-
 }

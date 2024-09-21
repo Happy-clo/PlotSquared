@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid;
-
 import com.google.common.collect.Lists;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -30,7 +29,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,7 +43,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
 /**
  * An UUID pipeline is essentially an ordered list of
  * {@link UUIDService uuid services} that each get the
@@ -55,14 +52,11 @@ import java.util.function.Consumer;
  * consumers, that can then be used to cache them, etc
  */
 public class UUIDPipeline {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + UUIDPipeline.class.getSimpleName());
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
-
     private final Executor executor;
     private final List<UUIDService> serviceList;
     private final List<Consumer<List<UUIDMapping>>> consumerList;
-
     /**
      * Construct a new UUID pipeline
      *
@@ -74,7 +68,6 @@ public class UUIDPipeline {
         this.serviceList = Lists.newLinkedList();
         this.consumerList = Lists.newLinkedList();
     }
-
     /**
      * Register a UUID service
      *
@@ -83,7 +76,6 @@ public class UUIDPipeline {
     public void registerService(final @NonNull UUIDService uuidService) {
         this.serviceList.add(uuidService);
     }
-
     /**
      * Register a mapping consumer
      *
@@ -92,7 +84,6 @@ public class UUIDPipeline {
     public void registerConsumer(final @NonNull Consumer<@NonNull List<@NonNull UUIDMapping>> mappingConsumer) {
         this.consumerList.add(mappingConsumer);
     }
-
     /**
      * Get a copy of the service list
      *
@@ -101,7 +92,6 @@ public class UUIDPipeline {
     public @NonNull List<@NonNull UUIDService> getServiceListInstance() {
         return Collections.unmodifiableList(this.serviceList);
     }
-
     /**
      * Let all consumers act on the given mapping.
      *
@@ -119,7 +109,6 @@ public class UUIDPipeline {
             runnable.run();
         }
     }
-
     /**
      * Consume a single mapping
      *
@@ -128,7 +117,6 @@ public class UUIDPipeline {
     public void consume(final @NonNull UUIDMapping mapping) {
         this.consume(Collections.singletonList(mapping));
     }
-
     /**
      * This will store the given username-UUID pair directly, and overwrite
      * any existing caches. This can be used to update usernames automatically
@@ -141,7 +129,6 @@ public class UUIDPipeline {
     public void storeImmediately(final @NonNull String username, final @NonNull UUID uuid) {
         this.consume(new UUIDMapping(uuid, username));
     }
-
     /**
      * Get a single UUID from a username. This is blocking.
      *
@@ -162,14 +149,12 @@ public class UUIDPipeline {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
-            // This is completely valid, we just don't care anymore
             if (Settings.DEBUG) {
                 LOGGER.warn("(UUID) Request for {} timed out. Rate limit.", username);
             }
         }
         return null;
     }
-
     /**
      * Get a single username from a UUID. This is blocking.
      *
@@ -187,14 +172,12 @@ public class UUIDPipeline {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } catch (TimeoutException ignored) {
-            // This is completely valid, we just don't care anymore
             if (Settings.DEBUG) {
                 LOGGER.warn("(UUID) Request for {} timed out. Rate limit.", uuid);
             }
         }
         return null;
     }
-
     /**
      * Get a single UUID from a username. This is non-blocking.
      *
@@ -216,7 +199,6 @@ public class UUIDPipeline {
                     }
                 });
     }
-
     /**
      * Get a single username from a UUID. This is non-blocking.
      *
@@ -238,7 +220,6 @@ public class UUIDPipeline {
                     }
                 });
     }
-
     /**
      * Asynchronously attempt to fetch the mapping from a list of UUIDs.
      * <p>
@@ -255,7 +236,6 @@ public class UUIDPipeline {
     ) {
         return this.getNames(requests).orTimeout(timeout, TimeUnit.MILLISECONDS);
     }
-
     /**
      * Asynchronously attempt to fetch the mapping from a list of names.
      * <p>
@@ -272,7 +252,6 @@ public class UUIDPipeline {
     ) {
         return this.getUUIDs(requests).orTimeout(timeout, TimeUnit.MILLISECONDS);
     }
-
     /**
      * Asynchronously attempt to fetch the mapping from a list of UUIDs
      *
@@ -285,14 +264,10 @@ public class UUIDPipeline {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
-
         final List<UUIDService> serviceList = this.getServiceListInstance();
         final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
         final List<UUID> remainingRequests = new ArrayList<>(requests);
-
         for (final UUIDService service : serviceList) {
-            // We can chain multiple synchronous
-            // ones in a row
             if (service.canBeSynchronous()) {
                 final List<UUIDMapping> completedRequests = service.getNames(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
@@ -306,7 +281,6 @@ public class UUIDPipeline {
                 return CompletableFuture.completedFuture(mappings);
             }
         }
-
         return CompletableFuture.supplyAsync(() -> {
             for (final UUIDService service : serviceList) {
                 final List<UUIDMapping> completedRequests = service.getNames(remainingRequests);
@@ -318,14 +292,12 @@ public class UUIDPipeline {
                     break;
                 }
             }
-
             if (mappings.size() == requests.size()) {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
                 LOGGER.info("(UUID) Failed to find all usernames");
             }
-
             if (Settings.UUID.UNKNOWN_AS_DEFAULT) {
                 for (final UUID uuid : remainingRequests) {
                     mappings.add(new UUIDMapping(
@@ -341,7 +313,6 @@ public class UUIDPipeline {
             }
         }, this.executor);
     }
-
     /**
      * Asynchronously attempt to fetch the mapping from a list of names
      *
@@ -354,14 +325,10 @@ public class UUIDPipeline {
         if (requests.isEmpty()) {
             return CompletableFuture.completedFuture(Collections.emptyList());
         }
-
         final List<UUIDService> serviceList = this.getServiceListInstance();
         final List<UUIDMapping> mappings = new ArrayList<>(requests.size());
         final List<String> remainingRequests = new ArrayList<>(requests);
-
         for (final UUIDService service : serviceList) {
-            // We can chain multiple synchronous
-            // ones in a row
             if (service.canBeSynchronous()) {
                 final List<UUIDMapping> completedRequests = service.getUUIDs(remainingRequests);
                 for (final UUIDMapping mapping : completedRequests) {
@@ -375,7 +342,6 @@ public class UUIDPipeline {
                 return CompletableFuture.completedFuture(mappings);
             }
         }
-
         return CompletableFuture.supplyAsync(() -> {
             for (final UUIDService service : serviceList) {
                 final List<UUIDMapping> completedRequests = service.getUUIDs(remainingRequests);
@@ -387,18 +353,15 @@ public class UUIDPipeline {
                     break;
                 }
             }
-
             if (mappings.size() == requests.size()) {
                 this.consume(mappings);
                 return mappings;
             } else if (Settings.DEBUG) {
                 LOGGER.info("(UUID) Failed to find all UUIDs");
             }
-
             throw new ServiceError("End of pipeline");
         }, this.executor);
     }
-
     /**
      * Get as many UUID mappings as possible under the condition
      * that the operation cannot be blocking (for an extended amount of time)
@@ -413,7 +376,6 @@ public class UUIDPipeline {
         }
         return mappings;
     }
-
     /**
      * Get a single UUID mapping immediately, if possible
      *
@@ -430,5 +392,4 @@ public class UUIDPipeline {
         }
         return null;
     }
-
 }

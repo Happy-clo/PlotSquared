@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -52,19 +51,14 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Objects;
-
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
-
 @SuppressWarnings("unused")
 public class ChunkListener implements Listener {
-
     private final PlotAreaManager plotAreaManager;
     private final int version;
-
     private RefMethod methodSetUnsaved;
     private RefMethod methodGetHandleChunk;
     private RefMethod methodGetHandleWorld;
@@ -82,7 +76,6 @@ public class ChunkListener implements Listener {
     */
     private Chunk lastChunk;
     private boolean ignoreUnload = false;
-
     @Inject
     public ChunkListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
@@ -169,7 +162,6 @@ public class ChunkListener implements Listener {
             }
         }, TaskTime.ticks(1L));
     }
-
     public boolean unloadChunk(String world, Chunk chunk, boolean safe) {
         if (safe && shouldSave(world, chunk.getX(), chunk.getZ())) {
             return false;
@@ -189,7 +181,6 @@ public class ChunkListener implements Listener {
         }
         return true;
     }
-
     public boolean shouldSave(String world, int chunkX, int chunkZ) {
         int x = chunkX << 4;
         int z = chunkZ << 4;
@@ -235,7 +226,6 @@ public class ChunkListener implements Listener {
         Plot plot = plotArea.getPlot(loc);
         return plot != null && plot.hasOwner();
     }
-
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
         if (ignoreUnload) {
@@ -255,12 +245,10 @@ public class ChunkListener implements Listener {
             chunk.setForceLoaded(true);
         }
     }
-
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
         processChunk(event.getChunk(), false);
     }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onItemSpawn(ItemSpawnEvent event) {
         Item entity = event.getEntity();
@@ -283,14 +271,12 @@ public class ChunkListener implements Listener {
             }
         });
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
         if (Settings.Chunk_Processor.DISABLE_PHYSICS) {
             event.setCancelled(true);
         }
     }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntitySpawn(CreatureSpawnEvent event) {
         LivingEntity entity = event.getEntity();
@@ -313,7 +299,6 @@ public class ChunkListener implements Listener {
             }
         });
     }
-
     private void cleanChunk(final Chunk chunk) {
         final int currentIndex = TaskManager.index.incrementAndGet();
         PlotSquaredTask task = TaskManager.runTaskRepeat(() -> {
@@ -342,7 +327,6 @@ public class ChunkListener implements Listener {
         }, TaskTime.ticks(5L));
         TaskManager.addTask(task, currentIndex);
     }
-
     public boolean processChunk(Chunk chunk, boolean unload) {
         if (!this.plotAreaManager.hasPlotArea(chunk.getWorld().getName())) {
             return false;
@@ -365,12 +349,10 @@ public class ChunkListener implements Listener {
                 cleanChunk(chunk);
                 return true;
             }
-
             for (int i = 0; i < (tiles.length - Settings.Chunk_Processor.MAX_TILES); i++) {
                 tiles[i].getBlock().setType(Material.AIR, false);
             }
         }
         return false;
     }
-
 }

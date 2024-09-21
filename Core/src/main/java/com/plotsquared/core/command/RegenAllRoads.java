@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.HybridPlotManager;
@@ -30,7 +29,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 @CommandDeclaration(command = "regenallroads",
         aliases = {"rgar"},
         usage = "/plot regenallroads <world> [height]",
@@ -38,10 +36,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
         requiredType = RequiredType.CONSOLE,
         permission = "plots.regenallroads")
 public class RegenAllRoads extends SubCommand {
-
     private final PlotAreaManager plotAreaManager;
     private final HybridUtils hybridUtils;
-
     @Inject
     public RegenAllRoads(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -50,7 +46,6 @@ public class RegenAllRoads extends SubCommand {
         this.plotAreaManager = plotAreaManager;
         this.hybridUtils = hybridUtils;
     }
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         int height = 0;
@@ -100,5 +95,4 @@ public class RegenAllRoads extends SubCommand {
         }
         return true;
     }
-
 }

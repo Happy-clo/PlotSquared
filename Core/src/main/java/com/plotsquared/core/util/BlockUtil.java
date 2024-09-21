@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.InputParseException;
 import com.sk89q.worldedit.extension.input.ParserContext;
@@ -30,28 +29,22 @@ import com.sk89q.worldedit.world.block.FuzzyBlockState;
 import com.sk89q.worldedit.world.registry.LegacyMapper;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.List;
-
 /**
  * {@link BlockState} related utility methods
  */
 public final class BlockUtil {
-
     private static final ParserContext PARSER_CONTEXT = new ParserContext();
     private static final InputParser<BaseBlock> PARSER;
-
     static {
         PARSER_CONTEXT.setRestricted(false);
         PARSER_CONTEXT.setPreferringWildcard(false);
         PARSER_CONTEXT.setTryLegacy(true);
         List<InputParser<BaseBlock>> parsers = WorldEdit.getInstance().getBlockFactory().getParsers();
-        PARSER = parsers.get(parsers.size() - 1); // Default parser is always at the end
+        PARSER = parsers.get(parsers.size() - 1);
     }
-
     private BlockUtil() {
     }
-
     /**
      * Get a {@link BlockState} from a legacy id
      *
@@ -61,7 +54,6 @@ public final class BlockUtil {
     public static @Nullable BlockState get(final int id) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id);
     }
-
     /**
      * Get a {@link BlockState} from a legacy id-data pair
      *
@@ -72,7 +64,6 @@ public final class BlockUtil {
     public static @Nullable BlockState get(final int id, final int data) {
         return LegacyMapper.getInstance().getBlockFromLegacy(id, data);
     }
-
     /**
      * Get a {@link BlockState} from its ID
      *
@@ -109,5 +100,4 @@ public final class BlockUtil {
             return null;
         }
     }
-
 }

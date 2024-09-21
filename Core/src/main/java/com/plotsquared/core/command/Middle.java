@@ -17,13 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-
 /**
  * @author manuelgu, altered by Citymonstret
  */
@@ -33,7 +31,6 @@ import com.plotsquared.core.plot.Plot;
         category = CommandCategory.TELEPORT,
         requiredType = RequiredType.PLAYER)
 public class Middle extends SubCommand {
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] arguments) {
         Location location = player.getLocation();
@@ -46,5 +43,4 @@ public class Middle extends SubCommand {
         player.sendMessage(TranslatableCaption.of("teleport.teleported_to_plot"));
         return true;
     }
-
 }

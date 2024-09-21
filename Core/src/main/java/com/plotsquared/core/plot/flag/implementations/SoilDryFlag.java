@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class SoilDryFlag extends BooleanFlag<SoilDryFlag> {
-
     public static final SoilDryFlag SOIL_DRY_TRUE = new SoilDryFlag(true);
     public static final SoilDryFlag SOIL_DRY_FALSE = new SoilDryFlag(false);
-
     private SoilDryFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_soil_dry"));
     }
-
     @Override
     protected SoilDryFlag flagOf(@NonNull Boolean value) {
         return value ? SOIL_DRY_TRUE : SOIL_DRY_FALSE;
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.google.inject.Inject;
 import com.intellectualsites.arkitektonika.Arkitektonika;
 import com.intellectualsites.arkitektonika.SchematicKeys;
@@ -30,7 +29,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -39,17 +37,14 @@ import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.zip.GZIPOutputStream;
-
 /**
  * This class handles communication with the Arkitektonika REST service.
  */
 public class PlotUploader {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotUploader.class.getSimpleName());
     private static final Path TEMP_DIR = Paths.get(PlotSquared.platform().getDirectory().getPath());
     private final SchematicHandler schematicHandler;
     private final Arkitektonika arkitektonika;
-
     /**
      * Create a new PlotUploader instance that uses the given schematic handler to create
      * schematics of plots.
@@ -61,7 +56,6 @@ public class PlotUploader {
         this.schematicHandler = schematicHandler;
         this.arkitektonika = Arkitektonika.builder().withUrl(Settings.Arkitektonika.BACKEND_URL).build();
     }
-
     /**
      * Upload a plot and retrieve a result. The plot will be saved into a temporary
      * schematic file and uploaded to the REST service
@@ -80,7 +74,6 @@ public class PlotUploader {
                 .thenApply(this::uploadAndDelete)
                 .thenApply(this::wrapIntoResult);
     }
-
     @NonNull
     private PlotUploadResult wrapIntoResult(final @Nullable SchematicKeys schematicKeys) {
         if (schematicKeys == null) {
@@ -90,7 +83,6 @@ public class PlotUploader {
         String delete = Settings.Arkitektonika.DELETE_URL.replace("{key}", schematicKeys.getDeletionKey());
         return PlotUploadResult.success(download, delete);
     }
-
     @Nullable
     private SchematicKeys uploadAndDelete(final @NonNull Path file) {
         try {
@@ -107,7 +99,6 @@ public class PlotUploader {
             }
         }
     }
-
     @NonNull
     private Path writeToTempFile(final @NonNull CompoundTag schematic) {
         try {
@@ -120,7 +111,6 @@ public class PlotUploader {
             throw new RuntimeException(e);
         }
     }
-
     /**
      * Writes a schematic provided as CompoundTag to an OutputStream.
      *
@@ -134,16 +124,13 @@ public class PlotUploader {
             nbtOutputStream.writeNamedTag("Schematic", schematic);
         }
     }
-
     /**
      * A result of a plot upload process.
      */
     public static class PlotUploadResult {
-
         private final boolean success;
         private final String downloadUrl;
         private final String deletionUrl;
-
         private PlotUploadResult(
                 boolean success, final @Nullable String downloadUrl,
                 final @Nullable String deletionUrl
@@ -152,17 +139,14 @@ public class PlotUploader {
             this.downloadUrl = downloadUrl;
             this.deletionUrl = deletionUrl;
         }
-
         @NonNull
         private static PlotUploadResult success(final @NonNull String downloadUrl, final @Nullable String deletionUrl) {
             return new PlotUploadResult(true, downloadUrl, deletionUrl);
         }
-
         @NonNull
         private static PlotUploadResult failed() {
             return new PlotUploadResult(false, null, null);
         }
-
         /**
          * Get whether this result is a success.
          *
@@ -171,7 +155,6 @@ public class PlotUploader {
         public boolean isSuccess() {
             return success;
         }
-
         /**
          * Get the url that can be used to download the uploaded plot schematic.
          *
@@ -180,7 +163,6 @@ public class PlotUploader {
         public String getDownloadUrl() {
             return downloadUrl;
         }
-
         /**
          * Get the url that can be used to delete the uploaded plot schematic.
          *
@@ -189,7 +171,5 @@ public class PlotUploader {
         public String getDeletionUrl() {
             return deletionUrl;
         }
-
     }
-
 }

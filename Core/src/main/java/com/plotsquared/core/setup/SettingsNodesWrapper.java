@@ -17,9 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.setup;
-
 import com.plotsquared.core.configuration.ConfigurationNode;
-
 /**
  * This class wraps an array of {@link ConfigurationNode}s.
  */
@@ -27,7 +25,6 @@ public record SettingsNodesWrapper(
         ConfigurationNode[] settingsNodes,
         SetupStep afterwards
 ) {
-
     /**
      * Returns the first step of this wrapper or the step or the
      * {@code afterwards} step if no step is available.
@@ -37,5 +34,4 @@ public record SettingsNodesWrapper(
     public SetupStep getFirstStep() {
         return this.settingsNodes.length == 0 ? this.afterwards : new SettingsNodeStep(this.settingsNodes[0], 0, this);
     }
-
 }

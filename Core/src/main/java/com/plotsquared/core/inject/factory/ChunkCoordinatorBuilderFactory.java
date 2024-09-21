@@ -17,15 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.inject.factory;
-
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.queue.ChunkCoordinatorBuilder;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public interface ChunkCoordinatorBuilderFactory {
-
     @Inject
     @NonNull ChunkCoordinatorBuilder create(@Assisted @NonNull ChunkCoordinatorFactory chunkCoordinatorFactory);
-
 }

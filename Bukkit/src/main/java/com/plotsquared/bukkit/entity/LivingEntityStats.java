@@ -17,14 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.entity;
-
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-
 import java.util.Collection;
-
 class LivingEntityStats {
-
     boolean loot;
     String name;
     boolean visible;
@@ -43,5 +39,4 @@ class LivingEntityStats {
     ItemStack chestplate;
     Collection<PotionEffect> potions;
     ItemStack offHand;
-
 }

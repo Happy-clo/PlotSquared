@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class KelpGrowFlag extends BooleanFlag<KelpGrowFlag> {
-
     public static final KelpGrowFlag KELP_GROW_TRUE = new KelpGrowFlag(true);
     public static final KelpGrowFlag KELP_GROW_FALSE = new KelpGrowFlag(false);
-
     private KelpGrowFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_kelp_grow"));
     }
-
     @Override
     protected KelpGrowFlag flagOf(@NonNull Boolean value) {
         return value ? KELP_GROW_TRUE : KELP_GROW_FALSE;
     }
-
 }

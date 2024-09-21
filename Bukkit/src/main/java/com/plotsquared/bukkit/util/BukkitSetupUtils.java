@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.generator.BukkitPlotGenerator;
@@ -42,20 +41,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Objects;
-
 @Singleton
 public class BukkitSetupUtils extends SetupUtils {
-
     private final PlotAreaManager plotAreaManager;
     private final YamlConfiguration worldConfiguration;
     private final File worldFile;
-
     @Inject
     public BukkitSetupUtils(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -66,8 +61,7 @@ public class BukkitSetupUtils extends SetupUtils {
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;
     }
-
-    @SuppressWarnings("deprecation") // Paper deprecation
+    @SuppressWarnings("deprecation")
     @Override
     public void updateGenerators(final boolean force) {
         if (loaded && !SetupUtils.generators.isEmpty() && !force) {
@@ -90,13 +84,12 @@ public class BukkitSetupUtils extends SetupUtils {
                         SetupUtils.generators.put(name, wrapped);
                     }
                 }
-            } catch (Throwable e) { // Recover from third party generator error
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
         }
         loaded = true;
     }
-
     @Override
     public void unload(String worldName, boolean save) {
         TaskManager.runTask(() -> {
@@ -120,7 +113,6 @@ public class BukkitSetupUtils extends SetupUtils {
             Bukkit.unloadWorld(world, false);
         });
     }
-
     @Override
     public String setupWorld(PlotAreaBuilder builder) {
         this.updateGenerators(false);
@@ -215,23 +207,18 @@ public class BukkitSetupUtils extends SetupUtils {
                 }
             }
         }
-
         try {
             this.worldConfiguration.save(this.worldFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         Objects.requireNonNull(PlotSquared.platform()).worldManager()
                 .handleWorldCreation(builder.worldName(), builder.generatorName());
-
         if (Bukkit.getWorld(world) != null) {
             return world;
         }
-
         return builder.worldName();
     }
-
     @Override
     public String getGenerator(PlotArea plotArea) {
         if (SetupUtils.generators.isEmpty()) {
@@ -253,5 +240,4 @@ public class BukkitSetupUtils extends SetupUtils {
         }
         return null;
     }
-
 }

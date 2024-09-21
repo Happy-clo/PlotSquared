@@ -17,20 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotInventory;
 import com.plotsquared.core.plot.PlotItemStack;
-
 /**
  * This class is only used by internal functions, for most cases use the PlotInventory class
  */
 public abstract class InventoryUtil {
-
     public abstract void open(final PlotInventory inv);
-
     public abstract void close(final PlotInventory inv);
-
     /**
      * Attempts to set an item into a {@link PlotInventory} while also checking the existence of the material
      *
@@ -44,7 +39,6 @@ public abstract class InventoryUtil {
             final PlotInventory plotInventory, final int index,
             final PlotItemStack item
     );
-
     /**
      * Attempts to set an item into a {@link PlotInventory}
      *
@@ -59,9 +53,6 @@ public abstract class InventoryUtil {
     ) {
         setItemChecked(plotInventory, index, item);
     }
-
     public abstract PlotItemStack[] getItems(final PlotPlayer<?> player);
-
     public abstract boolean isOpen(final PlotInventory plotInventory);
-
 }

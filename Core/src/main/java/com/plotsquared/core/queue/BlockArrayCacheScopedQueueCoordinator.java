@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
-
 import com.intellectualsites.annotations.NotPublic;
 import com.plotsquared.core.location.Location;
 import com.sk89q.jnbt.CompoundTag;
@@ -28,7 +27,6 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 /**
  * {@link QueueCoordinator} that caches all blocks set to it in a given array of form BlockState[][][]. An offset can be
  * applied to blocks set to it, and the scope limited. This should have blocks set to it one chunk at a time, based on the
@@ -41,7 +39,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  */
 @NotPublic
 public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQueueCoordinator {
-
     private final BlockState[][][] blockStates;
     private final int height;
     private final int width;
@@ -54,7 +51,6 @@ public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQ
     private final int scopeMaxZ;
     private int offsetX = 0;
     private int offsetZ = 0;
-
     /**
      * Construct a new instance
      *
@@ -69,18 +65,15 @@ public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQ
         this.minY = min.getY();
         this.maxY = max.getY();
         this.height = maxY - minY + 1;
-
         this.scopeMinX = min.getX() & 15;
         this.scopeMinZ = min.getZ() & 15;
         this.scopeMaxX = scopeMinX + width;
         this.scopeMaxZ = scopeMinZ + length;
         this.blockStates = new BlockState[height][width][length];
     }
-
     public BlockState[][][] getBlockStates() {
         return blockStates;
     }
-
     @Override
     public boolean setBlock(int x, final int y, int z, final @NonNull BlockState id) {
         x += offsetX;
@@ -90,7 +83,6 @@ public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQ
         }
         return false;
     }
-
     @Override
     public boolean setBlock(final int x, final int y, final int z, @NonNull final Pattern pattern) {
         int rx = x + offsetX;
@@ -103,17 +95,14 @@ public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQ
         }
         return false;
     }
-
     @Override
     public @NonNull Location getMin() {
         return super.getMin().add(offsetX - scopeMinX, 0, offsetZ - scopeMinZ);
     }
-
     @Override
     public @NonNull Location getMax() {
         return getMin().add(15, 0, 15).withY(maxY);
     }
-
     @Override
     public boolean setBlock(int x, int y, int z, final @NonNull BaseBlock id) {
         x += offsetX;
@@ -123,7 +112,6 @@ public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQ
         }
         return false;
     }
-
     @Override
     public @Nullable BlockState getBlock(final int x, final int y, final int z) {
         if (x >= 0 && x < width && y >= minY && y <= maxY && z >= 0 && z < length) {
@@ -131,41 +119,29 @@ public class BlockArrayCacheScopedQueueCoordinator extends ZeroedDelegateScopedQ
         }
         return null;
     }
-
     public void setOffsetX(final int offsetX) {
         this.offsetX = offsetX;
     }
-
     public void setOffsetZ(final int offsetZ) {
         this.offsetZ = offsetZ;
     }
-
     @Override
     public int size() {
         return height * width * length;
     }
-
     @Override
     public boolean setBiome(final int x, final int z, @NonNull final BiomeType biome) {
-        //do nothing
         return false;
     }
-
     @Override
     public boolean setBiome(final int x, final int y, final int z, @NonNull final BiomeType biome) {
-        //do nothing
         return false;
     }
-
     @Override
     public void fillBiome(final BiomeType biome) {
-        //do nothing
     }
-
     @Override
     public boolean setTile(final int x, final int y, final int z, @NonNull final CompoundTag tag) {
-        //do nothing
         return false;
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core;
-
 import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -47,40 +46,33 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.File;
-
 /**
  * PlotSquared main utility class
  *
  * @param <P> Player type
  */
 public interface PlotPlatform<P> extends LocaleHolder {
-
     /**
      * Gets the directory which contains PlotSquared files. The directory may not exist.
      *
      * @return the PlotSquared directory
      */
     @NonNull File getDirectory();
-
     /**
      * Gets the folder where all world data is stored.
      *
      * @return the world folder
      */
     @NonNull File worldContainer();
-
     /**
      * Completely shuts down the plugin.
      */
     void shutdown();
-
     /**
      * Completely shuts down the server.
      */
     void shutdownServer();
-
     /**
      * Get the name of the plugin
      *
@@ -89,14 +81,12 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull String pluginName() {
         return "PlotSquared";
     }
-
     /**
      * Gets the version of Minecraft that is running
      *
      * @return server version as array of numbers
      */
     int[] serverVersion();
-
     /**
      * Gets the default minimum world height for the version of Minecraft that the server is running.
      *
@@ -104,7 +94,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @since 6.6.0
      */
     int versionMinHeight();
-
     /**
      * Gets the default maximum world height for the version of Minecraft that the server is running.
      *
@@ -112,40 +101,34 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @since 6.6.0
      */
     int versionMaxHeight();
-
     /**
      * Gets the server implementation name and version
      *
      * @return server implementation and version as string
      */
     @NonNull String serverImplementation();
-
     /**
      * Gets the native server code package prefix.
      *
      * @return The package prefix
      */
     @NonNull String serverNativePackage();
-
     /**
      * Start Metrics.
      */
     void startMetrics();
-
     /**
      * If a world is already loaded, set the generator (use NMS if required).
      *
      * @param world The world to set the generator
      */
     void setGenerator(@NonNull String world);
-
     /**
      * Unregisters a {@link PlotPlayer} from cache e.g. if they have logged off.
      *
      * @param player the player to remove
      */
     void unregister(@NonNull PlotPlayer<?> player);
-
     /**
      * Gets the generator wrapper for a world (world) and generator (name).
      *
@@ -157,7 +140,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
             @NonNull String world,
             @Nullable String name
     );
-
     /**
      * Create a platform generator from a plot generator
      *
@@ -169,7 +151,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
             @NonNull String world,
             @NonNull IndependentPlotGenerator generator
     );
-
     /**
      * Usually HybridGen
      *
@@ -178,7 +159,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull IndependentPlotGenerator defaultGenerator() {
         return injector().getInstance(Key.get(IndependentPlotGenerator.class, DefaultGenerator.class));
     }
-
     /**
      * Get the backup manager instance
      *
@@ -187,7 +167,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull BackupManager backupManager() {
         return injector().getInstance(BackupManager.class);
     }
-
     /**
      * Get the platform specific world manager
      *
@@ -196,7 +175,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull PlatformWorldManager<?> worldManager() {
         return injector().getInstance(PlatformWorldManager.class);
     }
-
     /**
      * Get the player manager implementation for the platform
      *
@@ -206,7 +184,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
         return injector().getInstance(Key.get(new TypeLiteral<PlayerManager<? extends PlotPlayer<P>, ? extends P>>() {
         }));
     }
-
     /**
      * Get a platform world wrapper from a world name
      *
@@ -214,14 +191,12 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return Platform world wrapper
      */
     @Nullable World<?> getPlatformWorld(@NonNull String worldName);
-
     /**
      * Get the {@link com.google.inject.Injector} instance used by PlotSquared
      *
      * @return Injector instance
      */
     @NonNull Injector injector();
-
     /**
      * Get the world utility implementation
      *
@@ -230,7 +205,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull WorldUtil worldUtil() {
         return injector().getInstance(WorldUtil.class);
     }
-
     /**
      * Get the global block queue implementation
      *
@@ -239,7 +213,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull GlobalBlockQueue globalBlockQueue() {
         return injector().getInstance(GlobalBlockQueue.class);
     }
-
     /**
      * Get the {@link HybridUtils} implementation for the platform
      *
@@ -248,7 +221,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull HybridUtils hybridUtils() {
         return injector().getInstance(HybridUtils.class);
     }
-
     /**
      * Get the {@link SetupUtils} implementation for the platform
      *
@@ -257,7 +229,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull SetupUtils setupUtils() {
         return injector().getInstance(SetupUtils.class);
     }
-
     /**
      * Get the {@link EconHandler} implementation for the platform
      *
@@ -266,7 +237,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull EconHandler econHandler() {
         return injector().getInstance(EconHandler.class);
     }
-
     /**
      * Get the {@link RegionManager} implementation for the platform
      *
@@ -275,7 +245,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull RegionManager regionManager() {
         return injector().getInstance(RegionManager.class);
     }
-
     /**
      * Get the {@link ChunkManager} implementation for the platform
      *
@@ -284,7 +253,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull ChunkManager chunkManager() {
         return injector().getInstance(ChunkManager.class);
     }
-
     /**
      * Get the {@link ExpireManager} implementation for the platform
      *
@@ -294,7 +262,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull ExpireManager expireManager() {
         return injector().getInstance(ExpireManager.class);
     }
-
     /**
      * Get the {@link PlotAreaManager} implementation.
      *
@@ -302,14 +269,12 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @since 6.1.4
      */
     @NonNull PlotAreaManager plotAreaManager();
-
     /**
      * Get the platform specific console {@link Audience}
      *
      * @return Console audience
      */
     @NonNull Audience consoleAudience();
-
     /**
      * Get a formatted string containing all plugins on the server together
      * with plugin metadata. Mainly for use in debug pastes
@@ -317,7 +282,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return Formatted string
      */
     @NonNull String pluginsFormatted();
-
     /**
      * Get the kind of WorldEdit implementation
      *
@@ -326,12 +290,10 @@ public interface PlotPlatform<P> extends LocaleHolder {
      */
     @DoNotUse
     @NonNull String worldEditImplementations();
-
     /**
      * Load the caption maps
      */
     void copyCaptionMaps();
-
     /**
      * Get the {@link PermissionHandler} implementation for the platform
      *
@@ -340,7 +302,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull PermissionHandler permissionHandler() {
         return injector().getInstance(PermissionHandler.class);
     }
-
     /**
      * Get the {@link ServicePipeline} implementation
      *
@@ -349,7 +310,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull ServicePipeline servicePipeline() {
         return injector().getInstance(ServicePipeline.class);
     }
-
     /**
      * Get the {@link PlaceholderRegistry} implementation
      *
@@ -358,7 +318,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default @NonNull PlaceholderRegistry placeholderRegistry() {
         return injector().getInstance(PlaceholderRegistry.class);
     }
-
     /**
      * Convert a component to a legacy string
      *
@@ -366,7 +325,6 @@ public interface PlotPlatform<P> extends LocaleHolder {
      * @return Converted string
      */
     @NonNull String toLegacyPlatformString(@NonNull Component component);
-
     /**
      * Returns if the FastAsyncWorldEdit-PlotSquared hook is active/enabled
      *
@@ -375,5 +333,4 @@ public interface PlotPlatform<P> extends LocaleHolder {
     default boolean isFaweHooking() {
         return false;
     }
-
 }

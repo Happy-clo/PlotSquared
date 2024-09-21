@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
-
 import com.google.common.util.concurrent.RateLimiter;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.uuid.UUIDMapping;
@@ -28,24 +27,19 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.enginehub.squirrelid.Profile;
 import org.enginehub.squirrelid.resolver.HttpRepositoryService;
 import org.enginehub.squirrelid.resolver.ProfileService;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
 /**
  * UUID service using SquirrelID
  */
 @SuppressWarnings("UnstableApiUsage")
 public class SquirrelIdUUIDService implements UUIDService {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SquirrelIdUUIDService.class.getSimpleName());
-
     private final ProfileService profileService;
     private final RateLimiter rateLimiter;
-
     /**
      * Create a new SquirrelID UUID service
      *
@@ -55,11 +49,8 @@ public class SquirrelIdUUIDService implements UUIDService {
      */
     public SquirrelIdUUIDService(final int rateLimit) {
         this.profileService = HttpRepositoryService.forMinecraft();
-        // RateLimiter uses request per seconds. The constructor
-        // parameter rateLimit is requests per 600 seconds
         this.rateLimiter = RateLimiter.create(rateLimit / 600.0D);
     }
-
     @Override
     public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> results = new ArrayList<>(uuids.size());
@@ -70,10 +61,6 @@ public class SquirrelIdUUIDService implements UUIDService {
                     results.add(new UUIDMapping(profile.getUniqueId(), profile.getName()));
                 }
             } catch (final IllegalArgumentException illegalArgumentException) {
-                //
-                // This means that the UUID was invalid for whatever reason, we'll try to
-                // go through them one by one
-                //
                 if (uuids.size() >= 2) {
                     if (Settings.DEBUG) {
                         LOGGER.info("(UUID) Found invalid UUID in batch. Will try each UUID individually.");
@@ -94,7 +81,6 @@ public class SquirrelIdUUIDService implements UUIDService {
         }
         return results;
     }
-
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> results = new ArrayList<>(usernames.size());
@@ -108,5 +94,4 @@ public class SquirrelIdUUIDService implements UUIDService {
         }
         return results;
     }
-
 }

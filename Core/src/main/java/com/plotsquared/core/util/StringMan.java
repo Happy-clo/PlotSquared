@@ -17,9 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,12 +25,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 public class StringMan {
-
     // Stolen from https://stackoverflow.com/a/366532/12620913 | Debug: https://regex101.com/r/DudJLb/1
     private static final Pattern STRING_SPLIT_PATTERN = Pattern.compile("[^\\s\"]+|\"([^\"]*)\"");
-
     public static int intersection(Set<String> options, String[] toCheck) {
         int count = 0;
         for (String check : toCheck) {
@@ -42,7 +37,6 @@ public class StringMan {
         }
         return count;
     }
-
     public static boolean isAlphanumericUnd(String str) {
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
@@ -52,17 +46,14 @@ public class StringMan {
         }
         return true;
     }
-
     public static String join(Collection<?> collection, String delimiter) {
         return join(collection.toArray(), delimiter);
     }
-
     public static String joinOrdered(Collection<?> collection, String delimiter) {
         Object[] array = collection.toArray();
         Arrays.sort(array, Comparator.comparingInt(Object::hashCode));
         return join(array, delimiter);
     }
-
     public static int getLevenshteinDistance(String s, String t) {
         int n = s.length();
         int m = t.length();
@@ -87,7 +78,6 @@ public class StringMan {
         for (int j = 1; j <= m; j++) {
             char t_j = t.charAt(j - 1);
             d[0] = j;
-
             for (i = 1; i <= n; i++) {
                 int cost = s.charAt(i - 1) == t_j ? 0 : 1;
                 d[i] = Math.min(Math.min(d[i - 1] + 1, p[i] + 1), p[i - 1] + cost);
@@ -98,7 +88,6 @@ public class StringMan {
         }
         return p[n];
     }
-
     public static String join(Object[] array, String delimiter) {
         StringBuilder result = new StringBuilder();
         for (int i = 0, j = array.length; i < j; i++) {
@@ -109,7 +98,6 @@ public class StringMan {
         }
         return result.toString();
     }
-
     public static boolean isEqualIgnoreCaseToAny(@NonNull String a, String... args) {
         for (String arg : args) {
             if (a.equalsIgnoreCase(arg)) {
@@ -118,22 +106,19 @@ public class StringMan {
         }
         return false;
     }
-
     public static boolean isEqual(String a, String b) {
         if ((a == null && b != null) || (a != null && b == null)) {
             return false;
-        } else if (a == null /* implies that b is null */) {
+        } else if (a == null) {
             return false;
         }
         return a.equals(b);
     }
-
     public static String repeat(String s, int n) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.valueOf(s).repeat(Math.max(0, n)));
         return sb.toString();
     }
-
     /**
      * @param message an input string
      * @return a list of strings
@@ -175,5 +160,4 @@ public class StringMan {
         }
         return splitMessages;
     }
-
 }

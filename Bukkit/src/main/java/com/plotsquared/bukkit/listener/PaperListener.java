@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.destroystokyo.paper.event.block.BeaconEffectEvent;
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
@@ -65,27 +64,22 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
 /**
  * Events specific to Paper. Some toit nups here
  */
 @SuppressWarnings("unused")
 public class PaperListener implements Listener {
-
     private final PlotAreaManager plotAreaManager;
     private Chunk lastChunk;
-
     @Inject
     public PaperListener(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
-
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onBlockDestroy(final BlockDestroyEvent event) {
         Location location = BukkitUtil.adapt(event.getBlock().getLocation());
@@ -98,7 +92,6 @@ public class PaperListener implements Listener {
             event.setWillDrop(plot.getFlag(TileDropFlag.class));
         }
     }
-
     @EventHandler
     public void onEntityPathfind(EntityPathfindEvent event) {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
@@ -132,19 +125,16 @@ public class PaperListener implements Listener {
         }
         event.setCancelled(true);
     }
-
     @EventHandler
     public void onEntityPathfind(SlimePathfindEvent event) {
         if (!Settings.Paper_Components.ENTITY_PATHING) {
             return;
         }
         Slime slime = event.getEntity();
-
         Block b = slime.getTargetBlockExact(4);
         if (b == null) {
             return;
         }
-
         Location toLoc = BukkitUtil.adapt(b.getLocation());
         Location fromLoc = BukkitUtil.adapt(event.getEntity().getLocation());
         PlotArea tarea = toLoc.getPlotArea();
@@ -155,7 +145,6 @@ public class PaperListener implements Listener {
         if (farea == null) {
             return;
         }
-
         if (tarea != farea) {
             event.setCancelled(true);
             return;
@@ -174,7 +163,6 @@ public class PaperListener implements Listener {
         }
         event.setCancelled(true);
     }
-
     @EventHandler
     public void onPreCreatureSpawnEvent(PreCreatureSpawnEvent event) {
         if (!Settings.Paper_Components.CREATURE_SPAWN) {
@@ -185,11 +173,9 @@ public class PaperListener implements Listener {
         if (area == null) {
             return;
         }
-        // Armour-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
         if (event.getType() == EntityType.ARMOR_STAND) {
             return;
         }
-        // If entities are spawning... the chunk should be loaded?
         Entity[] entities = event.getSpawnLocation().getChunk().getEntities();
         if (entities.length >= Settings.Chunk_Processor.MAX_ENTITIES) {
             event.setShouldAbortSpawn(true);
@@ -237,7 +223,6 @@ public class PaperListener implements Listener {
         Plot plot = location.getOwnedPlotAbs();
         if (plot == null) {
             EntityType type = event.getType();
-            // PreCreatureSpawnEvent **should** not be called for DROPPED_ITEM, just for the sake of consistency
             if (type == EntityType.DROPPED_ITEM) {
                 if (Settings.Enabled_Components.KILL_ROAD_ITEMS) {
                     event.setCancelled(true);
@@ -264,7 +249,6 @@ public class PaperListener implements Listener {
             event.setCancelled(true);
         }
     }
-
     @EventHandler
     public void onPlayerNaturallySpawnCreaturesEvent(PlayerNaturallySpawnCreaturesEvent event) {
         if (Settings.Paper_Components.CANCEL_CHUNK_SPAWN) {
@@ -275,7 +259,6 @@ public class PaperListener implements Listener {
             }
         }
     }
-
     @EventHandler
     public void onPreSpawnerSpawnEvent(PreSpawnerSpawnEvent event) {
         if (Settings.Paper_Components.SPAWNER_SPAWN) {
@@ -287,7 +270,6 @@ public class PaperListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBlockPlace(BlockPlaceEvent event) {
         if (!Settings.Paper_Components.TILE_ENTITY_CHECK || !Settings.Enabled_Components.CHUNK_PROCESSOR) {
@@ -312,7 +294,6 @@ public class PaperListener implements Listener {
             event.setBuild(false);
         }
     }
-
     /**
      * Unsure if this will be any performance improvement over the spigot version,
      * but here it is anyway :)
@@ -336,7 +317,6 @@ public class PaperListener implements Listener {
         }
         PlotPlayer<Player> pp = BukkitUtil.adapt((Player) shooter);
         Plot plot = location.getOwnedPlot();
-
         if (plot == null) {
             if (!PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(area, ProjectilesFlag.class, true) && !pp.hasPermission(
                     Permission.PERMISSION_ADMIN_PROJECTILE_ROAD
@@ -384,7 +364,6 @@ public class PaperListener implements Listener {
             }
         }
     }
-
     @EventHandler
     public void onAsyncTabCompletion(final AsyncTabCompleteEvent event) {
         if (!Settings.Paper_Components.ASYNC_TAB_COMPLETION) {
@@ -402,7 +381,7 @@ public class PaperListener implements Listener {
         }
         final String[] unprocessedArgs = buffer.split(Pattern.quote(" "));
         if (unprocessedArgs.length == 1) {
-            return; // We don't do anything in this case
+            return;
         } else if (!Settings.Enabled_Components.TAB_COMPLETED_ALIASES
                 .contains(unprocessedArgs[0].toLowerCase(Locale.ENGLISH))) {
             return;
@@ -424,21 +403,17 @@ public class PaperListener implements Listener {
         } catch (final Exception ignored) {
         }
     }
-
     @EventHandler(ignoreCancelled = true)
     public void onBeaconEffect(final BeaconEffectEvent event) {
         Block block = event.getBlock();
         Location beaconLocation = BukkitUtil.adapt(block.getLocation());
         Plot beaconPlot = beaconLocation.getPlot();
-
         PlotArea area = beaconLocation.getPlotArea();
         if (area == null) {
             return;
         }
-
         Player player = event.getPlayer();
         Location playerLocation = BukkitUtil.adapt(player.getLocation());
-
         PlotPlayer<Player> plotPlayer = BukkitUtil.adapt(player);
         Plot playerStandingPlot = playerLocation.getPlot();
         if (playerStandingPlot == null) {
@@ -449,7 +424,6 @@ public class PaperListener implements Listener {
             }
             return;
         }
-
         FlagContainer container = playerStandingPlot.getFlagContainer();
         boolean plotBeaconEffects = getBooleanFlagValue(container, BeaconEffectsFlag.class, true);
         if (playerStandingPlot.equals(beaconPlot)) {
@@ -458,12 +432,10 @@ public class PaperListener implements Listener {
             }
             return;
         }
-
         if (!plotBeaconEffects || Settings.Enabled_Components.DISABLE_BEACON_EFFECT_OVERFLOW) {
             event.setCancelled(true);
         }
     }
-
     private boolean getBooleanFlagValue(
             @NonNull FlagContainer container,
             @NonNull Class<? extends BooleanFlag<?>> flagClass,
@@ -472,5 +444,4 @@ public class PaperListener implements Listener {
         BooleanFlag<?> flag = container.getFlag(flagClass);
         return flag == null ? defaultValue : flag.getValue();
     }
-
 }

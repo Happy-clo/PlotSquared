@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
@@ -40,7 +39,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -52,24 +50,19 @@ import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 @CommandDeclaration(command = "cluster",
         aliases = "clusters",
         category = CommandCategory.ADMINISTRATION,
         requiredType = RequiredType.NONE,
         permission = "plots.cluster")
 public class Cluster extends SubCommand {
-
     private static final Component[] AVAILABLE_ARGS = Stream.of(
             "list", "create", "delete", "resize", "invite", "kick", "leave", "helpers", "tp", "sethome"
     ).map(s -> Component.text(s).style(Style.style(NamedTextColor.DARK_AQUA))).toArray(Component[]::new);
     private static final Component SEPARATOR = Component.text(", ").style(Style.style(NamedTextColor.GRAY));
-
-    // list, create, delete, resize, invite, kick, leave, helpers, tp, sethome
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
-            // return arguments
             player.sendMessage(
                     TranslatableCaption.of("cluster.cluster_available_args"),
                     TagResolver.resolver("list", Tag.inserting(ComponentHelper.join(AVAILABLE_ARGS, SEPARATOR)))
@@ -107,7 +100,6 @@ public class Cluster extends SubCommand {
                         TagResolver.resolver("amount", Tag.inserting(Component.text(clusters.size())))
                 );
                 for (PlotCluster cluster : clusters) {
-                    // Ignore unmanaged clusters
                     String name = "'" + cluster.getName() + "' : " + cluster;
                     if (player.getUUID().equals(cluster.owner)) {
                         player.sendMessage(
@@ -170,7 +162,6 @@ public class Cluster extends SubCommand {
                 }
                 PlotId pos1;
                 PlotId pos2;
-                // check pos1 / pos2
                 try {
                     pos1 = PlotId.fromString(args[2]);
                     pos2 = PlotId.fromString(args[3]);
@@ -178,7 +169,6 @@ public class Cluster extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("invalid.not_valid_plot_id"));
                     return false;
                 }
-                // check if name is taken
                 String name = args[1];
                 if (area.getCluster(name) != null) {
                     player.sendMessage(
@@ -192,7 +182,6 @@ public class Cluster extends SubCommand {
                     pos2 = PlotId.of(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()));
                     pos1 = tmp;
                 }
-                //check if overlap
                 PlotCluster cluster = area.getFirstIntersectingCluster(pos1, pos2);
                 if (cluster != null) {
                     player.sendMessage(
@@ -201,7 +190,6 @@ public class Cluster extends SubCommand {
                     );
                     return false;
                 }
-                // Check if it occupies existing plots
                 if (!area.contains(pos1) || !area.contains(pos2)) {
                     player.sendMessage(
                             TranslatableCaption.of("cluster.cluster_outside"),
@@ -227,7 +215,6 @@ public class Cluster extends SubCommand {
                         }
                     }
                 }
-                // Check allowed cluster size
                 cluster = new PlotCluster(area, pos1, pos2, player.getUUID());
                 int current;
                 if (Settings.Limit.GLOBAL) {
@@ -249,11 +236,9 @@ public class Cluster extends SubCommand {
                     );
                     return false;
                 }
-                // create cluster
                 cluster.settings.setAlias(name);
                 area.addCluster(cluster);
                 DBFunc.createCluster(cluster);
-                // Add any existing plots to the current cluster
                 for (Plot plot : plots) {
                     if (plot.hasOwner()) {
                         if (!cluster.isAdded(plot.getOwner())) {
@@ -347,7 +332,6 @@ public class Cluster extends SubCommand {
                 }
                 PlotId pos1;
                 PlotId pos2;
-                // check pos1 / pos2
                 try {
                     pos1 = PlotId.fromString(args[2]);
                     pos2 = PlotId.fromString(args[3]);
@@ -359,7 +343,6 @@ public class Cluster extends SubCommand {
                     pos1 = PlotId.of(Math.min(pos1.getX(), pos2.getX()), Math.min(pos1.getY(), pos2.getY()));
                     pos2 = PlotId.of(Math.max(pos1.getX(), pos2.getX()), Math.max(pos1.getY(), pos2.getY()));
                 }
-                // check if in cluster
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
                     player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
@@ -382,7 +365,6 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                //check if overlap
                 PlotCluster intersect = area.getFirstIntersectingCluster(pos1, pos2);
                 if (intersect != null) {
                     player.sendMessage(
@@ -394,9 +376,7 @@ public class Cluster extends SubCommand {
                 Set<Plot> existing = area.getPlotSelectionOwned(cluster.getP1(), cluster.getP2());
                 Set<Plot> newPlots = area.getPlotSelectionOwned(pos1, pos2);
                 Set<Plot> removed = new HashSet<>(existing);
-
                 removed.removeAll(newPlots);
-                // Check expand / shrink
                 if (!removed.isEmpty()) {
                     if (!player.hasPermission(Permission.PERMISSION_CLUSTER_RESIZE_SHRINK)) {
                         player.sendMessage(
@@ -422,7 +402,6 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                // Check allowed cluster size
                 int current;
                 if (Settings.Limit.GLOBAL) {
                     current = player.getPlayerClusterCount();
@@ -443,7 +422,6 @@ public class Cluster extends SubCommand {
                     );
                     return false;
                 }
-                // resize cluster
                 DBFunc.resizeCluster(cluster, pos1, pos2);
                 player.sendMessage(TranslatableCaption.of("cluster.cluster_resized"));
                 return true;
@@ -466,7 +444,6 @@ public class Cluster extends SubCommand {
                     );
                     return false;
                 }
-                // check if in cluster
                 PlotArea area = player.getApplicablePlotArea();
                 if (area == null) {
                     player.sendMessage(TranslatableCaption.of("errors.not_in_plot_world"));
@@ -488,7 +465,6 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-
                 PlotSquared.get().getImpromptuUUIDPipeline()
                         .getSingle(args[1], (uuid, throwable) -> {
                             if (throwable instanceof TimeoutException) {
@@ -500,7 +476,6 @@ public class Cluster extends SubCommand {
                                 );
                             } else {
                                 if (!cluster.isAdded(uuid)) {
-                                    // add the user if not added
                                     cluster.invited.add(uuid);
                                     DBFunc.setInvited(cluster, uuid);
                                     final PlotPlayer<?> otherPlayer =
@@ -556,7 +531,6 @@ public class Cluster extends SubCommand {
                         return false;
                     }
                 }
-                // check uuid
                 PlotSquared.get().getImpromptuUUIDPipeline()
                         .getSingle(args[1], (uuid, throwable) -> {
                             if (throwable instanceof TimeoutException) {
@@ -567,7 +541,6 @@ public class Cluster extends SubCommand {
                                         TagResolver.resolver("value", Tag.inserting(Component.text(args[1])))
                                 );
                             } else {
-                                // Can't kick if the player is yourself, the owner, or not added to the cluster
                                 if (uuid.equals(player.getUUID()) || uuid.equals(cluster.owner)
                                         || !cluster.isAdded(uuid)) {
                                     player.sendMessage(
@@ -581,7 +554,6 @@ public class Cluster extends SubCommand {
                                     }
                                     cluster.invited.remove(uuid);
                                     DBFunc.removeInvited(cluster, uuid);
-
                                     final PlotPlayer<?> player2 =
                                             PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
                                     if (player2 != null) {
@@ -688,7 +660,6 @@ public class Cluster extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("errors.not_in_cluster"));
                     return false;
                 }
-
                 PlotSquared.get().getImpromptuUUIDPipeline()
                         .getSingle(args[2], (uuid, throwable) -> {
                             if (throwable instanceof TimeoutException) {
@@ -807,7 +778,6 @@ public class Cluster extends SubCommand {
                     }
                 }
                 String id = cluster.toString();
-
                 PlotSquared.get().getImpromptuUUIDPipeline()
                         .getSingle(cluster.owner, (username, throwable) -> {
                             if (throwable instanceof TimeoutException) {
@@ -886,7 +856,6 @@ public class Cluster extends SubCommand {
         );
         return false;
     }
-
     private void removePlayerPlots(final PlotCluster cluster, final UUID uuid, final String world) {
         for (final Plot plot : PlotQuery.newQuery().inWorld(world).ownedBy(uuid)) {
             PlotCluster current = plot.getCluster();
@@ -904,7 +873,6 @@ public class Cluster extends SubCommand {
             }
         }
     }
-
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -961,5 +929,4 @@ public class Cluster extends SubCommand {
         }
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
-
 }

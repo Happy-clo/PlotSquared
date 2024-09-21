@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -44,20 +43,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.File;
 import java.util.Collection;
 import java.util.Set;
-
 public abstract class RegionManager {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + RegionManager.class.getSimpleName());
-
     public static RegionManager manager = null;
     protected final WorldUtil worldUtil;
     private final GlobalBlockQueue blockQueue;
     private final ProgressSubscriberFactory subscriberFactory;
-
     @Inject
     public RegionManager(
             @NonNull WorldUtil worldUtil,
@@ -68,13 +62,11 @@ public abstract class RegionManager {
         this.blockQueue = blockQueue;
         this.subscriberFactory = subscriberFactory;
     }
-
     public static BlockVector2 getRegion(Location location) {
         int x = location.getX() >> 9;
         int z = location.getZ() >> 9;
         return BlockVector2.at(x, z);
     }
-
     /**
      * 0 = Entity
      * 1 = Animal
@@ -87,7 +79,6 @@ public abstract class RegionManager {
      * @return array of counts of entity types
      */
     public abstract int[] countEntities(Plot plot);
-
     public void deleteRegionFiles(final String world, final Collection<BlockVector2> chunks, final Runnable whenDone) {
         TaskManager.runTaskAsync(() -> {
             for (BlockVector2 loc : chunks) {
@@ -101,7 +92,6 @@ public abstract class RegionManager {
             TaskManager.runTask(whenDone);
         });
     }
-
     /**
      * Set a number of cuboids to a certain block between two y values.
      *
@@ -149,7 +139,6 @@ public abstract class RegionManager {
         }
         return !enqueue || queue.enqueue();
     }
-
     /**
      * Notify any plugins that may want to modify clear behaviour that a clear is occuring
      *
@@ -159,7 +148,6 @@ public abstract class RegionManager {
     public boolean notifyClear(PlotManager manager) {
         return false;
     }
-
     /**
      * Only called when {@link RegionManager#notifyClear(PlotManager)} returns true in specific PlotManagers
      *
@@ -175,7 +163,6 @@ public abstract class RegionManager {
             @NonNull PlotManager manager,
             @Nullable PlotPlayer<?> actor
     );
-
     /**
      * Copy a region to a new location (in the same world)
      *
@@ -227,7 +214,6 @@ public abstract class RegionManager {
         }
         return copyFrom.enqueue();
     }
-
     /**
      * Assumptions:<br>
      * - pos1 and pos2 are in the same plot<br>
@@ -240,9 +226,7 @@ public abstract class RegionManager {
      * @return success or not
      */
     public abstract boolean regenerateRegion(Location pos1, Location pos2, boolean ignoreAugment, Runnable whenDone);
-
     public abstract void clearAllEntities(Location pos1, Location pos2);
-
     /**
      * Swap two regions within the same world
      *
@@ -261,10 +245,8 @@ public abstract class RegionManager {
     ) {
         int relX = swapPos.getX() - pos1.getX();
         int relZ = swapPos.getZ() - pos1.getZ();
-
         World world1 = worldUtil.getWeWorld(pos1.getWorldName());
         World world2 = worldUtil.getWeWorld(swapPos.getWorldName());
-
         QueueCoordinator fromQueue1 = blockQueue.getNewQueue(world1);
         QueueCoordinator fromQueue2 = blockQueue.getNewQueue(world2);
         fromQueue1.setUnloadAfter(false);
@@ -280,12 +262,10 @@ public abstract class RegionManager {
         ).getChunks());
         QueueCoordinator toQueue1 = blockQueue.getNewQueue(world1);
         QueueCoordinator toQueue2 = blockQueue.getNewQueue(world2);
-
         setCopyFromToConsumer(pos1, pos2, relX, relZ, world1, fromQueue1, toQueue2, true);
         setCopyFromToConsumer(pos1.add(relX, 0, relZ), pos2.add(relX, 0, relZ), -relX, -relZ, world1, fromQueue2, toQueue1,
                 true
         );
-
         toQueue2.setCompleteTask(whenDone);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             toQueue2.addProgressSubscriber(subscriberFactory.createFull(
@@ -295,7 +275,6 @@ public abstract class RegionManager {
                     TranslatableCaption.of("swap.progress_region2_paste")
             ));
         }
-
         toQueue1.setCompleteTask(toQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             toQueue1.addProgressSubscriber(subscriberFactory.createFull(
@@ -305,7 +284,6 @@ public abstract class RegionManager {
                     TranslatableCaption.of("swap.progress_region1_paste")
             ));
         }
-
         fromQueue2.setCompleteTask(toQueue1::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             fromQueue2.addProgressSubscriber(subscriberFactory
@@ -316,7 +294,6 @@ public abstract class RegionManager {
                             TranslatableCaption.of("swap.progress_region2_copy")
                     ));
         }
-
         fromQueue1.setCompleteTask(fromQueue2::enqueue);
         if (actor != null && Settings.QUEUE.NOTIFY_PROGRESS) {
             fromQueue1.addProgressSubscriber(subscriberFactory
@@ -329,7 +306,6 @@ public abstract class RegionManager {
         }
         fromQueue1.enqueue();
     }
-
     private void setCopyFromToConsumer(
             final Location pos1,
             final Location pos2,
@@ -372,7 +348,6 @@ public abstract class RegionManager {
             }
         });
     }
-
     /**
      * Set a region to a biome type.
      *
@@ -416,5 +391,4 @@ public abstract class RegionManager {
         queue.setCompleteTask(whenDone);
         queue.enqueue();
     }
-
 }

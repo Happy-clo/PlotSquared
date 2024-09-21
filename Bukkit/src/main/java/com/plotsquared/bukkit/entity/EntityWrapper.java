@@ -17,15 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.entity;
-
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public abstract class EntityWrapper {
-
     protected final float yaw;
     protected final float pitch;
     private final Entity entity;
@@ -33,11 +30,9 @@ public abstract class EntityWrapper {
     public double x;
     public double y;
     public double z;
-
     EntityWrapper(final @NonNull Entity entity) {
         this.entity = entity;
         this.type = entity.getType();
-
         final Location location = entity.getLocation();
         this.x = location.getX();
         this.y = location.getY();
@@ -45,43 +40,32 @@ public abstract class EntityWrapper {
         this.yaw = location.getYaw();
         this.pitch = location.getPitch();
     }
-
     @SuppressWarnings("deprecation")
     @Override
     public String toString() {
         return String.format("[%s, x=%s, y=%s, z=%s]", type.getName(), x, y, z);
     }
-
     public abstract Entity spawn(World world, int xOffset, int zOffset);
-
     public abstract void saveEntity();
-
     public float getYaw() {
         return this.yaw;
     }
-
     public float getPitch() {
         return this.pitch;
     }
-
     public Entity getEntity() {
         return this.entity;
     }
-
     public EntityType getType() {
         return this.type;
     }
-
     public double getX() {
         return this.x;
     }
-
     public double getY() {
         return this.y;
     }
-
     public double getZ() {
         return this.z;
     }
-
 }

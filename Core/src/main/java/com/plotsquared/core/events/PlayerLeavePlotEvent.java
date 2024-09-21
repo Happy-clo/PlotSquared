@@ -17,15 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
-
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-
 /**
  *
  */
 public class PlayerLeavePlotEvent extends PlotPlayerEvent {
-
     /**
      * PlayerLeavePlotEvent: Called when a player leaves a plot
      *
@@ -35,5 +32,4 @@ public class PlayerLeavePlotEvent extends PlotPlayerEvent {
     public PlayerLeavePlotEvent(PlotPlayer<?> player, Plot plot) {
         super(player, plot);
     }
-
 }

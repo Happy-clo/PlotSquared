@@ -17,19 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.comment;
-
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
-
 import java.util.List;
-
 public abstract class CommentInbox {
-
     @Override
     public abstract String toString();
-
     /**
      * @param plot   the plot's inbox to read
      * @param player the player trying to read the comment
@@ -41,7 +36,6 @@ public abstract class CommentInbox {
         }
         return false;
     }
-
     /**
      * @param plot   the plot's inbox to write to
      * @param player the player trying to write the comment
@@ -54,7 +48,6 @@ public abstract class CommentInbox {
         return player.hasPermission("plots.inbox.write." + this, true) && (
                 plot.isOwner(player.getUUID()) || player.hasPermission("plots.inbox.write." + this + ".other", true));
     }
-
     /**
      * @param plot   the plot's inbox to write to
      * @param player the player trying to modify the inbox
@@ -67,7 +60,6 @@ public abstract class CommentInbox {
         }
         return false;
     }
-
     /**
      * <br>
      * The `whenDone` parameter should be executed when it's done fetching the comments.
@@ -78,14 +70,12 @@ public abstract class CommentInbox {
      * @return success or not
      */
     public abstract boolean getComments(Plot plot, RunnableVal<List<PlotComment>> whenDone);
-
     /**
      * @param plot    plot
      * @param comment the comment to add
      * @return success or not
      */
     public abstract boolean addComment(Plot plot, PlotComment comment);
-
     /**
      * @param plot    plot
      * @param comment the comment to remove
@@ -93,12 +83,10 @@ public abstract class CommentInbox {
     public void removeComment(Plot plot, PlotComment comment) {
         DBFunc.removeComment(plot, comment);
     }
-
     /**
      * @param plot plot
      */
     public void clearInbox(Plot plot) {
         DBFunc.clearInbox(plot, toString());
     }
-
 }

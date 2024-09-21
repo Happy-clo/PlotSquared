@@ -17,26 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 @CommandDeclaration(command = "debugallowunsafe",
         usage = "/plot debugallowunsafe",
         category = CommandCategory.DEBUG,
         requiredType = RequiredType.NONE,
         permission = "plots.debugallowunsafe")
 public class DebugAllowUnsafe extends SubCommand {
-
     public static final List<UUID> unsafeAllowed = new ArrayList<>();
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
-
         if (unsafeAllowed.contains(player.getUUID())) {
             unsafeAllowed.remove(player.getUUID());
             player.sendMessage(TranslatableCaption.of("unsafe.debugallowunsafe_off"));
@@ -46,5 +40,4 @@ public class DebugAllowUnsafe extends SubCommand {
         }
         return true;
     }
-
 }

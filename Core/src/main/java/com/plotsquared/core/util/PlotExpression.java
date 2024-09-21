@@ -17,24 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.sk89q.worldedit.internal.expression.Expression;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * An expression that can be evaluated.
  * Evaluation is thread-safe.
  * This is a wrapper for {@link Expression}.
  */
 public class PlotExpression {
-
     private final Expression expression;
     private final Object lock = new Object();
-
     private PlotExpression(final @NonNull String rawExpression, final @NonNull String @NonNull [] variableNames) {
         this.expression = Expression.compile(rawExpression, variableNames);
     }
-
     /**
      * Compiles an expression from a string.
      *
@@ -48,7 +43,6 @@ public class PlotExpression {
     ) {
         return new PlotExpression(expression, variableNames);
     }
-
     /**
      * Evaluates the expression with the given variable values.
      *
@@ -57,11 +51,9 @@ public class PlotExpression {
      */
     public double evaluate(double... values) {
         double evaluate;
-        // synchronization is likely the best option in terms of memory and cpu consumption
         synchronized (this.lock) {
             evaluate = this.expression.evaluate(values);
         }
         return evaluate;
     }
-
 }

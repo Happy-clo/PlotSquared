@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.generator;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
@@ -33,13 +32,9 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Random;
-
 final class LegacyBlockStatePopulator extends BlockPopulator {
-
     private final IndependentPlotGenerator plotGenerator;
-
     /**
      * @since 6.9.0
      */
@@ -48,7 +43,6 @@ final class LegacyBlockStatePopulator extends BlockPopulator {
     ) {
         this.plotGenerator = plotGenerator;
     }
-
     @Override
     public void populate(@NonNull final World world, @NonNull final Random random, @NonNull final Chunk source) {
         int chunkMinX = source.getX() << 4;
@@ -57,7 +51,6 @@ final class LegacyBlockStatePopulator extends BlockPopulator {
         if (area == null || (area instanceof HybridPlotWorld hpw && !hpw.populationNeeded()) || area instanceof SinglePlotArea) {
             return;
         }
-
         QueueCoordinator queue = PlotSquared.platform().globalBlockQueue().getNewQueue(new BukkitWorld(world));
         queue.setForceSync(true);
         queue.setSideEffectSet(SideEffectSet.none());
@@ -69,5 +62,4 @@ final class LegacyBlockStatePopulator extends BlockPopulator {
         this.plotGenerator.populateChunk(offsetChunkQueue, area);
         queue.enqueue();
     }
-
 }

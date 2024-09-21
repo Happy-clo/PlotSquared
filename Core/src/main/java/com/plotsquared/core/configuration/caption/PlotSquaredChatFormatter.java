@@ -17,11 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class PlotSquaredChatFormatter implements ChatFormatter {
-
     @Override
     public void format(final @NonNull ChatContext context) {
         if (context.isRawOutput()) {
@@ -29,5 +26,4 @@ public class PlotSquaredChatFormatter implements ChatFormatter {
                     context.getMessage().replace('&', '\u2020').replace('\u00A7', '\u2030'));
         }
     }
-
 }

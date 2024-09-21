@@ -17,26 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
-
 import com.google.common.collect.ImmutableList;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.plot.comment.PlotComment;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 /**
  * Generic settings class.
  * - Does not keep a reference to a parent class
  * - Direct changes here will not occur in the db (Use the parent plot object for that)
  */
 public class PlotSettings {
-
     /**
      * Merged plots.
      */
@@ -57,7 +53,6 @@ public class PlotSettings {
      * Home Position.
      */
     private BlockLoc position;
-
     /**
      * <b>Check if the plot is merged in a direction</b><br> 0 = North<br> 1 = East<br> 2 = South<br> 3 = West<br>
      *
@@ -67,18 +62,15 @@ public class PlotSettings {
     public boolean getMerged(int direction) {
         return this.merged[direction];
     }
-
     public Map<UUID, Integer> getRatings() {
         if (this.ratings == null) {
             this.ratings = new HashMap<>();
         }
         return this.ratings;
     }
-
     public void setRatings(HashMap<UUID, Integer> ratings) {
         this.ratings = ratings;
     }
-
     public boolean setMerged(Direction direction, boolean merged) {
         if (Direction.ALL == direction) {
             throw new IllegalArgumentException("You cannot use Direction.ALL in this method!");
@@ -89,14 +81,12 @@ public class PlotSettings {
         }
         return false;
     }
-
     public BlockLoc getPosition() {
         if (this.position == null) {
             return BlockLoc.MINY;
         }
         return this.position;
     }
-
     public void setPosition(BlockLoc position) {
         if (position != null && position.getX() == 0 && position.getY() == 0
                 && position.getZ() == 0) {
@@ -104,52 +94,41 @@ public class PlotSettings {
         }
         this.position = position;
     }
-
     public List<PlotComment> getComments(String inbox) {
         if (this.comments == null) {
             return Collections.emptyList();
         }
-
         return this.comments.stream().filter(comment -> comment.inbox().equals(inbox))
                 .collect(ImmutableList.toImmutableList());
     }
-
     boolean removeComment(PlotComment comment) {
         if (this.comments == null) {
             return false;
         }
         return this.comments.remove(comment);
     }
-
     void removeComments(List<PlotComment> comments) {
         comments.forEach(this::removeComment);
     }
-
     void addComment(PlotComment comment) {
         if (this.comments == null) {
             this.comments = new ArrayList<>();
         }
         this.comments.add(comment);
     }
-
     public boolean[] getMerged() {
         return this.merged;
     }
-
     public void setMerged(boolean[] merged) {
         this.merged = merged;
     }
-
     public String getAlias() {
         return this.alias;
     }
-
     public void setAlias(String alias) {
         this.alias = alias;
     }
-
     public void setComments(List<PlotComment> comments) {
         this.comments = comments;
     }
-
 }

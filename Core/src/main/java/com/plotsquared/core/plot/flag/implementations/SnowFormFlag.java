@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class SnowFormFlag extends BooleanFlag<SnowFormFlag> {
-
     public static final SnowFormFlag SNOW_FORM_TRUE = new SnowFormFlag(true);
     public static final SnowFormFlag SNOW_FORM_FALSE = new SnowFormFlag(false);
-
     private SnowFormFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_snow_form"));
     }
-
     @Override
     protected SnowFormFlag flagOf(@NonNull Boolean value) {
         return value ? SNOW_FORM_TRUE : SNOW_FORM_FALSE;
     }
-
 }

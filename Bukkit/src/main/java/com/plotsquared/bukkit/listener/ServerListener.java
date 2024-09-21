@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.placeholder.MVdWPlaceholders;
@@ -34,18 +33,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class ServerListener implements Listener {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ServerListener.class.getSimpleName());
-
     private final BukkitPlatform plugin;
-
     @Inject
     public ServerListener(final @NonNull BukkitPlatform plugin) {
         this.plugin = plugin;
     }
-
     @EventHandler
     public void onServerLoad(ServerLoadEvent event) {
         if (Bukkit.getPluginManager().getPlugin("MVdWPlaceholderAPI") != null && Settings.Enabled_Components.USE_MVDWAPI) {
@@ -67,7 +61,6 @@ public class ServerListener implements Listener {
             }
         }
     }
-
     /**
      * Internal use only. Required to implement lazy econ loading using Guice.
      *
@@ -76,5 +69,4 @@ public class ServerListener implements Listener {
     public interface MutableEconHandler {
         void setImplementation(EconHandler econHandler);
     }
-
 }

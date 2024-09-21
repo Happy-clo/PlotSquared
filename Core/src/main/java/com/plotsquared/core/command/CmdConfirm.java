@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.MetaDataAccess;
@@ -29,23 +28,19 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 public class CmdConfirm {
-
     public static @Nullable CmdInstance getPending(PlotPlayer<?> player) {
         try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
                 PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
             return metaDataAccess.get().orElse(null);
         }
     }
-
     public static void removePending(PlotPlayer<?> player) {
         try (final MetaDataAccess<CmdInstance> metaDataAccess = player.accessTemporaryMetaData(
                 PlayerMetaDataKeys.TEMPORARY_CONFIRM)) {
             metaDataAccess.remove();
         }
     }
-
     public static void addPending(
             final PlotPlayer<?> player, String commandStr,
             final Runnable runnable
@@ -69,5 +64,4 @@ public class CmdConfirm {
             }
         }, TaskTime.ticks(1L));
     }
-
 }

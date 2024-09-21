@@ -17,26 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
-
 import com.sk89q.worldedit.entity.Entity;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * @since 6.11.1
  */
 public abstract class EntityEvent {
-
     private final Entity entity;
-
     private String name;
-
     /**
      * @since 6.11.0
      */
     public EntityEvent(Entity entity) {
         this.entity = entity;
     }
-
     /**
      * Obtain the entity involved in the event
      *
@@ -46,7 +40,6 @@ public abstract class EntityEvent {
     public Entity getEntity() {
         return this.entity;
     }
-
     /**
      * Obtain the event's class name
      *
@@ -60,5 +53,4 @@ public abstract class EntityEvent {
         }
         return this.name;
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -78,7 +77,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.lang.ref.Cleaner;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -99,14 +97,12 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MISC;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
-
 /**
  * The plot class<br>
  * [IMPORTANT]
@@ -116,16 +112,13 @@ import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
  * - Use the methods from the PlotArea/PS/Location etc to get existing plots
  */
 public class Plot {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Plot.class.getSimpleName());
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final Cleaner CLEANER = Cleaner.create();
-
     static {
         FLAG_DECIMAL_FORMAT.setMaximumFractionDigits(340);
     }
-
     /**
      * Plot flag container
      */
@@ -167,7 +160,6 @@ public class Plot {
     PlotSettings settings;
     @NonNull
     private PlotId id;
-    // These will be injected
     @Inject
     private EventDispatcher eventDispatcher;
     @Inject
@@ -203,9 +195,7 @@ public class Plot {
      * - The origin plot is used for plot grouping and relational data
      */
     private Plot origin;
-
     private Set<Plot> connectedCache;
-
     /**
      * Constructor for a new plot.
      * (Only changes after plot.create() will be properly set in the database)
@@ -221,7 +211,6 @@ public class Plot {
     public Plot(final PlotArea area, final @NonNull PlotId id, final UUID owner) {
         this(area, id, owner, 0);
     }
-
     /**
      * Constructor for an unowned plot.
      * (Only changes after plot.create() will be properly set in the database)
@@ -236,7 +225,6 @@ public class Plot {
     public Plot(final @NonNull PlotArea area, final @NonNull PlotId id) {
         this(area, id, null, 0);
     }
-
     /**
      * Constructor for a temporary plot (use -1 for temp)<br>
      * The database will ignore any queries regarding temporary plots.
@@ -258,11 +246,8 @@ public class Plot {
         this.temp = temp;
         this.flagContainer.setParentContainer(area.getFlagContainer());
         PlotSquared.platform().injector().injectMembers(this);
-        // This is needed, because otherwise the Plot, the FlagContainer and its
-        // `this::handleUnknown` PlotFlagUpdateHandler won't get cleaned up ever
         CLEANER.register(this, this.flagContainer.createCleanupHook());
     }
-
     /**
      * Constructor for a saved plots (Used by the database manager when plots are fetched)
      *
@@ -319,7 +304,6 @@ public class Plot {
         }
         PlotSquared.platform().injector().injectMembers(this);
     }
-
     /**
      * Get the plot from a string.
      *
@@ -387,7 +371,6 @@ public class Plot {
         }
         return area.getPlotAbs(id);
     }
-
     /**
      * Gets a plot from a string e.g. [area];[id]
      *
@@ -417,7 +400,6 @@ public class Plot {
         }
         return null;
     }
-
     /**
      * Return a new/cached plot object at a given location.
      *
@@ -435,14 +417,12 @@ public class Plot {
         }
         return null;
     }
-
     @NonNull
     static Location[] getCorners(final @NonNull String world, final @NonNull CuboidRegion region) {
         final BlockVector3 min = region.getMinimumPoint();
         final BlockVector3 max = region.getMaximumPoint();
         return new Location[]{Location.at(world, min), Location.at(world, max)};
     }
-
     /**
      * Get the owner of this exact plot, as it is
      * stored in the database.
@@ -460,7 +440,6 @@ public class Plot {
     public @Nullable UUID getOwnerAbs() {
         return this.owner;
     }
-
     /**
      * Set the owner of this exact sub-plot. This does
      * not update the database.
@@ -470,7 +449,6 @@ public class Plot {
     public void setOwnerAbs(final @Nullable UUID owner) {
         this.owner = owner;
     }
-
     /**
      * Get the name of the world that the plot is in
      *
@@ -479,7 +457,6 @@ public class Plot {
     public @Nullable String getWorldName() {
         return area.getWorldName();
     }
-
     /**
      * Session only plot metadata (session is until the server stops)<br>
      * <br>
@@ -494,7 +471,6 @@ public class Plot {
         }
         this.meta.put(key, value);
     }
-
     /**
      * Gets the metadata for a key<br>
      * <br>
@@ -509,7 +485,6 @@ public class Plot {
         }
         return null;
     }
-
     /**
      * Delete the metadata for a key<br>
      * - metadata is session only
@@ -522,7 +497,6 @@ public class Plot {
             this.meta.remove(key);
         }
     }
-
     /**
      * Gets the cluster this plot is associated with
      *
@@ -534,7 +508,6 @@ public class Plot {
         }
         return this.getArea().getCluster(this.id);
     }
-
     /**
      * Efficiently get the players currently inside this plot<br>
      * - Will return an empty list if no players are in the plot<br>
@@ -551,7 +524,6 @@ public class Plot {
         }
         return players;
     }
-
     /**
      * Checks if the plot has an owner.
      *
@@ -560,7 +532,6 @@ public class Plot {
     public boolean hasOwner() {
         return this.getOwnerAbs() != null;
     }
-
     /**
      * Checks if a UUID is a plot owner (merged plots may have multiple owners)
      *
@@ -576,15 +547,12 @@ public class Plot {
         }
         final Set<Plot> connected = getConnectedPlots();
         for (Plot current : connected) {
-            // can skip ServerPlotFlag check in getOwner()
-            // as flags are synchronized between plots
             if (uuid.equals(current.getOwnerAbs())) {
                 return true;
             }
         }
         return false;
     }
-
     /**
      * Checks if the given UUID is the owner of this specific plot
      *
@@ -597,7 +565,6 @@ public class Plot {
         }
         return uuid.equals(this.getOwner());
     }
-
     /**
      * Get the plot owner of this particular sub-plot.
      * (Merged plots can have multiple owners)
@@ -615,7 +582,6 @@ public class Plot {
         }
         return this.getOwnerAbs();
     }
-
     /**
      * Sets the plot owner (and update the database)
      *
@@ -641,7 +607,6 @@ public class Plot {
             }
         }
     }
-
     /**
      * Gets an immutable set of owner UUIDs for a plot (supports multi-owner mega-plots).
      * <p>
@@ -660,7 +625,6 @@ public class Plot {
         }
         return owners.build();
     }
-
     /**
      * Checks if the player is either the owner or on the trusted/added list.
      *
@@ -685,7 +649,6 @@ public class Plot {
         }
         return false;
     }
-
     /**
      * Checks if the player is not permitted on this plot.
      *
@@ -696,7 +659,6 @@ public class Plot {
         return this.denied != null && (this.denied.contains(DBFunc.EVERYONE) && !this.isAdded(uuid) || !this.isAdded(uuid) && this.denied
                 .contains(uuid));
     }
-
     /**
      * Gets the {@link PlotId} of this plot.
      *
@@ -705,7 +667,6 @@ public class Plot {
     public @NonNull PlotId getId() {
         return this.id;
     }
-
     /**
      * Change the plot ID
      *
@@ -714,7 +675,6 @@ public class Plot {
     public void setId(final @NonNull PlotId id) {
         this.id = id;
     }
-
     /**
      * Gets the plot world object for this plot<br>
      * - The generic PlotArea object can be casted to its respective class for more control (e.g. HybridPlotWorld)
@@ -724,7 +684,6 @@ public class Plot {
     public @Nullable PlotArea getArea() {
         return this.area;
     }
-
     /**
      * Assigns this plot to a plot area.<br>
      * (Mostly used during startup when worlds are being created)<br>
@@ -745,7 +704,6 @@ public class Plot {
         area.addPlot(this);
         this.flagContainer.setParentContainer(area.getFlagContainer());
     }
-
     /**
      * Gets the plot manager object for this plot<br>
      * - The generic PlotManager object can be casted to its respective class for more control (e.g. HybridPlotManager)
@@ -755,7 +713,6 @@ public class Plot {
     public @NonNull PlotManager getManager() {
         return this.area.getPlotManager();
     }
-
     /**
      * Gets or create plot settings.
      *
@@ -767,7 +724,6 @@ public class Plot {
         }
         return this.settings;
     }
-
     /**
      * Returns true if the plot is not merged, or it is the base
      * plot of multiple merged plots.
@@ -777,7 +733,6 @@ public class Plot {
     public boolean isBasePlot() {
         return !this.isMerged() || this.equals(this.getBasePlot(false));
     }
-
     /**
      * The base plot is an arbitrary but specific connected plot. It is useful for the following:<br>
      * - Merged plots need to be treated as a single plot for most purposes<br>
@@ -812,7 +767,6 @@ public class Plot {
         }
         return this.origin;
     }
-
     /**
      * Checks if this plot is merged in any direction.
      *
@@ -821,7 +775,6 @@ public class Plot {
     public boolean isMerged() {
         return getSettings().getMerged(0) || getSettings().getMerged(2) || getSettings().getMerged(1) || getSettings().getMerged(3);
     }
-
     /**
      * Gets the timestamp of when the plot was created (unreliable)<br>
      * - not accurate if the plot was created before this was implemented<br>
@@ -835,7 +788,6 @@ public class Plot {
         }
         return this.timestamp;
     }
-
     /**
      * Gets if the plot is merged in a direction<br>
      * ------- Actual -------<br>
@@ -888,11 +840,9 @@ public class Plot {
                                 this.area.getPlotAbs(this.id.getRelative(Direction.getFromIndex(i)))).isMerged(i2) && Objects
                         .requireNonNull(
                                 this.area.getPlotAbs(this.id.getRelative(Direction.getFromIndex(i2)))).isMerged(i);
-
         }
         return false;
     }
-
     /**
      * Gets the denied users.
      *
@@ -904,7 +854,6 @@ public class Plot {
         }
         return this.denied;
     }
-
     /**
      * Sets the denied users for this plot.
      *
@@ -933,7 +882,6 @@ public class Plot {
             addDenied(uuid);
         }
     }
-
     /**
      * Gets the trusted users.
      *
@@ -945,7 +893,6 @@ public class Plot {
         }
         return this.trusted;
     }
-
     /**
      * Sets the trusted users for this plot.
      *
@@ -965,7 +912,6 @@ public class Plot {
             addTrusted(uuid);
         }
     }
-
     /**
      * Gets the members
      *
@@ -977,7 +923,6 @@ public class Plot {
         }
         return this.members;
     }
-
     /**
      * Sets the members for this plot.
      *
@@ -997,7 +942,6 @@ public class Plot {
             addMember(uuid);
         }
     }
-
     /**
      * Denies a player from this plot. (updates database as well)
      *
@@ -1010,7 +954,6 @@ public class Plot {
             }
         }
     }
-
     /**
      * Add someone as a helper (updates database as well)
      *
@@ -1023,7 +966,6 @@ public class Plot {
             }
         }
     }
-
     /**
      * Add someone as a trusted user (updates database as well)
      *
@@ -1036,7 +978,6 @@ public class Plot {
             }
         }
     }
-
     /**
      * Sets the plot owner (and update the database)
      *
@@ -1065,11 +1006,9 @@ public class Plot {
         }
         return true;
     }
-
     public boolean isLoaded() {
         return this.worldUtil.isWorld(getWorldName());
     }
-
     /**
      * This will return null if the plot hasn't been analyzed
      *
@@ -1079,7 +1018,6 @@ public class Plot {
     public PlotAnalysis getComplexity(Settings.Auto_Clear settings) {
         return PlotAnalysis.getAnalysis(this, settings);
     }
-
     /**
      * Get an immutable view of all the flags associated with the plot.
      *
@@ -1088,7 +1026,6 @@ public class Plot {
     public Set<PlotFlag<?, ?>> getFlags() {
         return ImmutableSet.copyOf(flagContainer.getFlagMap().values());
     }
-
     /**
      * Sets a flag for the plot and stores it in the database.
      *
@@ -1107,7 +1044,6 @@ public class Plot {
         }
         return true;
     }
-
     /**
      * Parse the flag value into a flag instance based on the provided
      * flag class, and store it in the database.
@@ -1124,7 +1060,6 @@ public class Plot {
         }
         return true;
     }
-
     /**
      * Remove a flag from this plot
      *
@@ -1134,7 +1069,6 @@ public class Plot {
     public boolean removeFlag(final @NonNull Class<? extends PlotFlag<?, ?>> flag) {
         return this.removeFlag(getFlagContainer().queryLocal(flag));
     }
-
     /**
      * Get flags associated with the plot.
      *
@@ -1165,7 +1099,6 @@ public class Plot {
         }
         return flags.values();
     }
-
     /**
      * Get flags associated with the plot and the plot area that contains it.
      *
@@ -1175,7 +1108,6 @@ public class Plot {
     public Collection<PlotFlag<?, ?>> getApplicableFlags(final boolean ignorePluginFlags) {
         return getApplicableFlags(false, ignorePluginFlags);
     }
-
     /**
      * Remove a flag from this plot
      *
@@ -1198,7 +1130,6 @@ public class Plot {
         }
         return removed;
     }
-
     /**
      * Count the entities in a plot
      *
@@ -1218,7 +1149,6 @@ public class Plot {
         }
         return count;
     }
-
     /**
      * Returns true if a previous task was running
      *
@@ -1231,7 +1161,6 @@ public class Plot {
         }
         return value;
     }
-
     /**
      * Decrement the number of tracked tasks this plot is running<br>
      * - Used to track/limit the number of things a player can do on the plot at once
@@ -1251,7 +1180,6 @@ public class Plot {
         }
         return value;
     }
-
     /**
      * Gets the number of tracked running tasks for this plot<br>
      * - Used to track/limit the number of things a player can do on the plot at once
@@ -1262,7 +1190,6 @@ public class Plot {
         Integer value = (Integer) this.getMeta("running");
         return value == null ? 0 : value;
     }
-
     /**
      * Unclaim the plot (does not modify terrain). Changes made to this plot will not be reflected in unclaimed plot objects.
      *
@@ -1277,12 +1204,9 @@ public class Plot {
             for (PlotPlayer<?> pp : players) {
                 this.plotListener.plotExit(pp, current);
             }
-
             if (Settings.Backup.DELETE_ON_UNCLAIM) {
-                // Destroy all backups when the plot is unclaimed
                 Objects.requireNonNull(PlotSquared.platform()).backupManager().getProfile(current).destroy();
             }
-
             getArea().removePlot(getId());
             DBFunc.delete(current);
             current.setOwnerAbs(null);
@@ -1294,7 +1218,6 @@ public class Plot {
         }
         return true;
     }
-
     public void getCenter(final Consumer<Location> result) {
         Location[] corners = getCorners();
         Location top = corners[0];
@@ -1313,7 +1236,6 @@ public class Plot {
             result.accept(location.withY(1 + height));
         });
     }
-
     /**
      * @return Location of center
      * @deprecated May cause synchronous chunk loads
@@ -1343,7 +1265,6 @@ public class Plot {
         }
         return location.withY(1 + y);
     }
-
     /**
      * @return side where players should teleport to
      * @deprecated May cause synchronous chunk loads
@@ -1362,7 +1283,6 @@ public class Plot {
         }
         return Location.at(getWorldName(), x, y + 1, z);
     }
-
     public void getSide(Consumer<Location> result) {
         CuboidRegion largest = getLargestRegion();
         int x = (largest.getMaximumPoint().getX() >> 1) - (largest.getMinimumPoint().getX() >> 1) + largest
@@ -1386,7 +1306,6 @@ public class Plot {
             result.accept(Location.at(getWorldName(), x, y + 1, z));
         }
     }
-
     /**
      * @return the plot home location
      * @deprecated May cause synchronous chunk loading
@@ -1418,7 +1337,6 @@ public class Plot {
             return location;
         }
     }
-
     /**
      * Return the home location for the plot
      *
@@ -1451,18 +1369,16 @@ public class Plot {
             });
         }
     }
-
     private Location toHomeLocation(Location bottom, BlockLoc relativeHome) {
         return Location.at(
                 bottom.getWorldName(),
                 bottom.getX() + relativeHome.getX(),
-                relativeHome.getY(), // y is absolute
+                relativeHome.getY(),
                 bottom.getZ() + relativeHome.getZ(),
                 relativeHome.getYaw(),
                 relativeHome.getPitch()
         );
     }
-
     /**
      * Sets the home location
      *
@@ -1480,7 +1396,6 @@ public class Plot {
         }
         DBFunc.setPosition(plot, null);
     }
-
     /**
      * Gets the default home location for a plot<br>
      * - Ignores any home location set for that specific plot
@@ -1490,7 +1405,6 @@ public class Plot {
     public void getDefaultHome(Consumer<Location> result) {
         getDefaultHome(false, result);
     }
-
     /**
      * @param member if to get the home for plot members
      * @return location of home for members or visitors
@@ -1504,7 +1418,6 @@ public class Plot {
             int x;
             int z;
             if (loc.getX() == Integer.MAX_VALUE && loc.getZ() == Integer.MAX_VALUE) {
-                // center
                 if (getArea() instanceof SinglePlotArea) {
                     int y = loc.getY() == Integer.MIN_VALUE
                             ? (isLoaded() ? this.worldUtil.getHighestBlockSynchronous(plot.getWorldName(), 0, 0) + 1 : 63)
@@ -1519,7 +1432,6 @@ public class Plot {
                         .getMinimumPoint()
                         .getZ();
             } else {
-                // specific
                 Location bot = plot.getBottomAbs();
                 x = bot.getX() + loc.getX();
                 z = bot.getZ() + loc.getZ();
@@ -1533,10 +1445,8 @@ public class Plot {
             int y = isLoaded() ? this.worldUtil.getHighestBlockSynchronous(plot.getWorldName(), 0, 0) + 1 : 63;
             return Location.at(plot.getWorldName(), 0, y, 0, 0, 0);
         }
-        // Side
         return plot.getSideSynchronous();
     }
-
     public void getDefaultHome(boolean member, Consumer<Location> result) {
         Plot plot = this.getBasePlot(false);
         if (!isLoaded()) {
@@ -1553,7 +1463,6 @@ public class Plot {
             int x;
             int z;
             if (loc.getX() == Integer.MAX_VALUE && loc.getZ() == Integer.MAX_VALUE) {
-                // center
                 if (getArea() instanceof SinglePlotArea) {
                     x = 0;
                     z = 0;
@@ -1567,7 +1476,6 @@ public class Plot {
                             .getZ();
                 }
             } else {
-                // specific
                 Location bot = plot.getBottomAbs();
                 x = bot.getX() + loc.getX();
                 z = bot.getZ() + loc.getZ();
@@ -1589,23 +1497,19 @@ public class Plot {
             }
             return;
         }
-        // Side
         if (getArea() instanceof SinglePlotArea) {
             int y = isLoaded() ? this.worldUtil.getHighestBlockSynchronous(plot.getWorldName(), 0, 0) + 1 : 63;
             result.accept(Location.at(plot.getWorldName(), 0, y, 0, 0, 0));
         }
         plot.getSide(result);
     }
-
     public double getVolume() {
         double count = 0;
         for (CuboidRegion region : getRegions()) {
-            // CuboidRegion#getArea is deprecated and we want to ensure use of correct height
             count += region.getLength() * region.getWidth() * (area.getMaxGenHeight() - area.getMinGenHeight() + 1);
         }
         return count;
     }
-
     /**
      * Gets the average rating of the plot. This is the value displayed in /plot info
      *
@@ -1616,7 +1520,6 @@ public class Plot {
         double sum = ratings.stream().mapToDouble(Rating::getAverageRating).sum();
         return sum / ratings.size();
     }
-
     /**
      * Sets a rating for a user<br>
      * - If the user has already rated, the following will return false
@@ -1636,7 +1539,6 @@ public class Plot {
         DBFunc.setRating(base, uuid, aggregate);
         return true;
     }
-
     /**
      * Clear the ratings/likes for this plot
      */
@@ -1648,14 +1550,12 @@ public class Plot {
             baseSettings.setRatings(null);
         }
     }
-
     public Map<UUID, Boolean> getLikes() {
         final Map<UUID, Boolean> map = new HashMap<>();
         final Map<UUID, Rating> ratings = this.getRatings();
         ratings.forEach((uuid, rating) -> map.put(uuid, rating.getLike()));
         return map;
     }
-
     /**
      * Gets the ratings associated with a plot<br>
      * - The rating object may contain multiple categories
@@ -1673,12 +1573,10 @@ public class Plot {
         }
         return map;
     }
-
     public boolean hasRatings() {
         Plot base = this.getBasePlot(false);
         return base.settings != null && base.settings.getRatings() != null;
     }
-
     /**
      * Claim the plot
      *
@@ -1759,7 +1657,6 @@ public class Plot {
         this.getPlotModificationManager().setSign(player.getName());
         return true;
     }
-
     /**
      * Retrieve the biome of the plot.
      *
@@ -1768,9 +1665,6 @@ public class Plot {
     public void getBiome(Consumer<BiomeType> result) {
         this.getCenter(location -> this.worldUtil.getBiome(location.getWorldName(), location.getX(), location.getZ(), result));
     }
-
-    //TODO Better documentation needed.
-
     /**
      * @return biome at center of plot
      * @deprecated May cause synchronous chunk loads
@@ -1780,7 +1674,6 @@ public class Plot {
         final Location location = this.getCenterSynchronous();
         return this.worldUtil.getBiomeSynchronous(location.getWorldName(), location.getX(), location.getZ());
     }
-
     /**
      * Returns the top location for the plot.
      *
@@ -1789,7 +1682,6 @@ public class Plot {
     public Location getTopAbs() {
         return this.getManager().getPlotTopLocAbs(this.id).withWorld(this.getWorldName());
     }
-
     /**
      * Returns the bottom location for the plot.
      *
@@ -1798,7 +1690,6 @@ public class Plot {
     public Location getBottomAbs() {
         return this.getManager().getPlotBottomLocAbs(this.id).withWorld(this.getWorldName());
     }
-
     /**
      * Swaps the settings for two plots.
      *
@@ -1817,7 +1708,6 @@ public class Plot {
             this.moveData(plot, null);
             return CompletableFuture.completedFuture(true);
         }
-        // Swap cached
         final PlotId temp = PlotId.of(this.getId().getX(), this.getId().getY());
         this.id = plot.getId();
         plot.id = temp;
@@ -1825,10 +1715,8 @@ public class Plot {
         plot.area.removePlot(plot.getId());
         this.area.addPlotAbs(this);
         plot.area.addPlotAbs(plot);
-        // Swap database
         return DBFunc.swapPlots(plot, this);
     }
-
     /**
      * Moves the settings for a plot.
      *
@@ -1853,7 +1741,6 @@ public class Plot {
         TaskManager.runTaskLater(whenDone, TaskTime.ticks(1L));
         return true;
     }
-
     /**
      * Gets the top loc of a plot (if mega, returns top loc of that mega plot) - If you would like each plot treated as
      * a small plot use {@link #getTopAbs()}
@@ -1873,7 +1760,6 @@ public class Plot {
         }
         return top;
     }
-
     /**
      * Gets the bot loc of a plot (if mega, returns bot loc of that mega plot) - If you would like each plot treated as
      * a small plot use {@link #getBottomAbs()}
@@ -1893,7 +1779,6 @@ public class Plot {
         }
         return bot;
     }
-
     /**
      * Returns the top and bottom location.<br>
      * - If the plot is not connected, it will return its own corners<br>
@@ -1909,27 +1794,22 @@ public class Plot {
         }
         return RegionUtil.getCorners(this.getWorldName(), this.getRegions());
     }
-
     /**
      * @return bottom corner location
      * @deprecated in favor of getCorners()[0];<br>
      */
-    // Won't remove as suggestion also points to deprecated method
     @Deprecated
     public Location getBottom() {
         return this.getCorners()[0];
     }
-
     /**
      * @return the top corner of the plot
      * @deprecated in favor of getCorners()[1];
      */
-    // Won't remove as suggestion also points to deprecated method
     @Deprecated
     public Location getTop() {
         return this.getCorners()[1];
     }
-
     /**
      * Gets plot display name.
      *
@@ -1942,7 +1822,6 @@ public class Plot {
         }
         return this.area + ";" + this.id;
     }
-
     /**
      * Remove a denied player (use DBFunc as well)<br>
      * Using the * uuid will remove all users
@@ -1960,7 +1839,6 @@ public class Plot {
         }
         return rmvDenied(uuid);
     }
-
     private boolean rmvDenied(UUID uuid) {
         for (Plot current : this.getConnectedPlots()) {
             if (current.getDenied().remove(uuid)) {
@@ -1971,7 +1849,6 @@ public class Plot {
         }
         return true;
     }
-
     /**
      * Remove a helper (use DBFunc as well)<br>
      * Using the * uuid will remove all users
@@ -1989,7 +1866,6 @@ public class Plot {
         }
         return rmvTrusted(uuid);
     }
-
     private boolean rmvTrusted(UUID uuid) {
         for (Plot plot : this.getConnectedPlots()) {
             if (plot.getTrusted().remove(uuid)) {
@@ -2000,7 +1876,6 @@ public class Plot {
         }
         return true;
     }
-
     /**
      * Remove a trusted user (use DBFunc as well)<br>
      * Using the * uuid will remove all users
@@ -2021,7 +1896,6 @@ public class Plot {
         }
         return rmvMember(uuid);
     }
-
     private boolean rmvMember(UUID uuid) {
         for (Plot current : this.getConnectedPlots()) {
             if (current.getMembers().remove(uuid)) {
@@ -2032,7 +1906,6 @@ public class Plot {
         }
         return true;
     }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -2047,7 +1920,6 @@ public class Plot {
         Plot other = (Plot) obj;
         return this.hashCode() == other.hashCode() && this.id.equals(other.id) && this.area == other.area;
     }
-
     /**
      * Gets the plot hashcode<br>
      * Note: The hashcode is unique if:<br>
@@ -2060,7 +1932,6 @@ public class Plot {
     public int hashCode() {
         return this.id.hashCode();
     }
-
     /**
      * Gets the plot alias.
      * - Returns an empty string if no alias is set
@@ -2073,7 +1944,6 @@ public class Plot {
         }
         return this.settings.getAlias();
     }
-
     /**
      * Sets the plot alias.
      *
@@ -2092,7 +1962,6 @@ public class Plot {
             DBFunc.setAlias(current, alias);
         }
     }
-
     /**
      * Sets the raw merge data<br>
      * - Updates DB<br>
@@ -2125,7 +1994,6 @@ public class Plot {
             DBFunc.setMerged(this, this.getSettings().getMerged());
         }
     }
-
     /**
      * Gets the merged array.
      *
@@ -2134,7 +2002,6 @@ public class Plot {
     public boolean[] getMerged() {
         return this.getSettings().getMerged();
     }
-
     /**
      * Sets the raw merge data<br>
      * - Updates DB<br>
@@ -2155,7 +2022,6 @@ public class Plot {
         DBFunc.setMerged(this, merged);
         clearCache();
     }
-
     public void clearCache() {
         this.connectedCache = null;
         if (this.origin != null) {
@@ -2163,7 +2029,6 @@ public class Plot {
             this.origin = null;
         }
     }
-
     /**
      * Gets the set home location or 0,Integer#MIN_VALUE,0 if no location is set<br>
      * - Does not take the default home location into account
@@ -2174,7 +2039,6 @@ public class Plot {
     public BlockLoc getPosition() {
         return this.getSettings().getPosition();
     }
-
     /**
      * Check if a plot can be claimed by the provided player.
      *
@@ -2197,7 +2061,6 @@ public class Plot {
         }
         return !isMerged();
     }
-
     /**
      * Merge the plot settings<br>
      * - Used when a plot is merged<br>
@@ -2238,7 +2101,6 @@ public class Plot {
         for (UUID uuid : plot.getMembers()) {
             this.addMember(uuid);
         }
-
         for (UUID uuid : this.getDenied()) {
             plot.addDenied(uuid);
         }
@@ -2246,7 +2108,6 @@ public class Plot {
             this.addDenied(uuid);
         }
     }
-
     /**
      * Gets the plot in a relative location<br>
      * Note: May be null if the partial plot area does not include the relative location
@@ -2258,11 +2119,9 @@ public class Plot {
     public Plot getRelative(int x, int y) {
         return this.area.getPlotAbs(PlotId.of(this.id.getX() + x, this.id.getY() + y));
     }
-
     public Plot getRelative(PlotArea area, int x, int y) {
         return area.getPlotAbs(PlotId.of(this.id.getX() + x, this.id.getY() + y));
     }
-
     /**
      * Gets the plot in a relative direction
      * Note: May be null if the partial plot area does not include the relative location
@@ -2273,7 +2132,6 @@ public class Plot {
     public @Nullable Plot getRelative(@NonNull Direction direction) {
         return this.area.getPlotAbs(this.id.getRelative(direction));
     }
-
     /**
      * Gets a set of plots connected (and including) this plot.
      * The returned set is immutable.
@@ -2289,7 +2147,6 @@ public class Plot {
         }
         Plot basePlot = getBasePlot(false);
         if (this.connectedCache == null && this != basePlot) {
-            // share cache between connected plots
             Set<Plot> connectedPlots = basePlot.getConnectedPlots();
             this.connectedCache = connectedPlots;
             return connectedPlots;
@@ -2297,7 +2154,6 @@ public class Plot {
         if (this.connectedCache != null && this.connectedCache.contains(this)) {
             return this.connectedCache;
         }
-
         Set<Plot> tmpSet = new HashSet<>();
         tmpSet.add(this);
         HashSet<Plot> queueCache = new HashSet<>();
@@ -2322,13 +2178,11 @@ public class Plot {
         this.connectedCache = tmpSet;
         return tmpSet;
     }
-
     private void computeDirectMerged(Set<Plot> queueCache, Deque<Plot> frontier, Direction direction) {
         if (this.isMerged(direction)) {
             Plot tmp = this.area.getPlotAbs(this.id.getRelative(direction));
             assert tmp != null;
             if (!tmp.isMerged(direction.opposite())) {
-                // invalid merge
                 if (tmp.isOwnerAbs(this.getOwnerAbs())) {
                     tmp.getSettings().setMerged(direction.opposite(), true);
                     DBFunc.setMerged(tmp, tmp.getSettings().getMerged());
@@ -2341,7 +2195,6 @@ public class Plot {
             frontier.add(tmp);
         }
     }
-
     private void addIfIncluded(
             Plot current, Direction
             direction, Set<Plot> queueCache, Set<Plot> tmpSet, Deque<Plot> frontier
@@ -2355,7 +2208,6 @@ public class Plot {
             frontier.add(tmp);
         }
     }
-
     /**
      * This will combine each plot into effective rectangular regions<br>
      * - This result is cached globally<br>
@@ -2451,7 +2303,6 @@ public class Plot {
             for (int x = bot.getX(); x <= top.getX(); x++) {
                 Plot plot = this.area.getPlotAbs(PlotId.of(x, top.getY()));
                 if (plot.isMerged(Direction.SOUTH)) {
-                    // south wedge
                     Location toploc = plot.getExtendedTopAbs();
                     Location botabs = plot.getBottomAbs();
                     Location topabs = plot.getTopAbs();
@@ -2462,15 +2313,12 @@ public class Plot {
                         pos1 = BlockVector3.at(topabs.getX() + 1, minHeight, topabs.getZ() + 1);
                         pos2 = BlockVector3.at(toploc.getX(), maxHeight, toploc.getZ());
                         regions.add(new CuboidRegion(pos1, pos2));
-                        // intersection
                     }
                 }
             }
-
             for (int y = bot.getY(); y <= top.getY(); y++) {
                 Plot plot = this.area.getPlotAbs(PlotId.of(top.getX(), y));
                 if (plot.isMerged(Direction.EAST)) {
-                    // east wedge
                     Location toploc = plot.getExtendedTopAbs();
                     Location botabs = plot.getBottomAbs();
                     Location topabs = plot.getTopAbs();
@@ -2481,7 +2329,6 @@ public class Plot {
                         pos1 = BlockVector3.at(topabs.getX() + 1, minHeight, topabs.getZ() + 1);
                         pos2 = BlockVector3.at(toploc.getX(), maxHeight, toploc.getZ());
                         regions.add(new CuboidRegion(pos1, pos2));
-                        // intersection
                     }
                 }
             }
@@ -2491,7 +2338,6 @@ public class Plot {
         }
         return regions;
     }
-
     /**
      * Attempt to find the largest rectangular region in a plot (as plots can form non rectangular shapes)
      *
@@ -2511,7 +2357,6 @@ public class Plot {
         }
         return max;
     }
-
     /**
      * Do the plot entry tasks for each player in the plot<br>
      * - Usually called when the plot state changes (unclaimed/claimed/flag change etc)
@@ -2524,7 +2369,6 @@ public class Plot {
             }
         }, TaskTime.ticks(1L));
     }
-
     public void debug(final @NonNull String message) {
         try {
             final Collection<PlotPlayer<?>> players = PlotPlayer.getDebugModePlayersInPlot(this);
@@ -2544,7 +2388,6 @@ public class Plot {
         } catch (final Exception ignored) {
         }
     }
-
     /**
      * Teleport a player to a plot and send them the teleport message.
      *
@@ -2554,7 +2397,6 @@ public class Plot {
     public void teleportPlayer(final PlotPlayer<?> player, Consumer<Boolean> result) {
         teleportPlayer(player, TeleportCause.PLUGIN, result);
     }
-
     /**
      * Teleport a player to a plot and send them the teleport message.
      *
@@ -2565,12 +2407,10 @@ public class Plot {
     public void teleportPlayer(final PlotPlayer<?> player, TeleportCause cause, Consumer<Boolean> resultConsumer) {
         Plot plot = this.getBasePlot(false);
         if ((getArea() == null || !(getArea() instanceof SinglePlotArea)) && !WorldUtil.isValidLocation(plot.getBottomAbs())) {
-            // prevent from teleporting into unsafe regions
             player.sendMessage(TranslatableCaption.of("border.denied"));
             resultConsumer.accept(false);
             return;
         }
-
         PlayerTeleportToPlotEvent event = this.eventDispatcher.callTeleport(player, player.getLocation(), plot, cause);
         if (event.getEventResult() == Result.DENY) {
             player.sendMessage(
@@ -2580,7 +2420,6 @@ public class Plot {
             resultConsumer.accept(false);
             return;
         }
-
         final Consumer<Location> locationConsumer = calculatedLocation -> {
             Location location = event.getLocationTransformer() == null ? calculatedLocation :
                     Objects.requireNonNullElse(event.getLocationTransformer().apply(calculatedLocation), calculatedLocation);
@@ -2614,7 +2453,6 @@ public class Plot {
             this.getDefaultHome(false, locationConsumer);
         }
     }
-
     /**
      * Checks if the owner of this Plot is online.
      *
@@ -2638,7 +2476,6 @@ public class Plot {
         }
         return false;
     }
-
     /**
      * Get the maximum distance of the plot from x=0, z=0.
      *
@@ -2652,7 +2489,6 @@ public class Plot {
                 Math.max(Math.abs(top.getX()), Math.abs(top.getZ()))
         );
     }
-
     /**
      * Expands the world border to include this plot if it is beyond the current border.
      */
@@ -2666,7 +2502,6 @@ public class Plot {
             this.area.setMeta("worldBorder", max);
         }
     }
-
     /**
      * Merges two plots. <br>- Assumes plots are directly next to each other <br> - saves to DB
      *
@@ -2691,7 +2526,6 @@ public class Plot {
                 greaterPlot.setMerged(Direction.NORTH, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
-                    //lesserPlot.removeSign();
                     lesserPlot.getPlotModificationManager().removeRoadSouth(queue);
                     Plot diagonal = greaterPlot.getRelative(Direction.EAST);
                     if (diagonal.isMerged(Direction.NORTHWEST)) {
@@ -2716,7 +2550,6 @@ public class Plot {
                 greaterPlot.setMerged(Direction.WEST, true);
                 lesserPlot.mergeData(greaterPlot);
                 if (removeRoads) {
-                    //lesserPlot.removeSign();
                     Plot diagonal = greaterPlot.getRelative(Direction.SOUTH);
                     if (diagonal.isMerged(Direction.NORTHWEST)) {
                         lesserPlot.plotModificationManager.removeRoadSouthEast(queue);
@@ -2730,7 +2563,6 @@ public class Plot {
             }
         }
     }
-
     /**
      * Check if the plot is merged in a given direction
      *
@@ -2740,7 +2572,6 @@ public class Plot {
     public boolean isMerged(final @NonNull Direction direction) {
         return isMerged(direction.getIndex());
     }
-
     /**
      * Get the value associated with the specified flag. This will first look at plot
      * specific flag values, then at the containing plot area and its default values
@@ -2753,7 +2584,6 @@ public class Plot {
     public @NonNull <T> T getFlag(final @NonNull Class<? extends PlotFlag<T, ?>> flagClass) {
         return this.flagContainer.getFlag(flagClass).getValue();
     }
-
     /**
      * Get the value associated with the specified flag. This will first look at plot
      * specific flag values, then at the containing plot area and its default values
@@ -2769,7 +2599,6 @@ public class Plot {
         final PlotFlag<?, ?> flagInstance = this.flagContainer.getFlagErased(flagClass);
         return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
     }
-
     public CompletableFuture<Caption> format(final Caption iInfo, PlotPlayer<?> player, final boolean full) {
         final CompletableFuture<Caption> future = new CompletableFuture<>();
         int num = this.getConnectedPlots().size();
@@ -2801,13 +2630,11 @@ public class Plot {
                     } else {
                         seen = TranslatableCaption.of("info.never").toComponent(player);
                     }
-
                     ComponentLike description = TranslatableCaption.of("info.plot_no_description").toComponent(player);
                     String descriptionValue = this.getFlag(DescriptionFlag.class);
                     if (!descriptionValue.isEmpty()) {
                         description = Component.text(descriptionValue);
                     }
-
                     ComponentLike flags;
                     Collection<PlotFlag<?, ?>> flagCollection = this.getApplicableFlags(true);
                     if (flagCollection.isEmpty()) {
@@ -2870,7 +2697,6 @@ public class Plot {
                     SimpleDateFormat sdf = new SimpleDateFormat(Settings.Timeformat.DATE_FORMAT);
                     sdf.setTimeZone(TimeZone.getTimeZone(Settings.Timeformat.TIME_ZONE));
                     String newDate = sdf.format(creationDate);
-
                     tagBuilder.tag("id", Tag.inserting(Component.text(getId().toString())));
                     tagBuilder.tag("alias", Tag.inserting(alias));
                     tagBuilder.tag("num", Tag.inserting(Component.text(num)));
@@ -2943,7 +2769,6 @@ public class Plot {
         );
         return future;
     }
-
     /**
      * If rating categories are enabled, get the average rating by category.<br>
      * - The index corresponds to the index of the category in the config
@@ -2987,7 +2812,6 @@ public class Plot {
         }
         return ratings;
     }
-
     /**
      * Get the plot flag container
      *
@@ -2996,7 +2820,6 @@ public class Plot {
     public @NonNull FlagContainer getFlagContainer() {
         return this.flagContainer;
     }
-
     /**
      * Get the plot comment container. This can be used to manage
      * and access plot comments
@@ -3006,7 +2829,6 @@ public class Plot {
     public @NonNull PlotCommentContainer getPlotCommentContainer() {
         return this.plotCommentContainer;
     }
-
     /**
      * Get the plot modification manager
      *
@@ -3015,5 +2837,4 @@ public class Plot {
     public @NonNull PlotModificationManager getPlotModificationManager() {
         return this.plotModificationManager;
     }
-
 }

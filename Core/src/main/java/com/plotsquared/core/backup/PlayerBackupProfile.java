@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
-
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -31,7 +30,6 @@ import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,23 +41,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
 /**
  * A profile associated with a player (normally a plot owner) and a
  * plot, which is used to store and retrieve plot backups
  * {@inheritDoc}
  */
 public class PlayerBackupProfile implements BackupProfile {
-
     static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
-
     private final UUID owner;
     private final Plot plot;
     private final BackupManager backupManager;
     private final SchematicHandler schematicHandler;
     private final Object backupLock = new Object();
     private volatile List<Backup> backupCache;
-
     @Inject
     public PlayerBackupProfile(
             @Assisted final @NonNull UUID owner, @Assisted final @NonNull Plot plot,
@@ -70,12 +64,10 @@ public class PlayerBackupProfile implements BackupProfile {
         this.backupManager = backupManager;
         this.schematicHandler = schematicHandler;
     }
-
     private static boolean isValidFile(final @NonNull Path path) {
         final String name = path.getFileName().toString();
         return name.endsWith(".schem") || name.endsWith(".schematic");
     }
-
     private static Path resolve(final @NonNull Path parent, final String child) {
         Path path = parent;
         try {
@@ -91,7 +83,6 @@ public class PlayerBackupProfile implements BackupProfile {
         }
         return path;
     }
-
     @Override
     public @NonNull CompletableFuture<List<Backup>> listBackups() {
         synchronized (this.backupLock) {
@@ -128,7 +119,6 @@ public class PlayerBackupProfile implements BackupProfile {
             });
         }
     }
-
     @Override
     public void destroy() {
         this.listBackups().whenCompleteAsync((backups, error) -> {
@@ -139,14 +129,12 @@ public class PlayerBackupProfile implements BackupProfile {
             this.backupCache = null;
         });
     }
-
     public @NonNull Path getBackupDirectory() {
         return resolve(resolve(
                 resolve(backupManager.getBackupPath(), Objects.requireNonNull(plot.getArea().toString(), "plot area id")),
                 Objects.requireNonNull(plot.getId().toDashSeparatedString(), "plot id")
         ), Objects.requireNonNull(owner.toString(), "owner"));
     }
-
     @Override
     public @NonNull CompletableFuture<Backup> createBackup() {
         final CompletableFuture<Backup> future = new CompletableFuture<>();
@@ -168,7 +156,6 @@ public class PlayerBackupProfile implements BackupProfile {
         });
         return future;
     }
-
     @Override
     public @NonNull CompletableFuture<Void> restoreBackup(final @NonNull Backup backup, @Nullable PlotPlayer<?> player) {
         final CompletableFuture<Void> future = new CompletableFuture<>();
@@ -213,5 +200,4 @@ public class PlayerBackupProfile implements BackupProfile {
         }
         return future;
     }
-
 }

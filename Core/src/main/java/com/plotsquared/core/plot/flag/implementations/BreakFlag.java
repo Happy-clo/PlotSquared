@@ -17,26 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Collections;
 import java.util.List;
-
 public class BreakFlag extends BlockTypeListFlag<BreakFlag> {
-
     public static final BreakFlag BREAK_NONE = new BreakFlag(Collections.emptyList());
-
     protected BreakFlag(List<BlockTypeWrapper> blockTypeList) {
         super(blockTypeList, TranslatableCaption.of("flags.flag_description_break"));
     }
-
     @Override
     protected BreakFlag flagOf(@NonNull List<BlockTypeWrapper> value) {
         return new BreakFlag(value);
     }
-
 }

@@ -17,17 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.comment;
-
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.plotsquared.core.util.task.TaskManager;
-
 import java.util.ArrayList;
 import java.util.List;
-
 public class InboxOwner extends CommentInbox {
-
     @Override
     public boolean getComments(final Plot plot, final RunnableVal<List<PlotComment>> whenDone) {
         List<PlotComment> comments = plot.getPlotCommentContainer().getComments(toString());
@@ -52,7 +48,6 @@ public class InboxOwner extends CommentInbox {
         });
         return true;
     }
-
     @Override
     public boolean addComment(Plot plot, PlotComment comment) {
         if (plot.getOwner() == null) {
@@ -62,10 +57,8 @@ public class InboxOwner extends CommentInbox {
         DBFunc.setComment(plot, comment);
         return true;
     }
-
     @Override
     public String toString() {
         return "owner";
     }
-
 }

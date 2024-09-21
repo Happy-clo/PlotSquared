@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class TamedAttackFlag extends BooleanFlag<TamedAttackFlag> {
-
     public static final TamedAttackFlag TAMED_ATTACK_TRUE = new TamedAttackFlag(true);
     public static final TamedAttackFlag TAMED_ATTACK_FALSE = new TamedAttackFlag(false);
-
     private TamedAttackFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_tamed_attack"));
     }
-
     @Override
     protected TamedAttackFlag flagOf(@NonNull Boolean value) {
         return value ? TAMED_ATTACK_TRUE : TAMED_ATTACK_FALSE;
     }
-
 }

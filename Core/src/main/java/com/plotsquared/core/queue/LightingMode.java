@@ -17,35 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
-
 import java.util.HashMap;
 import java.util.Map;
-
 public enum LightingMode {
-
     NONE(0),
     PLACEMENT(1),
     REPLACEMENT(2),
     ALL(3);
-
     private static final Map<Integer, LightingMode> map = new HashMap<>();
-
     static {
         for (LightingMode mode : LightingMode.values()) {
             map.put(mode.mode, mode);
         }
     }
-
     private final int mode;
-
     LightingMode(int mode) {
         this.mode = mode;
     }
-
     public static LightingMode valueOf(int mode) {
         return map.get(mode);
     }
-
     public int getMode() {
         return mode;
     }

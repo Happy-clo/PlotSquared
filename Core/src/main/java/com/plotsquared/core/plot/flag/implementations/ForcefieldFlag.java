@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class ForcefieldFlag extends BooleanFlag<ForcefieldFlag> {
-
     public static final ForcefieldFlag FORCEFIELD_TRUE = new ForcefieldFlag(true);
     public static final ForcefieldFlag FORCEFIELD_FALSE = new ForcefieldFlag(false);
-
     private ForcefieldFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_forcefield"));
     }
-
     @Override
     protected ForcefieldFlag flagOf(@NonNull Boolean value) {
         return value ? FORCEFIELD_TRUE : FORCEFIELD_FALSE;
     }
-
 }

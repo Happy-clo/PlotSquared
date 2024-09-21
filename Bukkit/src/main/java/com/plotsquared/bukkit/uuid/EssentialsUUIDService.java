@@ -17,34 +17,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
-
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
 /**
  * UUID service using the EssentialsX API
  */
 public class EssentialsUUIDService implements UUIDService {
-
     private final Essentials essentials;
-
     public EssentialsUUIDService() {
         this.essentials = Essentials.getPlugin(Essentials.class);
     }
-
     @Override
     public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         return Collections.emptyList();
     }
-
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
@@ -62,5 +55,4 @@ public class EssentialsUUIDService implements UUIDService {
         }
         return mappings;
     }
-
 }

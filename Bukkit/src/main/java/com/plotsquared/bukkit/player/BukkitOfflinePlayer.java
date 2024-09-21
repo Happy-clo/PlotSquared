@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.player;
-
 import com.plotsquared.core.permissions.NullPermissionProfile;
 import com.plotsquared.core.permissions.PermissionHandler;
 import com.plotsquared.core.permissions.PermissionProfile;
@@ -26,14 +25,10 @@ import org.bukkit.OfflinePlayer;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.UUID;
-
 public class BukkitOfflinePlayer implements OfflinePlotPlayer {
-
     public final OfflinePlayer player;
     private final PermissionProfile permissionProfile;
-
     /**
      * Please do not use this method. Instead use BukkitUtil.getPlayer(Player),
      * as it caches player objects.
@@ -49,24 +44,20 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
         this.permissionProfile = permissionHandler.getPermissionProfile(this)
                 .orElse(NullPermissionProfile.INSTANCE);
     }
-
     @NonNull
     @Override
     public UUID getUUID() {
         return this.player.getUniqueId();
     }
-
     @Override
     @NonNegative
     public long getLastPlayed() {
         return this.player.getLastSeen();
     }
-
     @Override
     public String getName() {
         return this.player.getName();
     }
-
     @Override
     public boolean hasPermission(
             final @Nullable String world,
@@ -74,7 +65,6 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
     ) {
         return this.permissionProfile.hasPermission(world, permission);
     }
-
     @Override
     public boolean hasKeyedPermission(
             final @Nullable String world,
@@ -86,10 +76,8 @@ public class BukkitOfflinePlayer implements OfflinePlotPlayer {
                 stub + ".*"
         );
     }
-
     @Override
     public boolean hasPermission(@NonNull final String permission, final boolean notify) {
         return hasPermission(permission);
     }
-
 }

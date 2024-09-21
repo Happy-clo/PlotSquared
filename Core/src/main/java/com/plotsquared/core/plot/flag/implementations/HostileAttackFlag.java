@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class HostileAttackFlag extends BooleanFlag<HostileAttackFlag> {
-
     public static final HostileAttackFlag HOSTILE_ATTACK_TRUE = new HostileAttackFlag(true);
     public static final HostileAttackFlag HOSTILE_ATTACK_FALSE = new HostileAttackFlag(false);
-
     private HostileAttackFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_hostile_attack"));
     }
-
     @Override
     protected HostileAttackFlag flagOf(@NonNull Boolean value) {
         return value ? HOSTILE_ATTACK_TRUE : HOSTILE_ATTACK_FALSE;
     }
-
 }

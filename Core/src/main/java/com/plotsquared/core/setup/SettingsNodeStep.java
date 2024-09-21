@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.setup;
-
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.configuration.ConfigurationNode;
@@ -29,19 +28,15 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Collection;
 import java.util.Collections;
-
 /**
  * A SettingsNodeStep is a step wrapping a {@link ConfigurationNode}.
  */
 public class SettingsNodeStep implements SetupStep {
-
     private final ConfigurationNode configurationNode;
     private final int id;
     private final SetupStep next;
-
     public SettingsNodeStep(
             final ConfigurationNode configurationNode, final int id,
             final SettingsNodesWrapper wrapper
@@ -54,7 +49,6 @@ public class SettingsNodeStep implements SetupStep {
             this.next = wrapper.afterwards();
         }
     }
-
     @Override
     public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument) {
         if (this.configurationNode.isValid(argument)) {
@@ -62,19 +56,16 @@ public class SettingsNodeStep implements SetupStep {
         }
         return this.next;
     }
-
     @NonNull
     @Override
     public Collection<String> getSuggestions() {
         return this.configurationNode.getSuggestions();
     }
-
     @Nullable
     @Override
     public String getDefaultValue() {
         return String.valueOf(this.configurationNode.getDefaultValue());
     }
-
     @Override
     public void announce(PlotPlayer<?> plotPlayer) {
         plotPlayer.sendMessage(
@@ -90,7 +81,6 @@ public class SettingsNodeStep implements SetupStep {
                         .build()
         );
     }
-
     @Override
     public Collection<Command> createSuggestions(PlotPlayer<?> plotPlayer, String argument) {
         switch (this.configurationNode.getType().getType()) {
@@ -108,13 +98,10 @@ public class SettingsNodeStep implements SetupStep {
         }
         return Collections.emptyList();
     }
-
     public ConfigurationNode getConfigurationNode() {
         return this.configurationNode;
     }
-
     public int getId() {
         return this.id;
     }
-
 }

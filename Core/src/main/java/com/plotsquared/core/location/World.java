@@ -17,16 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.location;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * PlotSquared representation of a platform world
  *
  * @param <T> Platform world type
  */
 public interface World<T> {
-
     /**
      * Get a {@link NullWorld} implementation
      *
@@ -36,72 +33,57 @@ public interface World<T> {
     static <T> NullWorld<T> nullWorld() {
         return new NullWorld<>();
     }
-
     /**
      * Get the platform world represented by this world
      *
      * @return Platform world
      */
     @NonNull T getPlatformWorld();
-
     /**
      * Get the name of the world
      *
      * @return World name
      */
     @NonNull String getName();
-
     /**
      * Get the min world height. Inclusive.
      *
      * @since 6.6.0
      */
     int getMinHeight();
-
-
     /**
      * Get the max world height. Inclusive.
      *
      * @since 6.6.0
      */
     int getMaxHeight();
-
     class NullWorld<T> implements World<T> {
-
         private NullWorld() {
         }
-
         @NonNull
         @Override
         public T getPlatformWorld() {
             throw new UnsupportedOperationException("Cannot get platform world from NullWorld");
         }
-
         @Override
         public @NonNull String getName() {
             return "";
         }
-
         @Override
         public int getMinHeight() {
             return 0;
         }
-
         @Override
         public int getMaxHeight() {
             return 0;
         }
-
         @Override
         public boolean equals(final Object obj) {
             return obj instanceof NullWorld;
         }
-
         @Override
         public int hashCode() {
             return "null".hashCode();
         }
-
     }
-
 }

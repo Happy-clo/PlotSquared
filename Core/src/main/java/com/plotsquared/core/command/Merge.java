@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -38,9 +37,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.UUID;
-
 @CommandDeclaration(command = "merge",
         aliases = "m",
         permission = "plots.merge",
@@ -49,13 +46,10 @@ import java.util.UUID;
         requiredType = RequiredType.NONE,
         confirmation = true)
 public class Merge extends SubCommand {
-
     public static final String[] values = new String[]{"north", "east", "south", "west"};
     public static final String[] aliases = new String[]{"n", "e", "s", "w"};
-
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
-
     @Inject
     public Merge(
             final @NonNull EventDispatcher eventDispatcher,
@@ -64,7 +58,6 @@ public class Merge extends SubCommand {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
-
     public static String direction(float yaw) {
         yaw = yaw / 90;
         int i = Math.round(yaw);
@@ -76,7 +69,6 @@ public class Merge extends SubCommand {
             default -> "";
         };
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocationFull();
@@ -140,7 +132,6 @@ public class Merge extends SubCommand {
         boolean force = event.getEventResult() == Result.FORCE;
         direction = event.getDir();
         final int maxSize = event.getMax();
-
         if (!force && size - 1 > maxSize) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
@@ -151,9 +142,7 @@ public class Merge extends SubCommand {
         final PlotArea plotArea = plot.getArea();
         PlotExpression priceExr = plotArea.getPrices().getOrDefault("merge", null);
         final double price = priceExr == null ? 0d : priceExr.evaluate(size);
-
         UUID uuid = player.getUUID();
-
         if (!force && !plot.isOwner(uuid)) {
             if (!player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_MERGE)) {
                 player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
@@ -328,5 +317,4 @@ public class Merge extends SubCommand {
         player.sendMessage(TranslatableCaption.of("merge.merge_requested"));
         return true;
     }
-
 }

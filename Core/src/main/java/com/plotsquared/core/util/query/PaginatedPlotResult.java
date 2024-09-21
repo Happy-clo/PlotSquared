@@ -17,27 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
-
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Collections;
 import java.util.List;
-
 /**
  * Paginated collection of plots as a result of a {@link PlotQuery query}
  */
 public final class PaginatedPlotResult {
-
     private final List<Plot> plots;
     private final int pageSize;
-
     PaginatedPlotResult(final @NonNull List<Plot> plots, final int pageSize) {
         this.plots = plots;
         this.pageSize = pageSize;
     }
-
     /**
      * Get the plots belonging to a certain page.
      *
@@ -53,7 +47,6 @@ public final class PaginatedPlotResult {
         final int to = Math.max(from + pageSize, this.plots.size());
         return this.plots.subList(from, to);
     }
-
     /**
      * Get the number of available pages
      *
@@ -62,5 +55,4 @@ public final class PaginatedPlotResult {
     public int getPages() {
         return (int) Math.ceil((double) plots.size() / (double) pageSize);
     }
-
 }

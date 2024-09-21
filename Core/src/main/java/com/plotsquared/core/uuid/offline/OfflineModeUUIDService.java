@@ -17,24 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid.offline;
-
 import com.google.common.base.Charsets;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
-
 /**
  * Name provider service that creates UUIDs from usernames
  */
 public class OfflineModeUUIDService implements UUIDService {
-
     @NonNull
     protected final UUID getFromUsername(@NonNull String username) {
         if (Settings.UUID.FORCE_LOWERCASE) {
@@ -42,12 +38,10 @@ public class OfflineModeUUIDService implements UUIDService {
         }
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(Charsets.UTF_8));
     }
-
     @Override
     public @NonNull List<@NonNull UUIDMapping> getNames(final @NonNull List<@NonNull UUID> uuids) {
         return Collections.emptyList();
     }
-
     @Override
     public @NonNull List<@NonNull UUIDMapping> getUUIDs(@NonNull List<@NonNull String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
@@ -56,5 +50,4 @@ public class OfflineModeUUIDService implements UUIDService {
         }
         return mappings;
     }
-
 }

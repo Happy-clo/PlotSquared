@@ -17,20 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.placeholders;
-
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * A {@link Placeholder placeholder} that requires a {@link com.plotsquared.core.plot.Plot plot}
  */
 public abstract class PlotSpecificPlaceholder extends Placeholder {
-
     public PlotSpecificPlaceholder(final @NonNull String key) {
         super(key);
     }
-
     @Override
     public @NonNull
     final String getValue(final @NonNull PlotPlayer<?> player) {
@@ -40,7 +36,6 @@ public abstract class PlotSpecificPlaceholder extends Placeholder {
         }
         return this.getValue(player, plot);
     }
-
     /**
      * Get the value of the placeholder for the {@link PlotPlayer player} in a specific {@link Plot plot}
      *
@@ -53,5 +48,4 @@ public abstract class PlotSpecificPlaceholder extends Placeholder {
             final @NonNull PlotPlayer<?> player,
             final @NonNull Plot plot
     );
-
 }

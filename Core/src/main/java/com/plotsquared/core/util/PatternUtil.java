@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -37,12 +36,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
-
 public class PatternUtil {
-
     public static BaseBlock apply(@NonNull Pattern pattern, int x, int y, int z) {
         Preconditions.checkNotNull(pattern, "Pattern may not be null");
         if (pattern instanceof BlockPattern
@@ -52,11 +48,9 @@ public class PatternUtil {
         }
         return pattern.applyBlock(BlockVector3.at(x, y, z));
     }
-
     public static Pattern parse(PlotPlayer<?> plotPlayer, String input) {
         return parse(plotPlayer, input, true);
     }
-
     public static List<String> getSuggestions(String input) {
         try {
             return WorldEdit.getInstance().getPatternFactory().getSuggestions(input);
@@ -64,7 +58,6 @@ public class PatternUtil {
         }
         return new ArrayList<>();
     }
-
     public static Pattern parse(PlotPlayer<?> plotPlayer, String input, boolean allowLegacy) {
         ParserContext context = new ParserContext();
         if (plotPlayer != null) {
@@ -89,7 +82,6 @@ public class PatternUtil {
             );
         }
     }
-
     public static boolean isAir(Pattern pattern) {
         if (pattern instanceof BlockPattern) {
             return ((BlockPattern) pattern).getBlock().getBlockType().getMaterial().isAir();
@@ -105,5 +97,4 @@ public class PatternUtil {
         }
         return false;
     }
-
 }

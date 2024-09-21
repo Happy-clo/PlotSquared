@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -35,29 +34,24 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
-
 @CommandDeclaration(command = "trust",
         aliases = {"t"},
         requiredType = RequiredType.PLAYER,
         usage = "/plot trust <player | *>",
         category = CommandCategory.SETTINGS)
 public class Trust extends Command {
-
     private final EventDispatcher eventDispatcher;
-
     @Inject
     public Trust(final @NonNull EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
     }
-
     @Override
     public CompletableFuture<Boolean> execute(
             final PlotPlayer<?> player, String[] args,
@@ -73,11 +67,9 @@ public class Trust extends Command {
                 currentPlot.isOwner(player.getUUID()) || player.hasPermission(Permission.PERMISSION_ADMIN_COMMAND_TRUST),
                 TranslatableCaption.of("permission.no_plot_perms")
         );
-
         checkTrue(args.length == 1, TranslatableCaption.of("commandconfig.command_syntax"),
                 TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
         );
-
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable != null) {
@@ -95,7 +87,6 @@ public class Trust extends Command {
                 checkTrue(!uuids.isEmpty(), TranslatableCaption.of("errors.invalid_player"),
                         TagResolver.resolver("value", Tag.inserting(Component.text(args[0])))
                 );
-
                 Iterator<UUID> iterator = uuids.iterator();
                 int size = currentPlot.getTrusted().size() + currentPlot.getMembers().size();
                 while (iterator.hasNext()) {
@@ -149,7 +140,6 @@ public class Trust extends Command {
                     );
                     return;
                 }
-                // Success
                 confirm.run(this, () -> {
                     for (UUID uuid : uuids) {
                         if (uuid != DBFunc.EVERYONE) {
@@ -169,10 +159,8 @@ public class Trust extends Command {
         });
         return CompletableFuture.completedFuture(true);
     }
-
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit;
-
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.command.MainCommand;
 import com.plotsquared.core.configuration.Settings;
@@ -31,15 +30,12 @@ import org.bukkit.command.ProxiedCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-
 public class BukkitCommand implements CommandExecutor, TabCompleter {
-
     @Override
     public boolean onCommand(
             CommandSender commandSender, Command command, String commandLabel,
@@ -55,7 +51,6 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         }
         return false;
     }
-
     @Override
     public List<String> onTabComplete(
             CommandSender commandSender, Command command, String label,
@@ -82,5 +77,4 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
         }
         return result;
     }
-
 }

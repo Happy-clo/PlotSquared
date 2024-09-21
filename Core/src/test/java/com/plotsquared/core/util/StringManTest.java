@@ -17,17 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
-
 public class StringManTest {
-
     @Test
     public void ensureThatAllVariationsHasTheExpectedOutcome() {
-
         List<Message> messages = List.of(
                 new Message("title", List.of("title")),
                 new Message("title \"sub title\"", List.of("title", "sub title")),
@@ -38,10 +33,8 @@ public class StringManTest {
                         List.of("How <bold>bold</bold> of you", "to assume I like <rainbow>rainbows</rainbow>")
                 )
         );
-
         for (Message message : messages) {
             var messageList = StringMan.splitMessage(message.input);
-
             Assertions.assertEquals(message.expected.size(), messageList.size());
             if (message.expected.size() > 0) {
                 Assertions.assertEquals(message.expected.get(0), messageList.get(0));
@@ -51,9 +44,6 @@ public class StringManTest {
             }
         }
     }
-
     private record Message(String input, List<String> expected) {
-
     }
-
 }

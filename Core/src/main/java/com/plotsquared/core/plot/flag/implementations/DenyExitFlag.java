@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class DenyExitFlag extends BooleanFlag<DenyExitFlag> {
-
     public static final DenyExitFlag DENY_EXIT_FLAG_TRUE = new DenyExitFlag(true);
     public static final DenyExitFlag DENY_EXIT_FLAG_FALSE = new DenyExitFlag(false);
-
     protected DenyExitFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_deny_exit"));
     }
-
     @Override
     protected DenyExitFlag flagOf(@NonNull Boolean value) {
         return value ? DENY_EXIT_FLAG_TRUE : DENY_EXIT_FLAG_FALSE;
     }
-
 }

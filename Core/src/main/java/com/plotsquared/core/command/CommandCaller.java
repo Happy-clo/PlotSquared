@@ -17,17 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.configuration.caption.Caption;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * Any entity that is able to execute commands, receive messages &amp; and have
  * permission nodes
  */
 public interface CommandCaller {
-
     /**
      * Send a message to the command caller
      *
@@ -35,7 +32,6 @@ public interface CommandCaller {
      * @param replacements Variable replacements
      */
     void sendMessage(@NonNull Caption caption, @NonNull TagResolver... replacements);
-
     /**
      * Check the player's permissions. <i>Will be cached if permission caching is enabled.</i>
      *
@@ -43,12 +39,10 @@ public interface CommandCaller {
      * @return if permission is had
      */
     boolean hasPermission(@NonNull String permission);
-
     /**
      * Get the type of the caller
      *
      * @return Caller type
      */
     RequiredType getSuperCaller();
-
 }

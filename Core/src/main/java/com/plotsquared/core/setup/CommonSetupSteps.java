@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.setup;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -37,31 +36,26 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 public enum CommonSetupSteps implements SetupStep {
     CHOOSE_GENERATOR(TranslatableCaption.of("setup.setup_init")) {
         @Override
         public SetupStep handleInput(PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String arg) {
             if (!SetupUtils.generators.containsKey(arg)) {
                 plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_generator_error"));
-                return this; // invalid input -> same setup step
+                return this;
             }
             builder.generatorName(arg);
-            return CommonSetupSteps.CHOOSE_PLOT_AREA_TYPE; // proceed with next step
+            return CommonSetupSteps.CHOOSE_PLOT_AREA_TYPE;
         }
-
-
         @Override
         public Collection<String> getSuggestions() {
             return Collections.unmodifiableSet(SetupUtils.generators.keySet());
         }
-
         @Nullable
         @Override
         public String getDefaultValue() {
@@ -97,7 +91,6 @@ public enum CommonSetupSteps implements SetupStep {
                     builder.plotManager(PlotSquared.platform().pluginName());
                     plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_world_generator_error"));
                     builder.settingsNodesWrapper(CommonSetupSteps.wrap(builder.plotManager()));
-                    // TODO why is processSetup not called here?
                 }
                 if (builder.plotAreaType() == PlotAreaType.PARTIAL) {
                     return CHOOSE_AREA_ID;
@@ -106,7 +99,6 @@ public enum CommonSetupSteps implements SetupStep {
                 }
             }
         }
-
         @Nullable
         @Override
         public String getDefaultValue() {
@@ -129,7 +121,6 @@ public enum CommonSetupSteps implements SetupStep {
             builder.areaName(argument);
             return CHOOSE_MINIMUM_PLOT_ID;
         }
-
         @Nullable
         @Override
         public String getDefaultValue() {
@@ -150,7 +141,6 @@ public enum CommonSetupSteps implements SetupStep {
             }
             return CHOOSE_MAXIMUM_PLOT_ID;
         }
-
         @Override
         public String getDefaultValue() {
             return "0;0";
@@ -170,7 +160,6 @@ public enum CommonSetupSteps implements SetupStep {
             }
             return CHOOSE_TERRAIN_TYPE;
         }
-
         @Override
         public String getDefaultValue() {
             return "0;0";
@@ -192,7 +181,6 @@ public enum CommonSetupSteps implements SetupStep {
             SettingsNodesWrapper wrapper = builder.settingsNodesWrapper();
             return wrapper.getFirstStep();
         }
-
         @Nullable
         @Override
         public String getDefaultValue() {
@@ -236,18 +224,15 @@ public enum CommonSetupSteps implements SetupStep {
             plotPlayer.sendMessage(TranslatableCaption.of("setup.setup_finished"));
             return null;
         }
-
         @Nullable
         @Override
         public String getDefaultValue() {
             return null;
         }
     };
-
     @NonNull
     private final Collection<String> suggestions;
     private final Caption description;
-
     /**
      * @param suggestions the input suggestions for this step
      * @param description the caption describing this step
@@ -256,37 +241,30 @@ public enum CommonSetupSteps implements SetupStep {
         this.suggestions = suggestions;
         this.description = description;
     }
-
     CommonSetupSteps(@NonNull Caption description) {
         this.description = description;
         this.suggestions = Collections.emptyList();
     }
-
     <E extends Enum<E>> CommonSetupSteps(@NonNull Class<E> argumentType, Caption description) {
         this(enumToStrings(argumentType), description);
     }
-
     private static <E extends Enum<E>> Collection<String> enumToStrings(Class<E> type) {
         return Arrays.stream(type.getEnumConstants()).map(e -> e.toString().toLowerCase()).collect(Collectors.toList());
     }
-
     private static SettingsNodesWrapper wrap(String plotManager) {
         return new SettingsNodesWrapper(SetupUtils.generators.get(plotManager).getPlotGenerator()
                 .getNewPlotArea("CheckingPlotSquaredGenerator", null, null, null)
                 .getSettingNodes(), CHOOSE_WORLD_NAME);
     }
-
     private static boolean isValidWorldName(String s) {
         return s
                 .chars()
                 .allMatch((i) -> i == 95 || i == 45 || i >= 97 && i <= 122 || i >= 65 && i <= 90 || i >= 48 && i <= 57 || i == 46);
     }
-
     @Override
     public void announce(PlotPlayer<?> plotPlayer) {
         plotPlayer.sendMessage(this.description);
     }
-
     public @NonNull Collection<String> getSuggestions() {
         return this.suggestions;
     }

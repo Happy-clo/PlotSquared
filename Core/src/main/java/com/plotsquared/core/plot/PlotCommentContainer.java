@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
-
 import com.plotsquared.core.plot.comment.PlotComment;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.List;
-
 /**
  * Container for {@link com.plotsquared.core.plot.Plot} comments
  */
 public final class PlotCommentContainer {
-
     private final Plot plot;
-
     PlotCommentContainer(final @NonNull Plot plot) {
         this.plot = plot;
     }
-
     /**
      * Remove a comment from the plot
      *
@@ -43,7 +37,6 @@ public final class PlotCommentContainer {
     public boolean removeComment(final @NonNull PlotComment comment) {
         return this.getSettings().removeComment(comment);
     }
-
     /**
      * Remove a list of comments from the plot
      *
@@ -52,7 +45,6 @@ public final class PlotCommentContainer {
     public void removeComments(final @NonNull List<PlotComment> comments) {
         this.getSettings().removeComments(comments);
     }
-
     /**
      * Get all comments in a specific inbox
      *
@@ -62,7 +54,6 @@ public final class PlotCommentContainer {
     public @NonNull List<PlotComment> getComments(final @NonNull String inbox) {
         return this.getSettings().getComments(inbox);
     }
-
     /**
      * Add a comment to the plot
      *
@@ -71,7 +62,6 @@ public final class PlotCommentContainer {
     public void addComment(final @NonNull PlotComment comment) {
         this.getSettings().addComment(comment);
     }
-
     /**
      * Set the plot comments
      *
@@ -80,7 +70,6 @@ public final class PlotCommentContainer {
     public void setComments(final @NonNull List<PlotComment> list) {
         this.getSettings().setComments(list);
     }
-
     @NonNull
     private PlotSettings getSettings() {
         if (this.plot.getSettings() == null) {
@@ -88,5 +77,4 @@ public final class PlotCommentContainer {
         }
         return this.plot.getSettings();
     }
-
 }

@@ -17,21 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
-
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-
 import java.util.UUID;
-
 /**
  *
  */
 public class PlayerPlotHelperEvent extends PlotEvent {
-
     private final PlotPlayer<?> initiator;
     private final boolean added;
     private final UUID player;
-
     /**
      * PlayerPlotHelperEvent: Called when a plot helper is added/removed
      *
@@ -46,7 +41,6 @@ public class PlayerPlotHelperEvent extends PlotEvent {
         this.added = added;
         this.player = player;
     }
-
     /**
      * If a player was added
      *
@@ -55,7 +49,6 @@ public class PlayerPlotHelperEvent extends PlotEvent {
     public boolean wasAdded() {
         return this.added;
     }
-
     /**
      * The UUID added/removed
      *
@@ -64,7 +57,6 @@ public class PlayerPlotHelperEvent extends PlotEvent {
     public UUID getPlayer() {
         return this.player;
     }
-
     /**
      * The player initiating the action
      *
@@ -73,5 +65,4 @@ public class PlayerPlotHelperEvent extends PlotEvent {
     public PlotPlayer<?> getInitiator() {
         return this.initiator;
     }
-
 }

@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class DenyPortalsFlag extends BooleanFlag<DenyPortalsFlag> {
-
     public static final DenyPortalsFlag DENY_PORTALS_TRUE = new DenyPortalsFlag(true);
     public static final DenyPortalsFlag DENY_PORTALS_FALSE = new DenyPortalsFlag(false);
-
     private DenyPortalsFlag(final boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_deny_portals"));
     }
-
     @Override
     protected DenyPortalsFlag flagOf(final @NonNull Boolean value) {
         return value ? DENY_PORTALS_TRUE : DENY_PORTALS_FALSE;
     }
-
 }

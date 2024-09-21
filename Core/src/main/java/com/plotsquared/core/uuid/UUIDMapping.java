@@ -17,11 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.UUID;
-
 /**
  * A pair consisting of a UUID and a username
  */
@@ -29,5 +26,4 @@ public record UUIDMapping(
         @NonNull UUID uuid,
         @NonNull String username
 ) {
-
 }

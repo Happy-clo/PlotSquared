@@ -17,22 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
-
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 /**
  * UUID service that uses the Paper profile API
  */
 public class PaperUUIDService implements UUIDService {
-
     @Override
     public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
@@ -44,7 +40,6 @@ public class PaperUUIDService implements UUIDService {
         }
         return mappings;
     }
-
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
@@ -56,5 +51,4 @@ public class PaperUUIDService implements UUIDService {
         }
         return mappings;
     }
-
 }

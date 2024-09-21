@@ -17,15 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.permissions;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 /**
  * A permission profile that can be used to check for permissions
  */
 public interface PermissionProfile {
-
     /**
      * Check if the owner of the profile has a given (global) permission
      *
@@ -35,7 +32,6 @@ public interface PermissionProfile {
     default boolean hasPermission(final @NonNull String permission) {
         return hasPermission(null, permission);
     }
-
     /**
      * Check if the owner of the profile has a given permission
      *
@@ -44,7 +40,6 @@ public interface PermissionProfile {
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
     boolean hasPermission(final @Nullable String world, @NonNull String permission);
-
     /**
      * Check if the owner of the profile has a given (global) keyed permission. Checks both {@code permission.key}
      * and {@code permission.*}
@@ -61,7 +56,6 @@ public interface PermissionProfile {
     ) {
         return hasKeyedPermission(null, permission, key);
     }
-
     /**
      * Check if the owner of the profile has a given keyed permission. Checks both {@code permission.key}
      * and {@code permission.*}
@@ -76,5 +70,4 @@ public interface PermissionProfile {
             @Nullable String world, final @NonNull String permission,
             final @NonNull String key
     );
-
 }

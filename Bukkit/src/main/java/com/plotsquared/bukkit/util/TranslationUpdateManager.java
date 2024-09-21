@@ -17,16 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
-
 import com.intellectualsites.annotations.NotPublic;
 import com.plotsquared.core.PlotSquared;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
-
 /**
  * This is a helper class which replaces older syntax no longer supported by MiniMessage with replacements in messages_%.json.
  * MiniMessage changed the syntax between major releases. To warrant a smooth upgrade, we attempt to replace any occurrences
@@ -36,7 +33,6 @@ import java.util.stream.Stream;
  */
 @NotPublic
 public class TranslationUpdateManager {
-
     public static void upgradeTranslationFile() throws IOException {
         String suggestCommand = "suggest_command";
         String suggestCommandReplacement = "run_command";
@@ -54,15 +50,12 @@ public class TranslationUpdateManager {
         String maximumMovesReplacement = "maximum_moves";
         String userMove = "userMove";
         String userMoveReplacement = "user_move";
-
-        // tag opening / closing characters are important, as the locale keys exist as well, which should not be replaced
         String listInfoUnknown = "<info.unknown>";
         String listInfoUnknownReplacement = "<unknown>";
         String listInfoServer = "<info.server>";
         String listInfoServerReplacement = "<server>";
         String listInfoEveryone = "<info.everyone>";
         String listInfoEveryoneReplacement = "<everyone>";
-
         try (Stream<Path> paths = Files.walk(Paths.get(PlotSquared.platform().getDirectory().toPath().resolve("lang").toUri()))) {
             paths
                     .filter(Files::isRegularFile)
@@ -82,7 +75,6 @@ public class TranslationUpdateManager {
                     });
         }
     }
-
     private static void replaceInFile(Path path, String searchText, String replacementText) {
         try {
             String content = Files.readString(path);
@@ -94,5 +86,4 @@ public class TranslationUpdateManager {
             e.printStackTrace();
         }
     }
-
 }

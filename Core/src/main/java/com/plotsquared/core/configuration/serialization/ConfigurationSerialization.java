@@ -17,9 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.serialization;
-
 import com.plotsquared.core.configuration.Configuration;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,21 +26,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 /**
  * Utility class for storing and retrieving classes for {@link Configuration}.
  */
 public class ConfigurationSerialization {
-
     public static final String SERIALIZED_TYPE_KEY = "==";
     private static final Map<String, Class<? extends ConfigurationSerializable>> aliases =
             new HashMap<>();
     private final Class<? extends ConfigurationSerializable> clazz;
-
     protected ConfigurationSerialization(Class<? extends ConfigurationSerializable> clazz) {
         this.clazz = clazz;
     }
-
     /**
      * Attempts to deserialize the given arguments into a new instance of the
      * given class.
@@ -62,7 +56,6 @@ public class ConfigurationSerialization {
     ) {
         return new ConfigurationSerialization(clazz).deserialize(args);
     }
-
     /**
      * Attempts to deserialize the given arguments into a new instance of the
      * given class.
@@ -78,11 +71,9 @@ public class ConfigurationSerialization {
      */
     public static ConfigurationSerializable deserializeObject(Map<String, ?> args) {
         Class<? extends ConfigurationSerializable> clazz = null;
-
         if (args.containsKey(SERIALIZED_TYPE_KEY)) {
             try {
                 String alias = (String) args.get(SERIALIZED_TYPE_KEY);
-
                 if (alias == null) {
                     throw new IllegalArgumentException("Cannot have null alias");
                 }
@@ -99,10 +90,8 @@ public class ConfigurationSerialization {
             throw new IllegalArgumentException(
                     "Args doesn't contain type key ('" + SERIALIZED_TYPE_KEY + "')");
         }
-
         return new ConfigurationSerialization(clazz).deserialize(args);
     }
-
     /**
      * Registers the given {@link ConfigurationSerializable} class by its
      * alias.
@@ -111,13 +100,11 @@ public class ConfigurationSerialization {
      */
     public static void registerClass(Class<? extends ConfigurationSerializable> clazz) {
         DelegateDeserialization delegate = clazz.getAnnotation(DelegateDeserialization.class);
-
         if (delegate == null) {
             registerClass(clazz, getAlias(clazz));
             registerClass(clazz, clazz.getName());
         }
     }
-
     /**
      * Registers the given alias to the specified {@link
      * ConfigurationSerializable} class.
@@ -132,7 +119,6 @@ public class ConfigurationSerialization {
     ) {
         aliases.put(alias, clazz);
     }
-
     /**
      * Unregisters the specified alias to a {@link ConfigurationSerializable}
      *
@@ -141,7 +127,6 @@ public class ConfigurationSerialization {
     public static void unregisterClass(String alias) {
         aliases.remove(alias);
     }
-
     /**
      * Unregisters any aliases for the specified {@link
      * ConfigurationSerializable} class.
@@ -152,7 +137,6 @@ public class ConfigurationSerialization {
         while (aliases.values().remove(clazz)) {
         }
     }
-
     /**
      * Attempts to get a registered {@link ConfigurationSerializable} class by
      * its alias.
@@ -163,7 +147,6 @@ public class ConfigurationSerialization {
     public static Class<? extends ConfigurationSerializable> getClassByAlias(String alias) {
         return aliases.get(alias);
     }
-
     /**
      * Gets the correct alias for the given {@link ConfigurationSerializable}
      * class.
@@ -173,7 +156,6 @@ public class ConfigurationSerialization {
      */
     public static String getAlias(Class<? extends ConfigurationSerializable> clazz) {
         DelegateDeserialization delegate = clazz.getAnnotation(DelegateDeserialization.class);
-
         if (delegate != null) {
             if (delegate.value() == clazz) {
                 delegate = null;
@@ -181,33 +163,26 @@ public class ConfigurationSerialization {
                 return getAlias(delegate.value());
             }
         }
-
         SerializableAs alias = clazz.getAnnotation(SerializableAs.class);
-
         if (alias != null) {
             return alias.value();
         }
-
         return clazz.getName();
     }
-
     protected Method getMethod(String name, boolean isStatic) {
         try {
             Method method = this.clazz.getDeclaredMethod(name, Map.class);
-
             if (!ConfigurationSerializable.class.isAssignableFrom(method.getReturnType())) {
                 return null;
             }
             if (Modifier.isStatic(method.getModifiers()) != isStatic) {
                 return null;
             }
-
             return method;
         } catch (NoSuchMethodException | SecurityException ignored) {
             return null;
         }
     }
-
     protected Constructor<? extends ConfigurationSerializable> getConstructor() {
         try {
             return this.clazz.getConstructor(Map.class);
@@ -215,12 +190,10 @@ public class ConfigurationSerialization {
             return null;
         }
     }
-
     protected ConfigurationSerializable deserializeViaMethod(Method method, Map<String, ?> args) {
         try {
             ConfigurationSerializable result =
                     (ConfigurationSerializable) method.invoke(null, args);
-
             if (result == null) {
                 Logger.getLogger(ConfigurationSerialization.class.getName()).log(
                         Level.SEVERE,
@@ -243,10 +216,8 @@ public class ConfigurationSerialization {
                 );
             }
         }
-
         return null;
     }
-
     protected ConfigurationSerializable deserializeViaCtor(
             Constructor<? extends ConfigurationSerializable> ctor, Map<String, ?> args
     ) {
@@ -265,10 +236,8 @@ public class ConfigurationSerialization {
                 );
             }
         }
-
         return null;
     }
-
     public ConfigurationSerializable deserialize(Map<String, ?> args) {
         if (args == null) {
             throw new NullPointerException("Args must not be null");
@@ -290,8 +259,6 @@ public class ConfigurationSerialization {
                 result = deserializeViaCtor(constructor, args);
             }
         }
-
         return result;
     }
-
 }

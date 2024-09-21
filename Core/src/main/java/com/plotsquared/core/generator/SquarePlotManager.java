@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
-
 import com.plotsquared.core.location.Direction;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -32,26 +31,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Iterator;
 import java.util.Set;
-
 /**
  * A plot manager with a square grid layout, with square shaped plots.
  */
 public abstract class SquarePlotManager extends GridPlotManager {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SquarePlotManager.class.getSimpleName());
-
     private final SquarePlotWorld squarePlotWorld;
     private final RegionManager regionManager;
-
     public SquarePlotManager(final @NonNull SquarePlotWorld squarePlotWorld, final @NonNull RegionManager regionManager) {
         super(squarePlotWorld);
         this.squarePlotWorld = squarePlotWorld;
         this.regionManager = regionManager;
     }
-
     @Override
     public boolean clearPlot(
             final @NonNull Plot plot,
@@ -80,7 +73,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
         run.run();
         return true;
     }
-
     @Override
     public Location getPlotTopLocAbs(@NonNull PlotId plotId) {
         int px = plotId.getX();
@@ -91,7 +83,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 .floor(squarePlotWorld.ROAD_WIDTH / 2) - 1;
         return Location.at(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMaxGenHeight(), z);
     }
-
     @Override
     public PlotId getPlotIdAbs(int x, int y, int z) {
         if (squarePlotWorld.ROAD_OFFSET_X != 0) {
@@ -124,7 +115,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
             return PlotId.of(dx, dz);
         }
     }
-
     public PlotId getNearestPlotId(@NonNull PlotArea plotArea, int x, int y, int z) {
         SquarePlotWorld dpw = (SquarePlotWorld) plotArea;
         if (dpw.ROAD_OFFSET_X != 0) {
@@ -148,7 +138,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
         }
         return PlotId.of(idx, idz);
     }
-
     @Override
     public PlotId getPlotId(int x, int y, int z) {
         try {
@@ -175,46 +164,36 @@ public abstract class SquarePlotManager extends GridPlotManager {
             PlotId id = PlotId.of(dx, dz);
             boolean[] merged = new boolean[]{rz <= pathWidthLower, rx > end, rz > end, rx <= pathWidthLower};
             int hash = HashUtil.hash(merged);
-            // Not merged, and no need to check if it is
             if (hash == 0) {
                 return id;
             }
             Plot plot = squarePlotWorld.getOwnedPlotAbs(id);
-            // Not merged, and standing on road
             if (plot == null) {
                 return null;
             }
             switch (hash) {
                 case 8 -> {
-                    // north
                     return plot.isMerged(Direction.NORTH) ? id : null;
                 }
                 case 4 -> {
-                    // east
                     return plot.isMerged(Direction.EAST) ? id : null;
                 }
                 case 2 -> {
-                    // south
                     return plot.isMerged(Direction.SOUTH) ? id : null;
                 }
                 case 1 -> {
-                    // west
                     return plot.isMerged(Direction.WEST) ? id : null;
                 }
                 case 12 -> {
-                    // northeast
                     return plot.isMerged(Direction.NORTHEAST) ? id : null;
                 }
                 case 6 -> {
-                    // southeast
                     return plot.isMerged(Direction.SOUTHEAST) ? id : null;
                 }
                 case 3 -> {
-                    // southwest
                     return plot.isMerged(Direction.SOUTHWEST) ? id : null;
                 }
                 case 9 -> {
-                    // northwest
                     return plot.isMerged(Direction.NORTHWEST) ? id : null;
                 }
             }
@@ -223,7 +202,6 @@ public abstract class SquarePlotManager extends GridPlotManager {
         }
         return null;
     }
-
     /**
      * Get the bottom plot loc (some basic math).
      */
@@ -237,5 +215,4 @@ public abstract class SquarePlotManager extends GridPlotManager {
                 - (int) Math.floor(squarePlotWorld.ROAD_WIDTH / 2);
         return Location.at(squarePlotWorld.getWorldName(), x, squarePlotWorld.getMinGenHeight(), z);
     }
-
 }

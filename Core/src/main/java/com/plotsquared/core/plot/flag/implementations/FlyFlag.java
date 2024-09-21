@@ -17,20 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Arrays;
 import java.util.Collection;
-
 public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
-
     public static final FlyFlag FLIGHT_FLAG_DISABLED = new FlyFlag(FlyStatus.DISABLED);
     public static final FlyFlag FLIGHT_FLAG_ENABLED = new FlyFlag(FlyStatus.ENABLED);
     public static final FlyFlag FLIGHT_FLAG_DEFAULT = new FlyFlag(FlyStatus.DEFAULT);
-
     protected FlyFlag(final FlyStatus value) {
         super(
                 value,
@@ -38,7 +33,6 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
                 TranslatableCaption.of("flags.flag_description_flight")
         );
     }
-
     @Override
     public FlyFlag parse(final @NonNull String input) {
         return switch (input.toLowerCase()) {
@@ -47,7 +41,6 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
             default -> FLIGHT_FLAG_DEFAULT;
         };
     }
-
     @Override
     public FlyFlag merge(final @NonNull FlyStatus newValue) {
         if (newValue == FlyStatus.ENABLED || this.getValue() == FlyStatus.ENABLED) {
@@ -55,17 +48,14 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
         }
         return flagOf(newValue);
     }
-
     @Override
     public String toString() {
         return this.getValue().name().toLowerCase();
     }
-
     @Override
     public String getExample() {
         return "true";
     }
-
     @Override
     protected FlyFlag flagOf(final @NonNull FlyStatus value) {
         return switch (value) {
@@ -74,16 +64,13 @@ public class FlyFlag extends PlotFlag<FlyFlag.FlyStatus, FlyFlag> {
             default -> FLIGHT_FLAG_DEFAULT;
         };
     }
-
     @Override
     public Collection<String> getTabCompletions() {
         return Arrays.asList("true", "false", "default");
     }
-
     public enum FlyStatus {
         ENABLED,
         DISABLED,
         DEFAULT
     }
-
 }

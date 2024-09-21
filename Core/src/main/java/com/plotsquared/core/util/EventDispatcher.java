@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.google.common.eventbus.EventBus;
 import com.intellectualsites.annotations.DoNotUse;
 import com.plotsquared.core.PlotSquared;
@@ -88,52 +87,41 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 @DoNotUse
 public class EventDispatcher {
-
     private final EventBus eventBus = new EventBus("PlotSquaredEvents");
     private final List<Object> listeners = new ArrayList<>();
     private final WorldEdit worldEdit;
-
     public EventDispatcher(final @Nullable WorldEdit worldEdit) {
         this.worldEdit = worldEdit;
     }
-
     public void registerListener(Object listener) {
         eventBus.register(listener);
         listeners.add(listener);
     }
-
     public void unregisterListener(Object listener) {
         eventBus.unregister(listener);
         listeners.remove(listener);
     }
-
     public void unregisterAll() {
         for (Object listener : listeners) {
             eventBus.unregister(listener);
         }
     }
-
     public void callGenericEvent(final @NonNull Object event) {
         eventBus.post(event);
     }
-
     public void callEvent(final @NonNull PlotEvent event) {
         eventBus.post(event);
     }
-
     public PlayerClaimPlotEvent callClaim(PlotPlayer<?> player, Plot plot, String schematic) {
         PlayerClaimPlotEvent event = new PlayerClaimPlotEvent(player, plot, schematic);
         callEvent(event);
         return event;
     }
-
     public PlayerAutoPlotEvent callAuto(
             PlotPlayer<?> player, PlotArea area, String schematic,
             int size_x, int size_z
@@ -143,13 +131,11 @@ public class EventDispatcher {
         callEvent(event);
         return event;
     }
-
     public PostPlayerAutoPlotEvent callPostAuto(PlotPlayer<?> player, Plot plot) {
         PostPlayerAutoPlotEvent event = new PostPlayerAutoPlotEvent(player, plot);
         callEvent(event);
         return event;
     }
-
     public PlayerAutoPlotsChosenEvent callAutoPlotsChosen(
             PlotPlayer<?> player, List<Plot> plots
     ) {
@@ -158,79 +144,66 @@ public class EventDispatcher {
         callEvent(event);
         return event;
     }
-
     public PlotClaimedNotifyEvent callPlotClaimedNotify(Plot plot, boolean auto) {
         PlotClaimedNotifyEvent event = new PlotClaimedNotifyEvent(plot, auto);
         callEvent(event);
         return event;
     }
-
     public PlayerTeleportToPlotEvent callTeleport(PlotPlayer<?> player, Location from, Plot plot, TeleportCause cause) {
         PlayerTeleportToPlotEvent event = new PlayerTeleportToPlotEvent(player, from, plot, cause);
         callEvent(event);
         return event;
     }
-
     public PlotComponentSetEvent callComponentSet(Plot plot, String component, Pattern pattern) {
         PlotComponentSetEvent event = new PlotComponentSetEvent(plot, component, pattern);
         callEvent(event);
         return event;
     }
-
     public PlotClearEvent callClear(Plot plot) {
         PlotClearEvent event = new PlotClearEvent(plot);
         callEvent(event);
         return event;
     }
-
     public PostPlotClearEvent callPostPlotClear(PlotPlayer<?> player, Plot plot) {
         PostPlotClearEvent event = new PostPlotClearEvent(player, plot);
         callEvent(event);
         return event;
     }
-
     public PlotDeleteEvent callDelete(Plot plot) {
         PlotDeleteEvent event = new PlotDeleteEvent(plot);
         callEvent(event);
         return event;
     }
-
     public PostPlotDeleteEvent callPostDelete(Plot plot) {
         PostPlotDeleteEvent event = new PostPlotDeleteEvent(plot);
         callEvent(event);
         return event;
     }
-
     public PlotFlagAddEvent callFlagAdd(PlotFlag<?, ?> flag, Plot plot) {
         PlotFlagAddEvent event = new PlotFlagAddEvent(flag, plot);
         callEvent(event);
         return event;
     }
-
     public PlotFlagRemoveEvent callFlagRemove(PlotFlag<?, ?> flag, Plot plot) {
         PlotFlagRemoveEvent event = new PlotFlagRemoveEvent(flag, plot);
         callEvent(event);
         return event;
     }
-
     public PlotMergeEvent callMerge(Plot plot, Direction dir, int max, PlotPlayer<?> player) {
         PlotMergeEvent event = new PlotMergeEvent(plot.getWorldName(), plot, dir, max, player);
         callEvent(event);
         return event;
     }
-
     public PostPlotMergeEvent callPostMerge(PlotPlayer<?> player, Plot plot) {
         PostPlotMergeEvent event = new PostPlotMergeEvent(player, plot);
         callEvent(event);
         return event;
     }
-
     public PlotAutoMergeEvent callAutoMerge(Plot plot, List<PlotId> plots) {
         PlotAutoMergeEvent event = new PlotAutoMergeEvent(plot.getWorldName(), plot, plots);
         callEvent(event);
         return event;
     }
-
     public PlotUnlinkEvent callUnlink(
             PlotArea area, Plot plot, boolean createRoad,
             boolean createSign, PlotUnlinkEvent.REASON reason
@@ -239,25 +212,21 @@ public class EventDispatcher {
         callEvent(event);
         return event;
     }
-
     public PostPlotUnlinkEvent callPostUnlink(Plot plot, PlotUnlinkEvent.REASON reason) {
         PostPlotUnlinkEvent event = new PostPlotUnlinkEvent(plot, reason);
         callEvent(event);
         return event;
     }
-
     public PlayerEnterPlotEvent callEntry(PlotPlayer<?> player, Plot plot) {
         PlayerEnterPlotEvent event = new PlayerEnterPlotEvent(player, plot);
         callEvent(event);
         return event;
     }
-
     public PlayerLeavePlotEvent callLeave(PlotPlayer<?> player, Plot plot) {
         PlayerLeavePlotEvent event = new PlayerLeavePlotEvent(player, plot);
         callEvent(event);
         return event;
     }
-
     public PlayerPlotDeniedEvent callDenied(
             PlotPlayer<?> initiator, Plot plot, UUID player,
             boolean added
@@ -266,7 +235,6 @@ public class EventDispatcher {
         callEvent(event);
         return event;
     }
-
     public PlayerPlotTrustedEvent callTrusted(
             PlotPlayer<?> initiator, Plot plot, UUID player,
             boolean added
@@ -275,7 +243,6 @@ public class EventDispatcher {
         callEvent(event);
         return event;
     }
-
     public PlayerPlotHelperEvent callMember(
             PlotPlayer<?> initiator, Plot plot, UUID player,
             boolean added
@@ -284,7 +251,6 @@ public class EventDispatcher {
         callEvent(event);
         return event;
     }
-
     public PlotChangeOwnerEvent callOwnerChange(
             PlotPlayer<?> initiator, Plot plot, UUID oldOwner,
             UUID newOwner, boolean hasOldOwner
@@ -294,51 +260,43 @@ public class EventDispatcher {
         callEvent(event);
         return event;
     }
-
     public PostPlotChangeOwnerEvent callPostOwnerChange(PlotPlayer<?> player, Plot plot, @Nullable UUID oldOwner) {
         PostPlotChangeOwnerEvent event = new PostPlotChangeOwnerEvent(player, plot, oldOwner);
         callEvent(event);
         return event;
     }
-
     public PlotRateEvent callRating(PlotPlayer<?> player, Plot plot, Rating rating) {
         PlotRateEvent event = new PlotRateEvent(player, rating, plot);
         eventBus.post(event);
         return event;
     }
-
     public PlotDoneEvent callDone(Plot plot) {
         PlotDoneEvent event = new PlotDoneEvent(plot);
         callEvent(event);
         return event;
     }
-
     public RemoveRoadEntityEvent callRemoveRoadEntity(Entity entity) {
         RemoveRoadEntityEvent event = new RemoveRoadEntityEvent(entity);
         eventBus.post(event);
         return event;
     }
-
     public PlayerPlotLimitEvent callPlayerPlotLimit(PlotPlayer<?> player, int calculatedLimit) {
         PlayerPlotLimitEvent event = new PlayerPlotLimitEvent(player, calculatedLimit);
         eventBus.post(event);
         return event;
     }
-
     public PlayerBuyPlotEvent callPlayerBuyPlot(PlotPlayer<?> player, Plot plot, double price) {
         PlayerBuyPlotEvent event = new PlayerBuyPlotEvent(player, plot, price);
         eventBus.post(event);
         return event;
     }
-
     public void callPostPlayerBuyPlot(PlotPlayer<?> player, OfflinePlotPlayer previousOwner, Plot plot,
                                       double price) {
         eventBus.post(new PostPlayerBuyPlotEvent(player, previousOwner, plot, price));
     }
-
     public void doJoinTask(final PlotPlayer<?> player) {
         if (player == null) {
-            return; //possible future warning message to figure out where we are retrieving null
+            return;
         }
         if (PlotSquared.platform().expireManager() != null) {
             PlotSquared.platform().expireManager().handleJoin(player);
@@ -356,7 +314,6 @@ public class EventDispatcher {
             player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
         }
     }
-
     public void doRespawnTask(final PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
         if (Settings.Teleport.ON_DEATH && plot != null) {
@@ -365,7 +322,6 @@ public class EventDispatcher {
             player.sendMessage(TranslatableCaption.of("teleport.teleported_to_road"));
         }
     }
-
     public boolean checkPlayerBlockEvent(
             PlotPlayer<?> player, @NonNull PlayerBlockEventType type,
             Location location, BlockType blockType, boolean notifyPerms
@@ -418,8 +374,6 @@ public class EventDispatcher {
                 if (player.hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER, false)) {
                     return true;
                 }
-                // we check for the EditSignFlag in the PlayerSignOpenEvent again, but we must not cancel the interact event
-                // or send a message if the flag is true
                 if (BlockCategories.ALL_SIGNS != null && BlockCategories.ALL_SIGNS.contains(blockType)
                         && plot.getFlag(EditSignFlag.class)) {
                     return true;
@@ -558,5 +512,4 @@ public class EventDispatcher {
         }
         return true;
     }
-
 }

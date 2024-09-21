@@ -17,9 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.entity;
-
 class ArmorStandStats {
-
     final float[] head = new float[3];
     final float[] body = new float[3];
     final float[] leftLeg = new float[3];
@@ -30,5 +28,4 @@ class ArmorStandStats {
     boolean noPlate;
     boolean invisible;
     boolean small;
-
 }

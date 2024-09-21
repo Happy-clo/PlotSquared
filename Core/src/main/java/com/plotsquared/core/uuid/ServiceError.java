@@ -17,28 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * Thrown by {@link ServiceError} when something goes wrong
  */
 public class ServiceError extends RuntimeException {
-
     public ServiceError(final @NonNull String message) {
         super(message);
     }
-
     public ServiceError(
             final @NonNull String message,
             final @NonNull Throwable cause
     ) {
         super(message, cause);
     }
-
     @Override
     public Throwable fillInStackTrace() {
         return this;
     }
-
 }

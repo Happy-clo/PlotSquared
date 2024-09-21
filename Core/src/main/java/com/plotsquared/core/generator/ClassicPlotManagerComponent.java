@@ -17,11 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Optional;
-
 /**
  * Plot components for {@link ClassicPlotManager}
  */
@@ -34,7 +31,6 @@ public enum ClassicPlotManagerComponent {
     MIDDLE,
     OUTLINE,
     BORDER;
-
     public static String[] stringValues() {
         final ClassicPlotManagerComponent[] classicPlotManagerComponents = values();
         final String[] stringValues = new String[classicPlotManagerComponents.length];
@@ -43,7 +39,6 @@ public enum ClassicPlotManagerComponent {
         }
         return stringValues;
     }
-
     public static Optional<ClassicPlotManagerComponent> fromString(final @NonNull String string) {
         for (final ClassicPlotManagerComponent classicPlotManagerComponent : values()) {
             if (classicPlotManagerComponent.name().equalsIgnoreCase(string)) {
@@ -52,5 +47,4 @@ public enum ClassicPlotManagerComponent {
         }
         return Optional.empty();
     }
-
 }

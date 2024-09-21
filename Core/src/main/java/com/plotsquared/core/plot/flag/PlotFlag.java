@@ -17,15 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag;
-
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.configuration.caption.Caption;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Collection;
 import java.util.Collections;
-
 /**
  * A plot flag is any property that can be assigned
  * to a plot, that will alter its functionality in some way.
@@ -34,12 +31,10 @@ import java.util.Collections;
  * @param <T> Value contained in the flag.
  */
 public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
-
     private final T value;
     private final Caption flagCategory;
     private final Caption flagDescription;
     private final String flagName;
-
     /**
      * Construct a new flag instance.
      *
@@ -56,11 +51,8 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
                 Preconditions.checkNotNull(flagCategory, "flag category may not be null");
         this.flagDescription =
                 Preconditions.checkNotNull(flagDescription, "flag description may not be null");
-        // Parse flag name
-        // noinspection unchecked
         this.flagName = getFlagName(this.getClass());
     }
-
     /**
      * Return the name of the flag.
      *
@@ -83,7 +75,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
         }
         return flagName.toString();
     }
-
     /**
      * Gets the flag name as a Kyori {@link Component}
      *
@@ -93,7 +84,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     public static <T, F extends PlotFlag<T, F>> Component getFlagNameComponent(Class<F> flagClass) {
         return Component.text(getFlagName(flagClass));
     }
-
     /**
      * Get the flag value
      *
@@ -103,7 +93,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     final T getValue() {
         return this.value;
     }
-
     /**
      * Parse a string into a flag, and throw an exception in the case that the
      * string does not represent a valid flag value. This instance won't change its
@@ -114,7 +103,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      * @throws FlagParseException If the value could not be parsed.
      */
     public abstract F parse(final @NonNull String input) throws FlagParseException;
-
     /**
      * Merge this flag's value with another value and return an instance
      * holding the merged value.
@@ -123,7 +111,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      * @return Flag containing parsed flag value.
      */
     public abstract F merge(final @NonNull T newValue);
-
     /**
      * Returns a string representation of the flag instance, that when
      * passed through {@link #parse(String)} will result in an equivalent
@@ -132,7 +119,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      * @return String representation of the flag
      */
     public abstract String toString();
-
     /**
      * Get the flag name.
      *
@@ -141,7 +127,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     public final String getName() {
         return this.flagName;
     }
-
     /**
      * Get a simple caption that describes the flag usage.
      *
@@ -150,7 +135,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     public Caption getFlagDescription() {
         return this.flagDescription;
     }
-
     /**
      * Get the category this flag belongs to. Usually a caption from {@link com.plotsquared.core.configuration.caption.TranslatableCaption}
      * <p>
@@ -162,7 +146,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     public Caption getFlagCategory() {
         return this.flagCategory;
     }
-
     /**
      * Get if the flag's permission should check for values. E.g. plots.flag.set.music.VALUE
      *
@@ -172,7 +155,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     public boolean isValuedPermission() {
         return true;
     }
-
     /**
      * An example of a string that would parse into a valid
      * flag value.
@@ -180,9 +162,7 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
      * @return An example flag value.
      */
     public abstract String getExample();
-
     protected abstract F flagOf(@NonNull T value);
-
     /**
      * Create a new instance of the flag using a provided
      * (non-null) value.
@@ -193,7 +173,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     public final F createFlagInstance(final @NonNull T value) {
         return flagOf(Preconditions.checkNotNull(value));
     }
-
     /**
      * Get the tab completable values associated with the flag type, or
      * an empty collection if tab completion isn't supported.
@@ -203,7 +182,6 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
     public Collection<String> getTabCompletions() {
         return Collections.emptyList();
     }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -215,10 +193,8 @@ public abstract class PlotFlag<T, F extends PlotFlag<T, F>> {
         final PlotFlag<?, ?> plotFlag = (PlotFlag<?, ?>) o;
         return value.equals(plotFlag.value);
     }
-
     @Override
     public int hashCode() {
         return value.hashCode();
     }
-
 }

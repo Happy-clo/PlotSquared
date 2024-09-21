@@ -17,17 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
-
 import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 public class PlayerClaimPlotEvent extends PlotPlayerEvent implements CancellablePlotEvent {
-
     private Result eventResult;
     private String schematic;
-
     /**
      * PlayerClaimPlotEvent: Called when a plot is claimed.
      *
@@ -39,7 +35,6 @@ public class PlayerClaimPlotEvent extends PlotPlayerEvent implements Cancellable
         super(player, plot);
         this.schematic = schematic;
     }
-
     /**
      * Obtain the schematic string as used by the {@link Claim} command or null.
      *
@@ -48,7 +43,6 @@ public class PlayerClaimPlotEvent extends PlotPlayerEvent implements Cancellable
     public @Nullable String getSchematic() {
         return this.schematic;
     }
-
     /**
      * Set the schematic string used in the claim.
      *
@@ -57,15 +51,12 @@ public class PlayerClaimPlotEvent extends PlotPlayerEvent implements Cancellable
     public void setSchematic(String schematic) {
         this.schematic = schematic;
     }
-
     @Override
     public Result getEventResult() {
         return eventResult;
     }
-
     @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }
-
 }

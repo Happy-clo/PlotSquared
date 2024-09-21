@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.generator;
-
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
@@ -33,38 +32,29 @@ import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Random;
-
 final class DelegatePlotGenerator extends IndependentPlotGenerator {
-
     private final ChunkGenerator chunkGenerator;
     private final String world;
-
     public DelegatePlotGenerator(ChunkGenerator chunkGenerator, String world) {
         this.chunkGenerator = chunkGenerator;
         this.world = world;
     }
-
     @Override
     public void initialize(PlotArea area) {
     }
-
     @Override
     public BiomeType getBiome(final PlotArea settings, final int x, final int y, final int z) {
         return null;
     }
-
     @Override
     public String getName() {
         return this.chunkGenerator.getClass().getName();
     }
-
     @Override
     public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
         return PlotSquared.platform().defaultGenerator().getNewPlotArea(world, id, min, max);
     }
-
     @Override
     public void generateChunk(final ZeroedDelegateScopedQueueCoordinator result, PlotArea settings, boolean biomes) {
         World world = BukkitUtil.getWorld(this.world);
@@ -78,19 +68,14 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
                 public void setBiome(int x, int z, @NonNull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
                 }
-
-                //do not annotate with Override until we discontinue support for 1.4.4 (we no longer support 1.4.4)
                 @Override
                 public void setBiome(int x, int y, int z, @NonNull Biome biome) {
                     result.setBiome(x, z, BukkitAdapter.adapt(biome));
-
                 }
-
                 @Override
                 public @NonNull Biome getBiome(int x, int z) {
                     return Biome.FOREST;
                 }
-
                 @Override
                 public @NonNull Biome getBiome(int x, int y, int z) {
                     return Biome.FOREST;
@@ -104,5 +89,4 @@ final class DelegatePlotGenerator extends IndependentPlotGenerator {
             populator.populate(world, random, world.getChunkAt(chunkX, chunkZ));
         }
     }
-
 }

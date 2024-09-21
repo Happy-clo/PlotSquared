@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Injector;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -40,34 +39,27 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-
 /**
  * PlotSquared command class.
  */
 @CommandDeclaration(command = "plot",
         aliases = {"plots", "p", "plotsquared", "plot2", "p2", "ps", "2", "plotme", "plotz", "ap"})
 public class MainCommand extends Command {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + MainCommand.class.getSimpleName());
-
     private static MainCommand instance;
     public Help help;
     public Toggle toggle;
-
     private MainCommand() {
         super(null, true);
         instance = this;
     }
-
     public static MainCommand getInstance() {
         if (instance == null) {
             instance = new MainCommand();
-
             final Injector injector = PlotSquared.platform().injector();
             final List<Class<? extends Command>> commands = new LinkedList<>();
             commands.add(Caps.class);
@@ -135,14 +127,12 @@ public class MainCommand extends Command {
             commands.add(Cluster.class);
             commands.add(DebugImportWorlds.class);
             commands.add(Backup.class);
-
             if (Settings.Ratings.USE_LIKES) {
                 commands.add(Like.class);
                 commands.add(Dislike.class);
             } else {
                 commands.add(Rate.class);
             }
-
             for (final Class<? extends Command> command : commands) {
                 try {
                     injector.getInstance(command);
@@ -151,22 +141,16 @@ public class MainCommand extends Command {
                     e.printStackTrace();
                 }
             }
-
-            // Referenced commands
             instance.toggle = injector.getInstance(Toggle.class);
             instance.help = new Help(instance);
         }
         return instance;
     }
-
     public static boolean onCommand(final PlotPlayer<?> player, String... args) {
         final EconHandler econHandler = PlotSquared.platform().econHandler();
         if (args.length >= 1 && args[0].contains(":")) {
             String[] split2 = args[0].split(":");
             if (split2.length == 2) {
-                // Ref: c:v, this will push value to the last spot in the array
-                // ex. /p h:2 SomeUsername
-                // > /p h SomeUsername 2
                 String[] tmp = new String[args.length + 1];
                 tmp[0] = split2[0];
                 tmp[args.length] = split2[1];
@@ -218,25 +202,20 @@ public class MainCommand extends Command {
             }, new RunnableVal2<>() {
                 @Override
                 public void run(Command cmd, CommandResult result) {
-                    // Post command stuff!?
                 }
             }).thenAccept(result -> {
-                // TODO: Something with the command result
             });
         } catch (CommandException e) {
             e.perform(player);
         }
-        // Always true
         return true;
     }
-
     @Override
     public CompletableFuture<Boolean> execute(
             final PlotPlayer<?> player, String[] args,
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) {
-        // Optional command scope //
         Location location = null;
         Plot plot = null;
         boolean tp = false;
@@ -254,7 +233,6 @@ public class MainCommand extends Command {
                     newLoc = newPlot.getCenterSynchronous();
                 }
                 if (player.canTeleport(newLoc)) {
-                    // Save meta
                     try (final MetaDataAccess<Location> locationMetaDataAccess
                                  = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
                         location = locationMetaDataAccess.get().orElse(null);
@@ -270,7 +248,6 @@ public class MainCommand extends Command {
                     player.sendMessage(TranslatableCaption.of("border.denied"));
                     return CompletableFuture.completedFuture(false);
                 }
-                // Trim command
                 args = Arrays.copyOfRange(args, 1, args.length);
             }
             if (args.length >= 2 && !args[0].isEmpty() && args[0].charAt(0) == '-') {
@@ -319,7 +296,6 @@ public class MainCommand extends Command {
                         TranslatableCaption.of("errors.error_console"));
             }
         }
-        // Reset command scope //
         if (tp && !(player instanceof ConsolePlayer)) {
             try (final MetaDataAccess<Location> locationMetaDataAccess
                          = player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LOCATION)) {
@@ -340,10 +316,8 @@ public class MainCommand extends Command {
         }
         return CompletableFuture.completedFuture(true);
     }
-
     @Override
     public boolean canExecute(PlotPlayer<?> player, boolean message) {
         return true;
     }
-
 }

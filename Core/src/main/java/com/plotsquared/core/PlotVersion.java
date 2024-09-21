@@ -17,16 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public final class PlotVersion {
-
     public final int year, month, day, hash;
     public final String versionString;
     public final int[] version;
     public final String suffix;
-
     public PlotVersion(
             final int year,
             final int month,
@@ -53,7 +49,6 @@ public final class PlotVersion {
         version[1] = verArray.length > 1 ? Integer.parseInt(verArray[1]) : 0;
         version[2] = verArray.length > 2 ? Integer.parseInt(verArray[2]) : 0;
     }
-
     public PlotVersion(
             final String rawVersion,
             final String commit,
@@ -73,14 +68,12 @@ public final class PlotVersion {
         version[0] = verArray.length > 0 ? Integer.parseInt(verArray[0]) : 0;
         version[1] = verArray.length > 1 ? Integer.parseInt(verArray[1]) : 0;
         version[2] = verArray.length > 2 ? Integer.parseInt(verArray[2]) : 0;
-
         this.hash = Integer.parseInt(commit.substring(commit.indexOf('=') + 1), 16);
         String[] split1 = date.substring(date.indexOf('=') + 1).split("\\.");
         this.year = Integer.parseInt(split1[0]);
         this.month = Integer.parseInt(split1[1]);
         this.day = Integer.parseInt(split1[2]);
     }
-
     public static @NonNull PlotVersion tryParse(
             final @NonNull String versionString,
             final @NonNull String commit,
@@ -93,7 +86,6 @@ public final class PlotVersion {
             return new PlotVersion(0, 0, 0, 0, "0");
         }
     }
-
     public @NonNull String versionString() {
         if (hash == 0 && versionString == null) {
             return "NoVer-SNAPSHOT";
@@ -101,7 +93,6 @@ public final class PlotVersion {
             return versionString + suffix;
         }
     }
-
     @Override
     public String toString() {
         if (hash == 0 && versionString == null) {
@@ -110,7 +101,6 @@ public final class PlotVersion {
             return "PlotSquared-" + versionString + suffix;
         }
     }
-
     /**
      * Compare a given version string with the one cached here.
      *
@@ -132,7 +122,6 @@ public final class PlotVersion {
             return one == version[0] && two == version[1] && three > version[2];
         }
     }
-
     /**
      * Compare a given version with the one cached here.
      *
@@ -149,5 +138,4 @@ public final class PlotVersion {
                     && verArray[2] > version[2];
         }
     }
-
 }

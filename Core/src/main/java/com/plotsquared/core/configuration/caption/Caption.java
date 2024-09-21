@@ -17,16 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * Any message that can be sent to a player, the console, etc.
  */
 public interface Caption {
-
     /**
      * Get the message that should be sent to the recipient
      *
@@ -34,7 +31,6 @@ public interface Caption {
      * @return Message
      */
     @NonNull String getComponent(@NonNull LocaleHolder localeHolder);
-
     /**
      * Get the Adventure {@link ComponentLike} for this caption
      *
@@ -43,7 +39,5 @@ public interface Caption {
      * @since 7.0.0
      */
     @NonNull Component toComponent(@NonNull LocaleHolder localeHolder);
-
     @NonNull String toString();
-
 }

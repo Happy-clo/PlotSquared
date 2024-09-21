@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -102,33 +101,27 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-
 import static org.bukkit.Tag.CORALS;
 import static org.bukkit.Tag.CORAL_BLOCKS;
 import static org.bukkit.Tag.WALL_CORALS;
-
 @SuppressWarnings("unused")
 public class BlockEventListener implements Listener {
     private final PlotAreaManager plotAreaManager;
     private final WorldEdit worldEdit;
-
     @Inject
     public BlockEventListener(final @NonNull PlotAreaManager plotAreaManager, final @NonNull WorldEdit worldEdit) {
         this.plotAreaManager = plotAreaManager;
         this.worldEdit = worldEdit;
     }
-
     public static void sendBlockChange(final org.bukkit.Location bloc, final BlockData data) {
         TaskManager.runTaskLater(() -> {
             String world = bloc.getWorld().getName();
             int x = bloc.getBlockX();
             int z = bloc.getBlockZ();
             int distance = Bukkit.getViewDistance() * 16;
-
             for (final PlotPlayer<?> player : PlotSquared.platform().playerManager().getPlayers()) {
                 Location location = player.getLocation();
                 if (location.getWorldName().equals(world)) {
@@ -140,7 +133,6 @@ public class BlockEventListener implements Listener {
             }
         }, TaskTime.ticks(3L));
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void blockCreate(BlockPlaceEvent event) {
         Location location = BukkitUtil.adapt(event.getBlock().getLocation());
@@ -218,7 +210,6 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
         }
     }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void blockDestroy(BlockBreakEvent event) {
         Player player = event.getPlayer();
@@ -230,7 +221,6 @@ public class BlockEventListener implements Listener {
         Plot plot = area.getPlot(location);
         if (plot != null) {
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
-            // == rather than <= as we only care about the "ground level" not being destroyed
             if (event.getBlock().getY() == area.getMinGenHeight()) {
                 if (!plotPlayer.hasPermission(Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL)) {
                     plotPlayer.sendMessage(
@@ -303,7 +293,6 @@ public class BlockEventListener implements Listener {
         );
         event.setCancelled(true);
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockSpread(BlockSpreadEvent event) {
         Block block = event.getBlock();
@@ -356,7 +345,6 @@ public class BlockEventListener implements Listener {
                 break;
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onCauldronEmpty(CauldronLevelChangeEvent event) {
         Entity entity = event.getEntity();
@@ -366,7 +354,6 @@ public class BlockEventListener implements Listener {
             return;
         }
         Plot plot = area.getPlot(location);
-        // TODO Add flags for specific control over cauldron changes (rain, dripstone...)
         switch (event.getReason()) {
             case BANNER_WASH, ARMOR_WASH, EXTINGUISH -> {
                 if (entity instanceof Player player) {
@@ -398,21 +385,16 @@ public class BlockEventListener implements Listener {
                 if (event.getReason() == CauldronLevelChangeEvent.ChangeReason.EXTINGUISH && event.getEntity() != null) {
                     event.getEntity().setFireTicks(0);
                 }
-                // Though the players fire ticks are modified,
-                // the cauldron water level change is cancelled and the event should represent that.
                 event.setCancelled(true);
             }
             default -> {
-                // Bucket empty, Bucket fill, Bottle empty, Bottle fill are already handled in PlayerInteract event
-                // Evaporation or Unknown reasons do not need to be cancelled as they are considered natural causes
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         if (event instanceof EntityBlockFormEvent) {
-            return; // handled below
+            return;
         }
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
@@ -452,7 +434,6 @@ public class BlockEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityBlockForm(EntityBlockFormEvent event) {
         String world = event.getBlock().getWorld().getName();
@@ -483,16 +464,16 @@ public class BlockEventListener implements Listener {
             BukkitPlayer plotPlayer = BukkitUtil.adapt(player);
             if (!plot.isAdded(plotPlayer.getUUID())) {
                 if (allowed) {
-                    return; // player is not added but forming <flag> is allowed
+                    return;
                 }
                 plot.debug(String.format(
                         "%s could not be formed because %s = false (entity is player)",
                         event.getNewState().getType(),
                         flag == SnowFormFlag.class ? "snow-form" : "ice-form"
                 ));
-                event.setCancelled(true); // player is not added and forming <flag> isn't allowed
+                event.setCancelled(true);
             }
-            return; // event is cancelled if not added and not allowed, otherwise forming <flag> is allowed
+            return;
         }
         if (plot.hasOwner()) {
             if (allowed) {
@@ -506,7 +487,6 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDamage(BlockDamageEvent event) {
         Player player = event.getPlayer();
@@ -532,7 +512,6 @@ public class BlockEventListener implements Listener {
                     }
                 }
             }
-            // == rather than <= as we only care about the "ground level" not being destroyed
             if (location.getY() == area.getMinGenHeight()) {
                 event.setCancelled(true);
                 return;
@@ -567,7 +546,6 @@ public class BlockEventListener implements Listener {
         }
         event.setCancelled(true);
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFade(BlockFadeEvent event) {
         Block block = event.getBlock();
@@ -610,49 +588,37 @@ public class BlockEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMoistureChange(MoistureChangeEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         PlotArea area = location.getPlotArea();
-
         if (area == null) {
             return;
         }
-
         Plot plot = area.getOwnedPlot(location);
-
         if (plot == null) {
             event.setCancelled(true);
             return;
         }
-
         if (block.getBlockData() instanceof Farmland farmland && event
                 .getNewState()
                 .getBlockData() instanceof Farmland newFarmland) {
             int currentMoisture = farmland.getMoisture();
             int newMoisture = newFarmland.getMoisture();
-
-            // farmland gets moisturizes
             if (newMoisture > currentMoisture) {
                 return;
             }
-
             if (plot.getFlag(SoilDryFlag.class)) {
                 return;
             }
-
             plot.debug("Soil could not dry because soil-dry = false");
             event.setCancelled(true);
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChange(BlockFromToEvent event) {
         Block fromBlock = event.getBlock();
-
-        // Check liquid flow flag inside of origin plot too
         final Location fromLocation = BukkitUtil.adapt(fromBlock.getLocation());
         final PlotArea fromArea = fromLocation.getPlotArea();
         if (fromArea != null) {
@@ -665,7 +631,6 @@ public class BlockEventListener implements Listener {
                 return;
             }
         }
-
         Block toBlock = event.getToBlock();
         Location toLocation = BukkitUtil.adapt(toBlock.getLocation());
         PlotArea toArea = toLocation.getPlotArea();
@@ -680,10 +645,8 @@ public class BlockEventListener implements Listener {
             return;
         }
         Plot toPlot = toArea.getOwnedPlot(toLocation);
-
         if (fromBlock.getType() == Material.DRAGON_EGG && fromArea != null) {
             final Plot fromPlot = fromArea.getOwnedPlot(fromLocation);
-
             if (fromPlot != null || toPlot != null) {
                 if ((fromPlot == null || !fromPlot.equals(toPlot)) && (toPlot == null || !toPlot.equals(fromPlot))) {
                     event.setCancelled(true);
@@ -691,7 +654,6 @@ public class BlockEventListener implements Listener {
                 }
             }
         }
-
         if (toPlot != null) {
             if (!toArea.contains(fromLocation.getX(), fromLocation.getZ()) || !Objects.equals(
                     toPlot,
@@ -719,7 +681,6 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
         } else if (event.getBlock().isLiquid()) {
             final org.bukkit.Location location = event.getBlock().getLocation();
-
             /*
                 X = block location
                 A-H = potential plot locations
@@ -731,35 +692,30 @@ public class BlockEventListener implements Listener {
                v
                 <-----O-----> x
              */
-            if (BukkitUtil.adapt(location.clone().add(-1, 0, 1)  /* A */).getPlot() != null
-                    || BukkitUtil.adapt(location.clone().add(1, 0, 0)   /* B */).getPlot() != null
-                    || BukkitUtil.adapt(location.clone().add(1, 0, 1)   /* C */).getPlot() != null
-                    || BukkitUtil.adapt(location.clone().add(-1, 0, 0)  /* D */).getPlot() != null
-                    || BukkitUtil.adapt(location.clone().add(1, 0, 0)   /* E */).getPlot() != null
-                    || BukkitUtil.adapt(location.clone().add(-1, 0, -1) /* F */).getPlot() != null
-                    || BukkitUtil.adapt(location.clone().add(0, 0, -1)  /* G */).getPlot() != null
-                    || BukkitUtil.adapt(location.clone().add(1, 0, 1)   /* H */).getPlot() != null) {
+            if (BukkitUtil.adapt(location.clone().add(-1, 0, 1)).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(1, 0, 0)).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(1, 0, 1)).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(-1, 0, 0)).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(1, 0, 0)).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(-1, 0, -1)).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(0, 0, -1)).getPlot() != null
+                    || BukkitUtil.adapt(location.clone().add(1, 0, 1)).getPlot() != null) {
                 event.setCancelled(true);
             }
         }
     }
-
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onGrow(BlockGrowEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
-
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-
         if (!area.buildRangeContainsY(location.getY())) {
             event.setCancelled(true);
             return;
         }
-
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(CropGrowFlag.class)) {
             if (plot != null) {
@@ -768,7 +724,6 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPistonExtend(BlockPistonExtendEvent event) {
         Block block = event.getBlock();
@@ -790,8 +745,6 @@ public class BlockEventListener implements Listener {
                 }
             }
             if (location.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ()).isPlotArea()) {
-                // Prevent pistons from extending if they are: bordering a plot
-                // area, facing inside plot area, and not pushing any blocks
                 event.setCancelled(true);
             }
             return;
@@ -818,13 +771,9 @@ public class BlockEventListener implements Listener {
             }
         }
         if (!plot.equals(area.getOwnedPlot(location.add(relative.getBlockX(), relative.getBlockY(), relative.getBlockZ())))) {
-            // This branch is only necessary to prevent pistons from extending
-            // if they are: on a plot edge, facing outside the plot, and not
-            // pushing any blocks
             event.setCancelled(true);
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPistonRetract(BlockPistonRetractEvent event) {
         Block block = event.getBlock();
@@ -868,7 +817,6 @@ public class BlockEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent event) {
         if (!this.plotAreaManager.hasPlotArea(event.getBlock().getWorld().getName())) {
@@ -898,7 +846,6 @@ public class BlockEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onStructureGrow(StructureGrowEvent event) {
         if (!this.plotAreaManager.hasPlotArea(event.getWorld().getName())) {
@@ -952,14 +899,11 @@ public class BlockEventListener implements Listener {
              * plot → the base plot of the merged area
              * origin → the plot where the event gets called
              */
-
-            // Are plot and origin different AND are both plots merged
             if (!Objects.equals(plot, origin) && (!plot.isMerged() && !origin.isMerged())) {
                 event.getBlocks().remove(i);
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBigBoom(BlockExplodeEvent event) {
         Block block = event.getBlock();
@@ -989,17 +933,14 @@ public class BlockEventListener implements Listener {
         }
         event.blockList().removeIf(blox -> !plot.equals(area.getOwnedPlot(BukkitUtil.adapt(blox.getLocation()))));
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
-
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(BlockBurnFlag.class)) {
             if (plot != null) {
@@ -1007,9 +948,7 @@ public class BlockEventListener implements Listener {
             }
             event.setCancelled(true);
         }
-
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockIgnite(BlockIgniteEvent event) {
         Player player = event.getPlayer();
@@ -1025,7 +964,6 @@ public class BlockEventListener implements Listener {
             event.setCancelled(true);
             return;
         }
-
         Plot plot = area.getOwnedPlot(location1);
         if (player != null) {
             BukkitPlayer pp = BukkitUtil.adapt(player);
@@ -1101,7 +1039,6 @@ public class BlockEventListener implements Listener {
                         }
                     }
                 }
-
             } else if (event.getIgnitingBlock() != null) {
                 Block ignitingBlock = event.getIgnitingBlock();
                 Plot plotIgnited = BukkitUtil.adapt(ignitingBlock.getLocation()).getPlot();
@@ -1116,17 +1053,14 @@ public class BlockEventListener implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onLeavesDecay(LeavesDecayEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
-
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-
         Plot plot = location.getOwnedPlot();
         if (plot == null || !plot.getFlag(LeafDecayFlag.class)) {
             if (plot != null) {
@@ -1134,9 +1068,7 @@ public class BlockEventListener implements Listener {
             }
             event.setCancelled(true);
         }
-
     }
-
     @EventHandler(ignoreCancelled = true)
     public void onSpongeAbsorb(SpongeAbsorbEvent event) {
         Block sponge = event.getBlock();
@@ -1160,23 +1092,18 @@ public class BlockEventListener implements Listener {
             });
         }
         if (blocks.isEmpty()) {
-            // Cancel event so the sponge block doesn't turn into a wet sponge
-            // if no water is being absorbed
             event.setCancelled(true);
         }
     }
-
     /*
      * BlockMultiPlaceEvent is called unrelated to the BlockPlaceEvent itself and therefore doesn't respect the cancellation.
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlockMultiPlace(BlockMultiPlaceEvent event) {
-        // Check if the generic block place event would be cancelled
         blockCreate(event);
         if (event.isCancelled()) {
             return;
         }
-
         BukkitPlayer pp = BukkitUtil.adapt(event.getPlayer());
         Location placedLocation = BukkitUtil.adapt(event.getBlockReplacedState().getLocation());
         PlotArea area = placedLocation.getPlotArea();
@@ -1184,7 +1111,6 @@ public class BlockEventListener implements Listener {
             return;
         }
         Plot plot = placedLocation.getPlot();
-
         for (final BlockState state : event.getReplacedBlockStates()) {
             Location currentLocation = BukkitUtil.adapt(state.getLocation());
             if (!pp.hasPermission(
@@ -1205,7 +1131,5 @@ public class BlockEventListener implements Listener {
                 break;
             }
         }
-
     }
-
 }

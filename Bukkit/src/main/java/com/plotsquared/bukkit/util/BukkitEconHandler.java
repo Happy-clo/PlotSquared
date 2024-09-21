@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
-
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
 import com.plotsquared.bukkit.player.BukkitPlayer;
@@ -30,16 +29,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 @Singleton
 public class BukkitEconHandler extends EconHandler {
-
     private Economy econ;
-
     private static OfflinePlayer getBukkitOfflinePlayer(PlotPlayer<?> plotPlayer) {
         return ((BukkitPlayer) plotPlayer).player;
     }
-
     @Override
     public boolean init() {
         if (this.econ == null) {
@@ -47,7 +42,6 @@ public class BukkitEconHandler extends EconHandler {
         }
         return this.econ != null;
     }
-
     private void setupEconomy() {
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
             return;
@@ -58,7 +52,6 @@ public class BukkitEconHandler extends EconHandler {
             this.econ = economyProvider.getProvider();
         }
     }
-
     @Override
     public double getMoney(PlotPlayer<?> player) {
         double bal = super.getMoney(player);
@@ -67,40 +60,32 @@ public class BukkitEconHandler extends EconHandler {
         }
         return bal;
     }
-
     @Override
     public void withdrawMoney(PlotPlayer<?> player, double amount) {
         this.econ.withdrawPlayer(getBukkitOfflinePlayer(player), amount);
     }
-
     @Override
     public void depositMoney(PlotPlayer<?> player, double amount) {
         this.econ.depositPlayer(getBukkitOfflinePlayer(player), amount);
     }
-
     @Override
     public void depositMoney(OfflinePlotPlayer player, double amount) {
         this.econ.depositPlayer(((BukkitOfflinePlayer) player).player, amount);
     }
-
     @Override
     public boolean isEnabled(PlotArea plotArea) {
         return plotArea.useEconomy();
     }
-
     @Override
     public @NonNull String format(double balance) {
         return this.econ.format(balance);
     }
-
     @Override
     public boolean isSupported() {
         return true;
     }
-
     @Override
     public double getBalance(PlotPlayer<?> player) {
         return this.econ.getBalance(getBukkitOfflinePlayer(player));
     }
-
 }

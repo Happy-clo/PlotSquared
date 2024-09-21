@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -39,13 +38,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-
 @CommandDeclaration(command = "load",
         aliases = "restore",
         category = CommandCategory.SCHEMATIC,
@@ -53,10 +50,8 @@ import java.util.List;
         permission = "plots.load",
         usage = "/plot load")
 public class Load extends SubCommand {
-
     private final PlotAreaManager plotAreaManager;
     private final SchematicHandler schematicHandler;
-
     @Inject
     public Load(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -65,7 +60,6 @@ public class Load extends SubCommand {
         this.plotAreaManager = plotAreaManager;
         this.schematicHandler = schematicHandler;
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final String world = player.getLocation().getWorldName();
@@ -90,14 +84,12 @@ public class Load extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
             return false;
         }
-
         try (final MetaDataAccess<List<String>> metaDataAccess =
                      player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
             if (args.length != 0) {
                 if (args.length == 1) {
                     List<String> schematics = metaDataAccess.get().orElse(null);
                     if (schematics == null) {
-                        // No schematics found:
                         player.sendMessage(
                                 TranslatableCaption.of("web.load_null"),
                                 TagResolver.resolver("command", Tag.inserting(Component.text("/plot load")))
@@ -108,7 +100,6 @@ public class Load extends SubCommand {
                     try {
                         schematic = schematics.get(Integer.parseInt(args[0]) - 1);
                     } catch (Exception ignored) {
-                        // use /plot load <index>
                         player.sendMessage(
                                 TranslatableCaption.of("invalid.not_valid_number"),
                                 TagResolver.resolver("value", Tag.inserting(Component.text("(1, " + schematics.size() + ')')))
@@ -169,9 +160,6 @@ public class Load extends SubCommand {
                 );
                 return false;
             }
-
-            // list schematics
-
             List<String> schematics = metaDataAccess.get().orElse(null);
             if (schematics == null) {
                 plot.addRunning();
@@ -191,7 +179,6 @@ public class Load extends SubCommand {
         }
         return true;
     }
-
     public void displaySaves(PlotPlayer<?> player) {
         try (final MetaDataAccess<List<String>> metaDataAccess =
                      player.accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_SCHEMATICS)) {
@@ -220,5 +207,4 @@ public class Load extends SubCommand {
             );
         }
     }
-
 }

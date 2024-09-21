@@ -17,17 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
-
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
-
 /**
  * Called when a Flag is added to a plot.
  */
 public class PlotFlagAddEvent extends PlotFlagEvent implements CancellablePlotEvent {
-
     private Result eventResult;
-
     /**
      * PlotFlagAddEvent: Called when a Flag is added to a plot.
      *
@@ -37,15 +33,12 @@ public class PlotFlagAddEvent extends PlotFlagEvent implements CancellablePlotEv
     public PlotFlagAddEvent(PlotFlag<?, ?> flag, Plot plot) {
         super(plot, flag);
     }
-
     @Override
     public Result getEventResult() {
         return eventResult;
     }
-
     @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }
-
 }

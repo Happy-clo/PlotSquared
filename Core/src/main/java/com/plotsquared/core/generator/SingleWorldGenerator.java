@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
@@ -31,9 +30,7 @@ import com.sk89q.worldedit.world.biome.BiomeTypes;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class SingleWorldGenerator extends IndependentPlotGenerator {
-
     private static final Location bedrock1 = Location.at("", 0, 0, 0);
     private static final Location bedrock2 = Location.at("", 15, 0, 15);
     private static final Location dirt1 = Location.at("", 0, 1, 0);
@@ -43,19 +40,15 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
     private static final BlockState BEDROCK = BlockTypes.BEDROCK.getDefaultState();
     private static final BlockState DIRT = BlockTypes.DIRT.getDefaultState();
     private static final BlockState GRASS_BLOCK = BlockTypes.GRASS_BLOCK.getDefaultState();
-
     private final PlotAreaManager plotAreaManager;
-
     @Inject
     public SingleWorldGenerator(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
-
     @Override
     public String getName() {
         return "PlotSquared:single";
     }
-
     @Override
     public void generateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea settings, boolean biomes) {
         SinglePlotArea area = (SinglePlotArea) settings;
@@ -73,19 +66,15 @@ public class SingleWorldGenerator extends IndependentPlotGenerator {
             result.fillBiome(BiomeTypes.PLAINS);
         }
     }
-
     @Override
     public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
         return ((SinglePlotAreaManager) this.plotAreaManager).getArea();
     }
-
     @Override
     public void initialize(PlotArea area) {
     }
-
     @Override
     public BiomeType getBiome(final PlotArea settings, final int x, final int y, final int z) {
         return BiomeTypes.PLAINS;
     }
-
 }

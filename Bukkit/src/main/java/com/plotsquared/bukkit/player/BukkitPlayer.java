@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.player;
-
 import com.google.common.base.Charsets;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.PlotSquared;
@@ -52,21 +51,16 @@ import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.potion.PotionEffectType;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Set;
 import java.util.UUID;
-
 import static com.sk89q.worldedit.world.gamemode.GameModes.ADVENTURE;
 import static com.sk89q.worldedit.world.gamemode.GameModes.CREATIVE;
 import static com.sk89q.worldedit.world.gamemode.GameModes.SPECTATOR;
 import static com.sk89q.worldedit.world.gamemode.GameModes.SURVIVAL;
-
 public class BukkitPlayer extends PlotPlayer<Player> {
-
     private static boolean CHECK_EFFECTIVE = true;
     public final Player player;
     private String name;
-
     /**
      * @param plotAreaManager   PlotAreaManager instance
      * @param eventDispatcher   EventDispatcher instance
@@ -87,17 +81,14 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             super.populatePersistentMetaMap();
         }
     }
-
     @Override
     public Actor toActor() {
         return BukkitAdapter.adapt(player);
     }
-
     @Override
     public Player getPlatformPlayer() {
         return this.player;
     }
-
     @NonNull
     @Override
     public UUID getUUID() {
@@ -112,13 +103,11 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
         return player.getUniqueId();
     }
-
     @Override
     @NonNegative
     public long getLastPlayed() {
         return this.player.getLastSeen();
     }
-
     @Override
     public boolean canTeleport(final @NonNull Location location) {
         if (!WorldUtil.isValidLocation(location)) {
@@ -135,7 +124,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         callEvent(event);
         return true;
     }
-
     private void callEvent(final @NonNull Event event) {
         final RegisteredListener[] listeners = event.getHandlers().getRegisteredListeners();
         for (final RegisteredListener listener : listeners) {
@@ -149,7 +137,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             }
         }
     }
-
     @SuppressWarnings("StringSplitter")
     @Override
     @NonNegative
@@ -162,7 +149,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
         final String[] nodes = stub.split("\\.");
         final StringBuilder n = new StringBuilder();
-        // Wildcard check from less specific permission to more specific permission
         for (int i = 0; i < (nodes.length - 1); i++) {
             n.append(nodes[i]).append(".");
             if (!stub.equals(n + Permission.PERMISSION_STAR.toString())) {
@@ -171,11 +157,9 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 }
             }
         }
-        // Wildcard check for the full permission
         if (hasPermission(stub + ".*")) {
             return Integer.MAX_VALUE;
         }
-        // Permission value cache for iterative check
         int max = 0;
         if (CHECK_EFFECTIVE) {
             boolean hasAny = false;
@@ -183,7 +167,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             final Set<PermissionAttachmentInfo> effective = player.getEffectivePermissions();
             if (!effective.isEmpty()) {
                 for (PermissionAttachmentInfo attach : effective) {
-                    // Ignore all "false" permissions
                     if (!attach.getValue()) {
                         continue;
                     }
@@ -205,7 +188,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 if (hasAny) {
                     return max;
                 }
-                // Workaround
                 for (PermissionAttachmentInfo attach : effective) {
                     String permStr = attach.getPermission();
                     if (permStr.startsWith("plots.") && !permStr.equals("plots.use")) {
@@ -222,7 +204,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
         return max;
     }
-
     @Override
     public void teleport(final @NonNull Location location, final @NonNull TeleportCause cause) {
         if (!WorldUtil.isValidLocation(location)) {
@@ -234,7 +215,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 );
         PaperLib.teleportAsync(player, bukkitLocation, getTeleportCause(cause));
     }
-
     @Override
     public String getName() {
         if (this.name == null) {
@@ -242,7 +222,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
         return this.name;
     }
-
     @Override
     public void setCompassTarget(Location location) {
         this.player.setCompassTarget(
@@ -250,12 +229,10 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                         location.getY(), location.getZ()
                 ));
     }
-
     @Override
     public Location getLocationFull() {
         return BukkitUtil.adaptComplete(this.player.getLocation());
     }
-
     @Override
     public void setWeather(final @NonNull PlotWeather weather) {
         switch (weather) {
@@ -263,11 +240,9 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             case RAIN -> this.player.setPlayerWeather(WeatherType.DOWNFALL);
             case WORLD -> this.player.resetPlayerWeather();
             default -> {
-                //do nothing as this is PlotWeather.OFF
             }
         }
     }
-
     @Override
     public com.sk89q.worldedit.world.gamemode.GameMode getGameMode() {
         return switch (this.player.getGameMode()) {
@@ -277,7 +252,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             default -> SURVIVAL;
         };
     }
-
     @Override
     public void setGameMode(final com.sk89q.worldedit.world.gamemode.GameMode gameMode) {
         if (ADVENTURE.equals(gameMode)) {
@@ -290,7 +264,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             this.player.setGameMode(GameMode.SURVIVAL);
         }
     }
-
     @Override
     public void setTime(final long time) {
         if (time != Long.MAX_VALUE) {
@@ -299,17 +272,14 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             this.player.resetPlayerTime();
         }
     }
-
     @Override
     public boolean getFlight() {
         return player.getAllowFlight();
     }
-
     @Override
     public void setFlight(boolean fly) {
         this.player.setAllowFlight(fly);
     }
-
     @Override
     public void playMusic(final @NonNull Location location, final @NonNull ItemType id) {
         if (id == ItemTypes.AIR) {
@@ -317,7 +287,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 player.stopSound(SoundCategory.MUSIC);
                 return;
             }
-            // 1.18 and downwards require a specific Sound to stop (even tho the packet does not??)
             for (final Sound sound : Sound.values()) {
                 if (sound.name().startsWith("MUSIC_DISC")) {
                     this.player.stopSound(sound, SoundCategory.MUSIC);
@@ -329,30 +298,25 @@ public class BukkitPlayer extends PlotPlayer<Player> {
                 SoundCategory.MUSIC, Float.MAX_VALUE, 1f
         );
     }
-
-    @SuppressWarnings("deprecation") // Needed for Spigot compatibility
+    @SuppressWarnings("deprecation")
     @Override
     public void kick(final String message) {
         this.player.kickPlayer(message);
     }
-
     @Override
     public void stopSpectating() {
         if (getGameMode() == SPECTATOR) {
             this.player.setSpectatorTarget(null);
         }
     }
-
     @Override
     public boolean isBanned() {
         return this.player.isBanned();
     }
-
     @Override
     public @NonNull Audience getAudience() {
         return BukkitUtil.BUKKIT_AUDIENCES.player(this.player);
     }
-
     @Override
     public void removeEffect(@NonNull String name) {
         PotionEffectType type = PotionEffectType.getByName(name);
@@ -360,7 +324,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             player.removePotionEffect(type);
         }
     }
-
     @Override
     public boolean canSee(final PlotPlayer<?> other) {
         if (other instanceof ConsolePlayer) {
@@ -369,7 +332,6 @@ public class BukkitPlayer extends PlotPlayer<Player> {
             return this.player.canSee(((BukkitPlayer) other).getPlatformPlayer());
         }
     }
-
     /**
      * Convert from PlotSquared's {@link TeleportCause} to Bukkit's {@link PlayerTeleportEvent.TeleportCause}
      *
@@ -384,5 +346,4 @@ public class BukkitPlayer extends PlotPlayer<Player> {
         }
         return PlayerTeleportEvent.TeleportCause.PLUGIN;
     }
-
 }

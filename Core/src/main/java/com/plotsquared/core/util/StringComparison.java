@@ -17,22 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Function;
-
 /**
  * String comparison library.
  */
 public class StringComparison<T> {
-
     private final Function<T, String> toString;
     private T bestMatch;
     private double match = Integer.MAX_VALUE;
     private T bestMatchObject;
-
     /**
      * Constructor
      *
@@ -42,28 +38,23 @@ public class StringComparison<T> {
     public StringComparison(String input, T[] objects) {
         this(input, objects, Object::toString);
     }
-
     public StringComparison(String input, T[] objects, Function<T, String> toString) {
         this.toString = toString;
         init(input, objects);
     }
-
     public StringComparison(String input, Collection<T> objects) {
         this(input, objects, Object::toString);
     }
-
     @SuppressWarnings("unchecked")
     public StringComparison(String input, Collection<T> objects, Function<T, String> toString) {
         this(input, (T[]) objects.toArray(), toString);
     }
-
     /**
      * You should call init(...) when you are ready to get a String comparison value.
      */
     public StringComparison() {
         this.toString = Object::toString;
     }
-
     /**
      * Compare two strings
      *
@@ -81,7 +72,6 @@ public class StringComparison<T> {
         }
         return distance;
     }
-
     /**
      * Create an ArrayList containing pairs of letters
      *
@@ -97,7 +87,6 @@ public class StringComparison<T> {
         }
         return aPairs;
     }
-
     /**
      * Get an array containing letter pairs
      *
@@ -112,7 +101,6 @@ public class StringComparison<T> {
         }
         return p;
     }
-
     public void init(String input, T[] objects) {
         int c;
         this.bestMatch = objects[0];
@@ -126,11 +114,9 @@ public class StringComparison<T> {
             }
         }
     }
-
     public String getString(T o) {
         return this.toString.apply(o);
     }
-
     /**
      * Get the object
      *
@@ -139,7 +125,6 @@ public class StringComparison<T> {
     public T getMatchObject() {
         return this.bestMatchObject;
     }
-
     /**
      * Get the best match value
      *
@@ -148,7 +133,6 @@ public class StringComparison<T> {
     public String getBestMatch() {
         return getString(this.bestMatch);
     }
-
     /**
      * Will return both the match number, and the actual match string
      *
@@ -157,16 +141,12 @@ public class StringComparison<T> {
     public ComparisonResult getBestMatchAdvanced() {
         return new ComparisonResult(this.match, this.bestMatch);
     }
-
-
     /**
      * The comparison result
      */
     public class ComparisonResult {
-
         public final T best;
         public final double match;
-
         /**
          * The constructor
          *
@@ -177,7 +157,5 @@ public class StringComparison<T> {
             this.match = match;
             this.best = best;
         }
-
     }
-
 }

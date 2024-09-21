@@ -17,17 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
 /**
  * @author DPOH-VAR
  * @version 1.0
  */
 public class ReflectionUtils {
-
     /**
      * prefix of bukkit classes
      */
@@ -36,14 +33,12 @@ public class ReflectionUtils {
      * prefix of minecraft classes
      */
     private static String preClassM = "net.minecraft.server";
-
     public ReflectionUtils(String version) {
         if (version != null) {
             preClassB += '.' + version;
             preClassM += '.' + version;
         }
     }
-
     public static Class<?> getClass(String name) {
         try {
             return Class.forName(name);
@@ -51,7 +46,6 @@ public class ReflectionUtils {
             return null;
         }
     }
-
     public static <T> Class<? extends T> getClass(String name, Class<T> superClass) {
         try {
             return Class.forName(name).asSubclass(superClass);
@@ -59,7 +53,6 @@ public class ReflectionUtils {
             return null;
         }
     }
-
     /**
      * Get class for name. Replace {nms} to net.minecraft.server.V*. Replace {cb} to org.bukkit.craftbukkit.V*. Replace
      * {nm} to net.minecraft
@@ -73,7 +66,6 @@ public class ReflectionUtils {
                 .replace("{nm}", "net.minecraft");
         return getRefClass(Class.forName(className));
     }
-
     /**
      * get RefClass object by real class
      *
@@ -83,18 +75,14 @@ public class ReflectionUtils {
     public static RefClass getRefClass(Class<?> clazz) {
         return new RefClass(clazz);
     }
-
     /**
      * RefClass - utility to simplify work with reflections.
      */
     public static class RefClass {
-
         private final Class<?> clazz;
-
         private RefClass(Class<?> clazz) {
             this.clazz = clazz;
         }
-
         /**
          * get passed class
          *
@@ -103,7 +91,6 @@ public class ReflectionUtils {
         public Class<?> getRealClass() {
             return this.clazz;
         }
-
         /**
          * get existing method by name and types
          *
@@ -130,7 +117,6 @@ public class ReflectionUtils {
                 return new RefMethod(this.clazz.getDeclaredMethod(name, classes));
             }
         }
-
         /**
          * get field by name
          *
@@ -145,29 +131,22 @@ public class ReflectionUtils {
                 return new RefField(this.clazz.getDeclaredField(name));
             }
         }
-
     }
-
-
     /**
      * Method wrapper
      */
     public static class RefMethod {
-
         private final Method method;
-
         private RefMethod(Method method) {
             this.method = method;
             method.setAccessible(true);
         }
-
         /**
          * @return passed method
          */
         public Method getRealMethod() {
             return this.method;
         }
-
         /**
          * apply method to object
          *
@@ -177,16 +156,11 @@ public class ReflectionUtils {
         public RefExecutor of(Object e) {
             return new RefExecutor(e);
         }
-
-
         public class RefExecutor {
-
             final Object e;
-
             public RefExecutor(Object e) {
                 this.e = e;
             }
-
             /**
              * apply method for selected object
              *
@@ -201,24 +175,17 @@ public class ReflectionUtils {
                     throw new RuntimeException(e);
                 }
             }
-
         }
-
     }
-
-
     /**
      * Constructor wrapper
      */
     public static class RefConstructor {
-
         private final Constructor<?> constructor;
-
         private RefConstructor(Constructor<?> constructor) {
             this.constructor = constructor;
             constructor.setAccessible(true);
         }
-
         /**
          * create new instance with constructor
          *
@@ -231,27 +198,19 @@ public class ReflectionUtils {
                 throws ReflectiveOperationException, IllegalArgumentException {
             return this.constructor.newInstance(params);
         }
-
     }
-
-
     public static class RefField {
-
         private final Field field;
-
         private RefField(Field field) {
             this.field = field;
             field.setAccessible(true);
         }
-
         /**
          * @return passed field
          */
         public Field getRealField() {
             return this.field;
         }
-
-
         /**
          * apply fiend for object
          *
@@ -261,15 +220,11 @@ public class ReflectionUtils {
         public RefExecutor of(Object e) {
             return new RefExecutor(e);
         }
-
         public class RefExecutor {
-
             final Object e;
-
             public RefExecutor(Object e) {
                 this.e = e;
             }
-
             /**
              * set field value for applied object
              *
@@ -282,7 +237,6 @@ public class ReflectionUtils {
                     throw new RuntimeException(e);
                 }
             }
-
             /**
              * get field value for applied object
              *
@@ -295,9 +249,6 @@ public class ReflectionUtils {
                     throw new RuntimeException(e);
                 }
             }
-
         }
-
     }
-
 }

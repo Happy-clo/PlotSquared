@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagAddEvent;
@@ -31,7 +30,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 @CommandDeclaration(command = "setdescription",
         permission = "plots.set.desc",
         usage = "/plot desc <description>",
@@ -39,14 +37,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER)
 public class Desc extends SetCommand {
-
     private final EventDispatcher eventDispatcher;
-
     @Inject
     public Desc(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
-
     @Override
     public boolean set(PlotPlayer<?> player, Plot plot, String desc) {
         if (desc.isEmpty()) {
@@ -83,5 +78,4 @@ public class Desc extends SetCommand {
         player.sendMessage(TranslatableCaption.of("desc.desc_set"));
         return true;
     }
-
 }

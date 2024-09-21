@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -70,7 +69,6 @@ import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,20 +83,16 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-
 /**
  * @author Jesse Boyd, Alexander Söderberg
  */
 public abstract class PlotArea implements ComponentLike {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotArea.class.getSimpleName());
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final DecimalFormat FLAG_DECIMAL_FORMAT = new DecimalFormat("0");
-
     static {
         FLAG_DECIMAL_FORMAT.setMaximumFractionDigits(340);
     }
-
     protected final ConcurrentHashMap<PlotId, Plot> plots = new ConcurrentHashMap<>();
     @NonNull
     private final String worldName;
@@ -139,10 +133,10 @@ public abstract class PlotArea implements ComponentLike {
     private boolean homeAllowNonmember = false;
     private BlockLoc nonmemberHome;
     private BlockLoc defaultHome;
-    private int maxBuildHeight = PlotSquared.platform().versionMaxHeight() + 1; // Exclusive
-    private int minBuildHeight = PlotSquared.platform().versionMinHeight() + 1; // Inclusive
-    private int maxGenHeight = PlotSquared.platform().versionMaxHeight(); // Inclusive
-    private int minGenHeight = PlotSquared.platform().versionMinHeight(); // Inclusive
+    private int maxBuildHeight = PlotSquared.platform().versionMaxHeight() + 1;
+    private int minBuildHeight = PlotSquared.platform().versionMinHeight() + 1;
+    private int maxGenHeight = PlotSquared.platform().versionMaxHeight();
+    private int minGenHeight = PlotSquared.platform().versionMinHeight();
     private GameMode gameMode = GameModes.CREATIVE;
     private Map<String, PlotExpression> prices = new HashMap<>();
     private List<String> schematics = new ArrayList<>();
@@ -155,7 +149,6 @@ public abstract class PlotArea implements ComponentLike {
     private QuadMap<PlotCluster> clusters;
     private String signMaterial = "OAK_WALL_SIGN";
     private String legacySignMaterial = "WALL_SIGN";
-
     public PlotArea(
             final @NonNull String worldName, final @Nullable String id,
             @NonNull IndependentPlotGenerator generator, final @Nullable PlotId min,
@@ -182,7 +175,6 @@ public abstract class PlotArea implements ComponentLike {
         this.worldHash = worldName.hashCode();
         this.worldConfiguration = worldConfiguration;
     }
-
     private static void parseFlags(FlagContainer flagContainer, List<String> flagStrings) {
         for (final String key : flagStrings) {
             final String[] split;
@@ -211,14 +203,11 @@ public abstract class PlotArea implements ComponentLike {
             }
         }
     }
-
     @NonNull
     protected abstract PlotManager createManager();
-
     public QueueCoordinator getQueue() {
         return this.globalBlockQueue.getNewQueue(PlotSquared.platform().worldUtil().getWeWorld(worldName));
     }
-
     /**
      * Returns the region for this PlotArea, or a CuboidRegion encompassing
      * the whole world if none exists.
@@ -235,7 +224,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return this.region;
     }
-
     /**
      * Returns the region for this PlotArea.
      *
@@ -253,7 +241,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return this.region;
     }
-
     /**
      * Returns the minimum value of a {@link PlotId}.
      *
@@ -262,7 +249,6 @@ public abstract class PlotArea implements ComponentLike {
     public @NonNull PlotId getMin() {
         return this.min == null ? PlotId.of(Integer.MIN_VALUE, Integer.MIN_VALUE) : this.min;
     }
-
     /**
      * Returns the max PlotId.
      *
@@ -271,7 +257,6 @@ public abstract class PlotArea implements ComponentLike {
     public @NonNull PlotId getMax() {
         return this.max == null ? PlotId.of(Integer.MAX_VALUE, Integer.MAX_VALUE) : this.max;
     }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -284,11 +269,9 @@ public abstract class PlotArea implements ComponentLike {
         return this.getWorldHash() == plotarea.getWorldHash() && this.getWorldName()
                 .equals(plotarea.getWorldName()) && StringMan.isEqual(this.getId(), plotarea.getId());
     }
-
     public Set<PlotCluster> getClusters() {
         return this.clusters == null ? new HashSet<>() : this.clusters.getAll();
     }
-
     /**
      * Check if a PlotArea is compatible (move/copy etc.).
      *
@@ -306,7 +289,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return true;
     }
-
     /**
      * When a world is created, the following method will be called for each.
      *
@@ -349,7 +331,7 @@ public abstract class PlotArea implements ComponentLike {
                 String raw = priceSection.getString(key);
                 if (raw.contains("{arg}")) {
                     raw = raw.replace("{arg}", "plots");
-                    priceSection.set(key, raw); // update if replaced
+                    priceSection.set(key, raw);
                 }
                 this.prices.put(key, PlotExpression.compile(raw, "plots"));
             }
@@ -362,14 +344,12 @@ public abstract class PlotArea implements ComponentLike {
         this.minBuildHeight = config.getInt("world.min_height");
         this.minGenHeight = config.getInt("world.min_gen_height");
         this.maxGenHeight = config.getInt("world.max_gen_height");
-
         switch (config.getString("world.gamemode").toLowerCase()) {
             case "creative", "c", "1" -> this.gameMode = GameModes.CREATIVE;
             case "adventure", "a", "2" -> this.gameMode = GameModes.ADVENTURE;
             case "spectator", "3" -> this.gameMode = GameModes.SPECTATOR;
             default -> this.gameMode = GameModes.SURVIVAL;
         }
-
         String homeNonMembers = config.getString("home.nonmembers");
         String homeDefault = config.getString("home.default");
         this.defaultHome = BlockLoc.fromString(homeDefault);
@@ -379,7 +359,6 @@ public abstract class PlotArea implements ComponentLike {
         } else {
             this.nonmemberHome = BlockLoc.fromString(homeNonMembers);
         }
-
         if ("side".equalsIgnoreCase(homeDefault)) {
             this.defaultHome = null;
         } else if (StringMan.isEqualIgnoreCaseToAny(homeDefault, "center", "middle", "centre")) {
@@ -394,11 +373,9 @@ public abstract class PlotArea implements ComponentLike {
                 this.defaultHome = null;
             }
         }
-
         this.spawnEggs = config.getBoolean("event.spawn.egg");
         this.spawnCustom = config.getBoolean("event.spawn.custom");
         this.spawnBreeding = config.getBoolean("event.spawn.breeding");
-
         if (PlotSquared.get().isWeInitialised()) {
             loadFlags(config);
         } else {
@@ -408,10 +385,8 @@ public abstract class PlotArea implements ComponentLike {
             );
             TaskManager.runTaskLater(() -> loadFlags(config), TaskTime.ticks(1));
         }
-
         loadConfiguration(config);
     }
-
     private void loadFlags(ConfigurationSection config) {
         ConsolePlayer.getConsole().sendMessage(
                 TranslatableCaption.of("flags.loading_area_flags"),
@@ -436,7 +411,6 @@ public abstract class PlotArea implements ComponentLike {
                 TranslatableCaption.of("flags.area_flags"),
                 TagResolver.resolver("flags", Tag.inserting(Component.text(flags.toString())))
         );
-
         List<String> roadflags = config.getStringList("road.flags");
         if (roadflags.isEmpty()) {
             roadflags = new ArrayList<>();
@@ -455,9 +429,7 @@ public abstract class PlotArea implements ComponentLike {
                 TagResolver.resolver("flags", Tag.inserting(Component.text(roadflags.toString())))
         );
     }
-
     public abstract void loadConfiguration(ConfigurationSection config);
-
     /**
      * Saving core PlotArea settings.
      *
@@ -506,7 +478,6 @@ public abstract class PlotArea implements ComponentLike {
         options.put("world.max_gen_height", this.getMaxGenHeight());
         options.put("world.gamemode", this.getGameMode().getName().toLowerCase());
         options.put("road.flags.default", null);
-
         if (this.getType() != PlotAreaType.NORMAL) {
             options.put("generator.terrain", this.getTerrain());
             options.put("generator.type", this.getType().toString());
@@ -533,7 +504,6 @@ public abstract class PlotArea implements ComponentLike {
             config.set("road.flags.liquid-flow", false);
         }
     }
-
     @NonNull
     @Override
     public String toString() {
@@ -543,12 +513,10 @@ public abstract class PlotArea implements ComponentLike {
             return this.getWorldName() + ";" + this.getId();
         }
     }
-
     @Override
     public @NotNull Component asComponent() {
         return Component.text(toString());
     }
-
     @Override
     public int hashCode() {
         if (this.hash != 0) {
@@ -556,14 +524,12 @@ public abstract class PlotArea implements ComponentLike {
         }
         return this.hash = toString().hashCode();
     }
-
     /**
      * Used for the <b>/plot setup</b> command Return null if you do not want to support this feature
      *
      * @return ConfigurationNode[]
      */
     public abstract ConfigurationNode[] getSettingNodes();
-
     /**
      * Gets the {@link Plot} at a location.
      *
@@ -578,7 +544,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return getPlotAbs(pid);
     }
-
     /**
      * Gets the base plot at a location.
      *
@@ -593,7 +558,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return getPlot(pid);
     }
-
     /**
      * Get the owned base plot at a location.
      *
@@ -609,7 +573,6 @@ public abstract class PlotArea implements ComponentLike {
         Plot plot = this.plots.get(pid);
         return plot == null ? null : plot.getBasePlot(false);
     }
-
     /**
      * Get the owned plot at a location.
      *
@@ -624,7 +587,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return this.plots.get(pid);
     }
-
     /**
      * Get the owned Plot at a PlotId.
      *
@@ -634,26 +596,21 @@ public abstract class PlotArea implements ComponentLike {
     public @Nullable Plot getOwnedPlotAbs(final @NonNull PlotId id) {
         return this.plots.get(id);
     }
-
     public @Nullable Plot getOwnedPlot(final @NonNull PlotId id) {
         Plot plot = this.plots.get(id);
         return plot == null ? null : plot.getBasePlot(false);
     }
-
     public boolean contains(final int x, final int z) {
         return this.getType() != PlotAreaType.PARTIAL || RegionUtil.contains(getRegionAbs(), x, z);
     }
-
     public boolean contains(final @NonNull PlotId id) {
         return this.min == null || (id.getX() >= this.min.getX() && id.getX() <= this.max.getX() &&
                 id.getY() >= this.min.getY() && id.getY() <= this.max.getY());
     }
-
     public boolean contains(final @NonNull Location location) {
         return StringMan.isEqual(location.getWorldName(), this.getWorldName()) && (
                 getRegionAbs() == null || this.region.contains(location.getBlockVector3()));
     }
-
     /**
      * Get if the {@code PlotArea}'s build range (min build height -> max build height) contains the given y value
      *
@@ -663,7 +620,6 @@ public abstract class PlotArea implements ComponentLike {
     public boolean buildRangeContainsY(int y) {
         return y >= minBuildHeight && y < maxBuildHeight;
     }
-
     /**
      * Utility method to check if the player is attempting to place blocks outside the build area, and notify of this if the
      * player does not have permissions.
@@ -682,12 +638,10 @@ public abstract class PlotArea implements ComponentLike {
                             .tag("maxheight", Tag.inserting(Component.text(maxBuildHeight)))
                             .build()
             );
-            // Return true if "failed" as the method will always be inverted otherwise
             return true;
         }
         return false;
     }
-
     public @NonNull Set<Plot> getPlotsAbs(final UUID uuid) {
         if (uuid == null) {
             return Collections.emptySet();
@@ -700,12 +654,10 @@ public abstract class PlotArea implements ComponentLike {
         });
         return myPlots;
     }
-
     public @NonNull Set<Plot> getPlots(final @NonNull UUID uuid) {
         return getPlots().stream().filter(plot -> plot.isBasePlot() && plot.isOwner(uuid))
                 .collect(ImmutableSet.toImmutableSet());
     }
-
     /**
      * A collection of the claimed plots in this {@link PlotArea}.
      *
@@ -714,14 +666,12 @@ public abstract class PlotArea implements ComponentLike {
     public Collection<Plot> getPlots() {
         return this.plots.values();
     }
-
     public int getPlotCount(final @NonNull UUID uuid) {
         if (!Settings.Done.COUNTS_TOWARDS_LIMIT) {
             return (int) getPlotsAbs(uuid).stream().filter(plot -> !DoneFlag.isDone(plot)).count();
         }
         return getPlotsAbs(uuid).size();
     }
-
     /**
      * Retrieves the plots for the player in this PlotArea.
      *
@@ -733,17 +683,12 @@ public abstract class PlotArea implements ComponentLike {
     public Set<Plot> getPlots(final @NonNull PlotPlayer<?> player) {
         return getPlots(player.getUUID());
     }
-
-    //todo check if this method is needed in this class
-
     public boolean hasPlot(final @NonNull UUID uuid) {
         return this.plots.entrySet().stream().anyMatch(entry -> entry.getValue().isOwner(uuid));
     }
-
     public int getPlotCount(final @Nullable PlotPlayer<?> player) {
         return player != null ? getPlotCount(player.getUUID()) : 0;
     }
-
     public @Nullable Plot getPlotAbs(final @NonNull PlotId id) {
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
@@ -755,7 +700,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return plot;
     }
-
     public @Nullable Plot getPlot(final @NonNull PlotId id) {
         final Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
@@ -767,7 +711,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return plot.getBasePlot(false);
     }
-
     /**
      * Retrieves the number of claimed plot in the {@link PlotArea}.
      *
@@ -776,7 +719,6 @@ public abstract class PlotArea implements ComponentLike {
     public int getPlotCount() {
         return this.plots.size();
     }
-
     public @Nullable PlotCluster getCluster(final @NonNull Location location) {
         final Plot plot = getPlot(location);
         if (plot == null) {
@@ -784,7 +726,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return this.clusters != null ? this.clusters.get(plot.getId().getX(), plot.getId().getY()) : null;
     }
-
     public @Nullable PlotCluster getFirstIntersectingCluster(
             final @NonNull PlotId pos1,
             final @NonNull PlotId pos2
@@ -799,11 +740,9 @@ public abstract class PlotArea implements ComponentLike {
         }
         return null;
     }
-
     @Nullable PlotCluster getCluster(final @NonNull PlotId id) {
         return this.clusters != null ? this.clusters.get(id.getX(), id.getY()) : null;
     }
-
     /**
      * Session only plot metadata (session is until the server stops).
      * <br>
@@ -818,12 +757,10 @@ public abstract class PlotArea implements ComponentLike {
         }
         this.meta.put(key, value);
     }
-
     public @NonNull <T> T getMeta(final @NonNull String key, final @NonNull T def) {
         final Object v = getMeta(key);
         return v == null ? def : (T) v;
     }
-
     /**
      * Get the metadata for a key<br>
      * <br>
@@ -838,20 +775,17 @@ public abstract class PlotArea implements ComponentLike {
         }
         return null;
     }
-
     @SuppressWarnings("unused")
     public @NonNull Set<Plot> getBasePlots() {
         final HashSet<Plot> myPlots = new HashSet<>(getPlots());
         myPlots.removeIf(plot -> !plot.isBasePlot());
         return myPlots;
     }
-
     private void forEachPlotAbs(Consumer<Plot> run) {
         for (final Entry<PlotId, Plot> entry : this.plots.entrySet()) {
             run.accept(entry.getValue());
         }
     }
-
     public void forEachBasePlot(Consumer<Plot> run) {
         for (final Plot plot : getPlots()) {
             if (plot.isBasePlot()) {
@@ -859,23 +793,19 @@ public abstract class PlotArea implements ComponentLike {
             }
         }
     }
-
     /**
      * Returns an ImmutableMap of PlotId's and Plots in this PlotArea.
      *
      * @return map of PlotId against Plot for all plots in this area
      * @deprecated Poorly implemented. May be removed in future.
      */
-    //todo eventually remove
     @Deprecated
     public @NonNull Map<PlotId, Plot> getPlotsRaw() {
         return ImmutableMap.copyOf(plots);
     }
-
     public @NonNull Set<Entry<PlotId, Plot>> getPlotEntries() {
         return this.plots.entrySet();
     }
-
     public boolean addPlot(final @NonNull Plot plot) {
         for (final PlotPlayer<?> pp : plot.getPlayersInPlot()) {
             try (final MetaDataAccess<Plot> metaDataAccess = pp.accessTemporaryMetaData(
@@ -885,7 +815,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return this.plots.put(plot.getId(), plot) == null;
     }
-
     public Plot getNextFreePlot(final PlotPlayer<?> player, @Nullable PlotId start) {
         int plots;
         PlotId center;
@@ -916,7 +845,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return null;
     }
-
     public boolean addPlotIfAbsent(final @NonNull Plot plot) {
         if (this.plots.putIfAbsent(plot.getId(), plot) == null) {
             for (PlotPlayer<?> pp : plot.getPlayersInPlot()) {
@@ -929,11 +857,9 @@ public abstract class PlotArea implements ComponentLike {
         }
         return false;
     }
-
     public boolean addPlotAbs(final @NonNull Plot plot) {
         return this.plots.put(plot.getId(), plot) == null;
     }
-
     /**
      * Get the plot border distance for a world<br>
      *
@@ -953,7 +879,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return Integer.MAX_VALUE;
     }
-
     /**
      * Get the plot border distance for a world, specifying whether the returned value should include the world.border-size
      * value. This is a player-traversable area, where plots cannot be claimed
@@ -974,7 +899,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return Integer.MAX_VALUE;
     }
-
     /**
      * Setup the plot border for a world (usually done when the world is created).
      */
@@ -990,7 +914,6 @@ public abstract class PlotArea implements ComponentLike {
             plot.updateWorldBorder();
         }
     }
-
     /**
      * Delete the metadata for a key.
      * - metadata is session only
@@ -1003,7 +926,6 @@ public abstract class PlotArea implements ComponentLike {
             this.meta.remove(key);
         }
     }
-
     public @Nullable List<Plot> canClaim(
             final @Nullable PlotPlayer<?> player, final @NonNull PlotId pos1,
             final @NonNull PlotId pos2
@@ -1039,11 +961,9 @@ public abstract class PlotArea implements ComponentLike {
         }
         return plots;
     }
-
     public boolean removePlot(final @NonNull PlotId id) {
         return this.plots.remove(id) != null;
     }
-
     /**
      * Merge a list of plots together. This is non-blocking for the world-changes that will be made. To run a task when the
      * world changes are complete, use {@link PlotArea#mergePlots(List, boolean, Runnable)};
@@ -1055,7 +975,6 @@ public abstract class PlotArea implements ComponentLike {
     public boolean mergePlots(final @NonNull List<PlotId> plotIds, final boolean removeRoads) {
         return mergePlots(plotIds, removeRoads, null);
     }
-
     /**
      * Merge a list of plots together. This is non-blocking for the world-changes that will be made.
      *
@@ -1072,11 +991,9 @@ public abstract class PlotArea implements ComponentLike {
         if (plotIds.size() < 2) {
             return false;
         }
-
         final PlotId pos1 = plotIds.get(0);
         final PlotId pos2 = plotIds.get(plotIds.size() - 1);
         final PlotManager manager = getPlotManager();
-
         QueueCoordinator queue = getQueue();
         manager.startPlotMerge(plotIds, queue);
         final Set<UUID> trusted = new HashSet<>();
@@ -1103,11 +1020,9 @@ public abstract class PlotArea implements ComponentLike {
                 final boolean ly = y < pos2.getY();
                 final PlotId id = PlotId.of(x, y);
                 final Plot plot = getPlotAbs(id);
-
                 plot.setTrusted(trusted);
                 plot.setMembers(members);
                 plot.setDenied(denied);
-
                 Plot plot2;
                 if (lx) {
                     if (ly) {
@@ -1137,7 +1052,6 @@ public abstract class PlotArea implements ComponentLike {
         queue.enqueue();
         return true;
     }
-
     /**
      * Get a set of owned plots within a selection (chooses the best algorithm based on selection size.
      * i.e. A selection of billions of plots will work fine
@@ -1170,7 +1084,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return result;
     }
-
     @SuppressWarnings("WeakerAccess")
     public void removeCluster(final @Nullable PlotCluster plotCluster) {
         if (this.clusters == null) {
@@ -1178,7 +1091,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         this.clusters.remove(plotCluster);
     }
-
     public void addCluster(final @Nullable PlotCluster plotCluster) {
         if (this.clusters == null) {
             this.clusters = new QuadMap<>(Integer.MAX_VALUE, 0, 0, 62) {
@@ -1195,7 +1107,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         this.clusters.add(plotCluster);
     }
-
     public @Nullable PlotCluster getCluster(final String string) {
         for (PlotCluster cluster : getClusters()) {
             if (cluster.getName().equalsIgnoreCase(string)) {
@@ -1204,7 +1115,6 @@ public abstract class PlotArea implements ComponentLike {
         }
         return null;
     }
-
     /**
      * Get whether a schematic with that name is available or not.
      * If a schematic is available, it can be used for plot claiming.
@@ -1215,7 +1125,6 @@ public abstract class PlotArea implements ComponentLike {
     public boolean hasSchematic(@NonNull String schematic) {
         return getSchematics().contains(schematic.toLowerCase());
     }
-
     /**
      * Get whether economy is enabled and used on this plot area or not.
      *
@@ -1224,7 +1133,6 @@ public abstract class PlotArea implements ComponentLike {
     public boolean useEconomy() {
         return useEconomy;
     }
-
     /**
      * Get whether the plot area is limited by a world border or not.
      *
@@ -1233,7 +1141,6 @@ public abstract class PlotArea implements ComponentLike {
     public boolean hasWorldBorder() {
         return worldBorder;
     }
-
     /**
      * Get the "extra border" size of the plot area.
      *
@@ -1243,7 +1150,6 @@ public abstract class PlotArea implements ComponentLike {
     public int getBorderSize() {
         return borderSize;
     }
-
     /**
      * Get whether plot signs are allowed or not.
      *
@@ -1252,7 +1158,6 @@ public abstract class PlotArea implements ComponentLike {
     public boolean allowSigns() {
         return allowSigns;
     }
-
     /**
      * Get the plot sign material.
      *
@@ -1261,11 +1166,9 @@ public abstract class PlotArea implements ComponentLike {
     public String signMaterial() {
         return signMaterial;
     }
-
     public String legacySignMaterial() {
         return legacySignMaterial;
     }
-
     /**
      * Get the value associated with the specified flag. This will look at
      * the default values stored in {@link GlobalFlagContainer}.
@@ -1277,7 +1180,6 @@ public abstract class PlotArea implements ComponentLike {
     public <T> T getFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
         return this.flagContainer.getFlag(flagClass).getValue();
     }
-
     /**
      * Get the value associated with the specified flag. This will look at
      * the default values stored in {@link GlobalFlagContainer}.
@@ -1292,7 +1194,6 @@ public abstract class PlotArea implements ComponentLike {
         final PlotFlag<?, ?> flagInstance = this.flagContainer.getFlagErased(flagClass);
         return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
     }
-
     /**
      * Get the value associated with the specified road flag. This will look at
      * the default values stored in {@link GlobalFlagContainer}.
@@ -1304,7 +1205,6 @@ public abstract class PlotArea implements ComponentLike {
     public <T> T getRoadFlag(final Class<? extends PlotFlag<T, ?>> flagClass) {
         return this.roadFlagContainer.getFlag(flagClass).getValue();
     }
-
     /**
      * Get the value associated with the specified road flag. This will look at
      * the default values stored in {@link GlobalFlagContainer}.
@@ -1319,101 +1219,77 @@ public abstract class PlotArea implements ComponentLike {
         final PlotFlag<?, ?> flagInstance = this.roadFlagContainer.getFlagErased(flagClass);
         return FlagContainer.<T, V>castUnsafe(flagInstance).getValue();
     }
-
     public @NonNull String getWorldName() {
         return this.worldName;
     }
-
     public String getId() {
         return this.id;
     }
-
     public @NonNull PlotManager getPlotManager() {
         return this.plotManager;
     }
-
     public int getWorldHash() {
         return this.worldHash;
     }
-
     public @NonNull IndependentPlotGenerator getGenerator() {
         return this.generator;
     }
-
     public boolean isAutoMerge() {
         return this.autoMerge;
     }
-
     public boolean isMiscSpawnUnowned() {
         return this.miscSpawnUnowned;
     }
-
     public boolean isMobSpawning() {
         return this.mobSpawning;
     }
-
     public boolean isMobSpawnerSpawning() {
         return this.mobSpawnerSpawning;
     }
-
     public BiomeType getPlotBiome() {
         return this.plotBiome;
     }
-
     public boolean isPlotChat() {
         return this.plotChat;
     }
-
     public boolean isForcingPlotChat() {
         return this.forcingPlotChat;
     }
-
     public boolean isSchematicClaimSpecify() {
         return this.schematicClaimSpecify;
     }
-
     public boolean isSchematicOnClaim() {
         return this.schematicOnClaim;
     }
-
     public String getSchematicFile() {
         return this.schematicFile;
     }
-
     public boolean isSpawnEggs() {
         return this.spawnEggs;
     }
-
     public String getSignMaterial() {
         return this.signMaterial;
     }
-
     public boolean isSpawnCustom() {
         return this.spawnCustom;
     }
-
     public boolean isSpawnBreeding() {
         return this.spawnBreeding;
     }
-
     public PlotAreaType getType() {
         return this.type;
     }
-
     /**
      * Set the type of this plot area.
      *
      * @param type the type of the plot area.
      */
     public void setType(PlotAreaType type) {
-        // TODO this should probably work only if type == null
         this.type = type;
     }
-
     public PlotAreaTerrainType getTerrain() {
         return this.terrain;
     }
-
     /**
      * Set the terrain generation type of this plot area.
      *
@@ -1422,11 +1298,9 @@ public abstract class PlotArea implements ComponentLike {
     public void setTerrain(PlotAreaTerrainType terrain) {
         this.terrain = terrain;
     }
-
     public boolean isHomeAllowNonmember() {
         return this.homeAllowNonmember;
     }
-
     /**
      * Get the location for non-members to be teleported to.
      *
@@ -1435,7 +1309,6 @@ public abstract class PlotArea implements ComponentLike {
     public BlockLoc nonmemberHome() {
         return this.nonmemberHome;
     }
-
     /**
      * Get the default location for players to be teleported to. May be overridden by {@link #nonmemberHome} if the player is
      * not a member of the plot.
@@ -1445,11 +1318,9 @@ public abstract class PlotArea implements ComponentLike {
     public BlockLoc defaultHome() {
         return this.defaultHome;
     }
-
     protected void setDefaultHome(BlockLoc defaultHome) {
         this.defaultHome = defaultHome;
     }
-
     /**
      * Get the maximum height that changes to plot components (wall filling, air, all etc.) may operate to
      *
@@ -1458,7 +1329,6 @@ public abstract class PlotArea implements ComponentLike {
     public int getMaxComponentHeight() {
         return this.maxBuildHeight;
     }
-
     /**
      * Get the minimum height that changes to plot components (wall filling, air, all etc.) may operate to
      *
@@ -1467,21 +1337,18 @@ public abstract class PlotArea implements ComponentLike {
     public int getMinComponentHeight() {
         return this.minBuildHeight;
     }
-
     /**
      * Get the maximum height players may build in. Exclusive.
      */
     public int getMaxBuildHeight() {
         return this.maxBuildHeight;
     }
-
     /**
      * Get the minimum height players may build in. Inclusive.
      */
     public int getMinBuildHeight() {
         return this.minBuildHeight;
     }
-
     /**
      * Get the min height from which PlotSquared will generate blocks. Inclusive.
      *
@@ -1490,7 +1357,6 @@ public abstract class PlotArea implements ComponentLike {
     public int getMinGenHeight() {
         return this.minGenHeight;
     }
-
     /**
      * Get the max height to which PlotSquared will generate blocks. Inclusive.
      *
@@ -1499,33 +1365,25 @@ public abstract class PlotArea implements ComponentLike {
     public int getMaxGenHeight() {
         return this.maxGenHeight;
     }
-
     public GameMode getGameMode() {
         return this.gameMode;
     }
-
     public Map<String, PlotExpression> getPrices() {
         return this.prices;
     }
-
     protected List<String> getSchematics() {
         return this.schematics;
     }
-
     public boolean isRoadFlags() {
         return this.roadFlags;
     }
-
     public FlagContainer getFlagContainer() {
         return this.flagContainer;
     }
-
     public FlagContainer getRoadFlagContainer() {
         return this.roadFlagContainer;
     }
-
     public void setAllowSigns(boolean allowSigns) {
         this.allowSigns = allowSigns;
     }
-
 }

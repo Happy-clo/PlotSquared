@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.schematic;
-
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -48,7 +47,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,18 +54,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
-
 public class StateWrapper {
-
     public CompoundTag tag;
-
     private boolean paperErrorTextureSent = false;
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + StateWrapper.class.getSimpleName());
-
     public StateWrapper(CompoundTag tag) {
         this.tag = tag;
     }
-
     public static String jsonToColourCode(String str) {
         str = str.replace("{\"extra\":", "").replace("],\"text\":\"\"}", "]")
                 .replace("[{\"color\":\"black\",\"text\":\"", "&0")
@@ -169,7 +162,6 @@ public class StateWrapper {
         str = ChatColor.translateAlternateColorCodes('&', str);
         return str;
     }
-
     /**
      * Restore the TileEntity data to the given world at the given coordinates.
      *
@@ -186,14 +178,13 @@ public class StateWrapper {
         }
         return restoreTag(world.getBlockAt(x, y, z));
     }
-
     /**
      * Restore the TileEntity data to the given block
      *
      * @param block Block to restore to
      * @return true if successful
      */
-    @SuppressWarnings("deprecation") // #setLine is needed for Spigot compatibility
+    @SuppressWarnings("deprecation")
     public boolean restoreTag(@NonNull Block block) {
         if (this.tag == null) {
             return false;
@@ -240,7 +231,6 @@ public class StateWrapper {
                         return true;
                     }
                     String player = skullOwner.getString("Name");
-
                     if (player != null && !player.isEmpty()) {
                         try {
                             skull.setOwningPlayer(Bukkit.getOfflinePlayer(player));
@@ -250,7 +240,6 @@ public class StateWrapper {
                         }
                         return true;
                     }
-
                     final CompoundTag properties = (CompoundTag) skullOwner.getValue().get("Properties");
                     if (properties == null) {
                         return false;
@@ -279,7 +268,6 @@ public class StateWrapper {
                     skull.setPlayerProfile(profile);
                     skull.update(true);
                     return true;
-
                 }
                 return false;
             }
@@ -305,7 +293,6 @@ public class StateWrapper {
         }
         return false;
     }
-
     public String getId() {
         String tileid = this.tag.getString("id").toLowerCase();
         if (tileid.startsWith("minecraft:")) {
@@ -313,7 +300,6 @@ public class StateWrapper {
         }
         return tileid;
     }
-
     public List<CompoundTag> serializeInventory(ItemStack[] items) {
         List<CompoundTag> tags = new ArrayList<>();
         for (int i = 0; i < items.length; ++i) {
@@ -325,7 +311,6 @@ public class StateWrapper {
         }
         return tags;
     }
-
     public Map<String, Tag> serializeItem(ItemStack item) {
         Map<String, Tag> data = new HashMap<>();
         data.put("id", new StringTag(item.getType().name()));
@@ -345,5 +330,4 @@ public class StateWrapper {
         }
         return data;
     }
-
 }

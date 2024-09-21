@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
-
 import com.plotsquared.bukkit.entity.EntityWrapper;
 import com.plotsquared.bukkit.entity.ReplicatingEntityWrapper;
 import com.plotsquared.core.location.Location;
@@ -32,24 +31,18 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 public class ContentMap {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ContentMap.class.getSimpleName());
-
     final Set<EntityWrapper> entities;
     final Map<PlotLoc, BaseBlock[]> allBlocks;
-
     ContentMap() {
         this.entities = new HashSet<>();
         this.allBlocks = new HashMap<>();
     }
-
     public void saveRegion(BukkitWorld world, int x1, int x2, int z1, int z2) {
         if (z1 > z2) {
             int tmp = z1;
@@ -67,7 +60,6 @@ public class ContentMap {
             }
         }
     }
-
     void saveEntitiesOut(Chunk chunk, CuboidRegion region) {
         for (Entity entity : chunk.getEntities()) {
             Location location = BukkitUtil.adapt(entity.getLocation());
@@ -84,7 +76,6 @@ public class ContentMap {
             this.entities.add(wrap);
         }
     }
-
     void saveEntitiesIn(Chunk chunk, CuboidRegion region, boolean delete) {
         for (Entity entity : chunk.getEntities()) {
             Location location = BukkitUtil.adapt(entity.getLocation());
@@ -106,7 +97,6 @@ public class ContentMap {
             }
         }
     }
-
     void restoreEntities(World world) {
         for (EntityWrapper entity : this.entities) {
             try {
@@ -117,7 +107,6 @@ public class ContentMap {
         }
         this.entities.clear();
     }
-
     private void saveBlocks(BukkitWorld world, int x, int z) {
         BaseBlock[] ids = new BaseBlock[world.getMaxY() - world.getMinY() + 1];
         for (short yIndex = 0; yIndex <= world.getMaxY() - world.getMinY(); yIndex++) {
@@ -127,5 +116,4 @@ public class ContentMap {
         PlotLoc loc = new PlotLoc(x, z);
         this.allBlocks.put(loc, ids);
     }
-
 }

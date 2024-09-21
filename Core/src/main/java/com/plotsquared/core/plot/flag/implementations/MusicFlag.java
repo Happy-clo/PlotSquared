@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
@@ -25,11 +24,8 @@ import com.plotsquared.core.util.ItemUtil;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
-
     public static final MusicFlag MUSIC_FLAG_NONE = new MusicFlag(ItemTypes.AIR);
-
     /**
      * Construct a new flag instance.
      *
@@ -38,7 +34,6 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
     protected MusicFlag(ItemType value) {
         super(value, TranslatableCaption.of("flags.flag_category_music"), TranslatableCaption.of("flags.flag_description_music"));
     }
-
     @Override
     public MusicFlag parse(@NonNull String input) throws FlagParseException {
         if (!input.isEmpty() && !input.contains("music_disc_")) {
@@ -52,7 +47,6 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_music"));
         }
     }
-
     @Override
     public MusicFlag merge(@NonNull ItemType newValue) {
         if (getValue().equals(ItemTypes.AIR)) {
@@ -63,20 +57,16 @@ public class MusicFlag extends PlotFlag<ItemType, MusicFlag> {
             return new MusicFlag(newValue);
         }
     }
-
     @Override
     public String toString() {
         return getValue().getId();
     }
-
     @Override
     public String getExample() {
         return "ward";
     }
-
     @Override
     protected MusicFlag flagOf(@NonNull ItemType value) {
         return new MusicFlag(value);
     }
-
 }

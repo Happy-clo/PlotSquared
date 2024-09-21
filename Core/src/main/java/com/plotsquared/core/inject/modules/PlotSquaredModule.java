@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.inject.modules;
-
 import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.AbstractModule;
 import com.plotsquared.core.PlotSquared;
@@ -31,11 +30,8 @@ import com.plotsquared.core.listener.PlotListener;
 import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.uuid.UUIDPipeline;
 import com.sk89q.worldedit.WorldEdit;
-
 import java.io.File;
-
 public class PlotSquaredModule extends AbstractModule {
-
     @Override
     protected void configure() {
         final PlotSquared plotSquared = PlotSquared.get();
@@ -49,5 +45,4 @@ public class PlotSquaredModule extends AbstractModule {
         bind(WorldEdit.class).toInstance(WorldEdit.getInstance());
         bind(EventDispatcher.class).toInstance(plotSquared.getEventDispatcher());
     }
-
 }

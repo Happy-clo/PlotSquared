@@ -17,35 +17,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.file;
-
 import com.plotsquared.core.configuration.Configuration;
 import com.plotsquared.core.configuration.MemoryConfiguration;
 import com.plotsquared.core.configuration.MemoryConfigurationOptions;
-
 /**
  * Various settings for controlling the input and output of a {@link
  * FileConfiguration}.
  */
 public class FileConfigurationOptions extends MemoryConfigurationOptions {
-
     private String header = null;
     private boolean copyHeader = true;
-
     protected FileConfigurationOptions(MemoryConfiguration configuration) {
         super(configuration);
     }
-
     @Override
     public FileConfiguration configuration() {
         return (FileConfiguration) super.configuration();
     }
-
     @Override
     public FileConfigurationOptions copyDefaults(boolean value) {
         super.copyDefaults(value);
         return this;
     }
-
     /**
      * Gets the header that will be applied to the top of the saved output.
      *
@@ -63,7 +56,6 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
     public String header() {
         return header;
     }
-
     /**
      * Sets the header that will be applied to the top of the saved output.
      *
@@ -83,7 +75,6 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
         header = value;
         return this;
     }
-
     /**
      * Gets whether or not the header should be copied from a default source.
      *
@@ -104,7 +95,6 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
     public boolean copyHeader() {
         return copyHeader;
     }
-
     /**
      * Sets whether or not the header should be copied from a default source.
      *
@@ -125,8 +115,6 @@ public class FileConfigurationOptions extends MemoryConfigurationOptions {
      */
     public FileConfigurationOptions copyHeader(boolean value) {
         copyHeader = value;
-
         return this;
     }
-
 }

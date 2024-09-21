@@ -17,15 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.StringFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class FarewellFlag extends StringFlag<FarewellFlag> {
-
     public static final FarewellFlag FAREWELL_FLAG_EMPTY = new FarewellFlag("");
-
     protected FarewellFlag(@NonNull String value) {
         super(
                 value,
@@ -33,30 +29,24 @@ public class FarewellFlag extends StringFlag<FarewellFlag> {
                 TranslatableCaption.of("flags.flag_description_farewell")
         );
     }
-
     @Override
     public FarewellFlag parse(@NonNull String input) {
         return flagOf(input);
     }
-
     @Override
     public FarewellFlag merge(@NonNull String newValue) {
         return flagOf(this.getValue() + " " + newValue);
     }
-
     @Override
     public String toString() {
         return this.getValue();
     }
-
     @Override
     public String getExample() {
         return "&cBye :(";
     }
-
     @Override
     protected FarewellFlag flagOf(@NonNull String value) {
         return new FarewellFlag(value);
     }
-
 }

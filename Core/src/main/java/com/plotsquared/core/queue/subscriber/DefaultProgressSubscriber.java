@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue.subscriber;
-
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.google.inject.assistedinject.Assisted;
@@ -34,18 +33,15 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 /**
  * The default PlotSquared Progress Subscriber. Can be used for both console and player tasks.
  * It is the {@link ProgressSubscriber} returned by {@link com.plotsquared.core.inject.factory.ProgressSubscriberFactory}.
  * Runs a repeating synchronous task notifying the given actor about any updates, saving updates notified by the ChunkCoordinator.
  */
 public class DefaultProgressSubscriber implements ProgressSubscriber {
-
     @NonNull
     private final AtomicDouble progress = new AtomicDouble(0);
     @NonNull
@@ -61,12 +57,10 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
     @NonNull
     private final Caption caption;
     private PlotSquaredTask task;
-
     @AssistedInject
     public DefaultProgressSubscriber() {
         throw new UnsupportedOperationException("DefaultProgressSubscriber cannot be used without an actor.");
     }
-
     @AssistedInject
     public DefaultProgressSubscriber(@Nullable @Assisted("subscriber") final PlotPlayer<?> actor) {
         Preconditions.checkNotNull(
@@ -78,7 +72,6 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
         this.wait = TaskTime.ms(Settings.QUEUE.NOTIFY_WAIT);
         this.caption = TranslatableCaption.of("working.progress");
     }
-
     @AssistedInject
     public DefaultProgressSubscriber(
             @Nullable @Assisted("subscriber") final PlotPlayer<?> actor,
@@ -95,7 +88,6 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
         this.wait = TaskTime.ms(wait);
         this.caption = Objects.requireNonNullElseGet(caption, () -> TranslatableCaption.of("working.progress"));
     }
-
     @Override
     public void notifyProgress(@NonNull ChunkCoordinator coordinator, double progress) {
         this.progress.set(progress);
@@ -120,16 +112,13 @@ public class DefaultProgressSubscriber implements ProgressSubscriber {
                     }, interval), wait);
         }
     }
-
     public void notifyEnd() {
         cancel();
     }
-
     public void cancel() {
         this.cancelled.set(true);
         if (this.task != null) {
             task.cancel();
         }
     }
-
 }

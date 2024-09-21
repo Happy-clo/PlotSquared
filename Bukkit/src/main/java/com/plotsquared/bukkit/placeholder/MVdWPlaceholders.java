@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.placeholder;
-
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import com.google.common.eventbus.Subscribe;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -28,16 +27,13 @@ import com.plotsquared.core.util.placeholders.PlaceholderRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * Placeholder support for MVdWPlaceholderAPI
  */
 public class MVdWPlaceholders {
-
     private static final String PREFIX = "plotsquared_";
     private final Plugin plugin;
     private final PlaceholderRegistry registry;
-
     public MVdWPlaceholders(
             final @NonNull Plugin plugin,
             final @NonNull PlaceholderRegistry registry
@@ -49,12 +45,10 @@ public class MVdWPlaceholders {
         }
         PlotSquared.get().getEventDispatcher().registerListener(this);
     }
-
     @Subscribe
     public void onNewPlaceholder(final PlaceholderRegistry.@NonNull PlaceholderAddedEvent event) {
         this.addPlaceholder(event.placeholder());
     }
-
     private void addPlaceholder(final @NonNull Placeholder placeholder) {
         PlaceholderAPI.registerPlaceholder(
                 plugin,
@@ -69,5 +63,4 @@ public class MVdWPlaceholders {
                 }
         );
     }
-
 }

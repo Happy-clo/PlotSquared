@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.TypeLiteral;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -36,20 +35,17 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 @CommandDeclaration(command = "inbox",
         usage = "/plot inbox [inbox] [delete <index> | clear | page]",
         permission = "plots.inbox",
         category = CommandCategory.CHAT,
         requiredType = RequiredType.PLAYER)
 public class Inbox extends SubCommand {
-
     public void displayComments(PlotPlayer<?> player, List<PlotComment> oldComments, int page) {
         if (oldComments == null || oldComments.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("comment.inbox_empty"));
@@ -59,13 +55,10 @@ public class Inbox extends SubCommand {
         if (page < 0) {
             page = 0;
         }
-        // Get the total pages
-        // int totalPages = ((int) Math.ceil(12 *
         int totalPages = (int) Math.ceil(comments.length / 12);
         if (page > totalPages) {
             page = totalPages;
         }
-        // Only display 12 per page
         int max = page * 12 + 12;
         if (max > comments.length) {
             max = comments.length;
@@ -80,8 +73,6 @@ public class Inbox extends SubCommand {
                         .tag("word", Tag.inserting(Component.text("all")))
                         .build()
         ));
-
-        // This might work xD
         for (int x = page * 12; x < max; x++) {
             PlotComment comment = comments[x];
             Component commentColored;
@@ -113,7 +104,6 @@ public class Inbox extends SubCommand {
         }
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         final Plot plot = player.getCurrentPlot();
@@ -296,7 +286,6 @@ public class Inbox extends SubCommand {
         }
         return true;
     }
-
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -322,5 +311,4 @@ public class Inbox extends SubCommand {
         }
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
-
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import net.luckperms.api.LuckPerms;
@@ -25,18 +24,14 @@ import net.luckperms.api.model.user.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 /**
  * UUID service that uses the LuckPerms API
  */
 public class LuckPermsUUIDService implements UUIDService {
-
     private final LuckPerms luckPerms;
-
     public LuckPermsUUIDService() {
         final RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
@@ -45,7 +40,6 @@ public class LuckPermsUUIDService implements UUIDService {
             throw new IllegalStateException("LuckPerms not available");
         }
     }
-
     @Override
     public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
@@ -61,7 +55,6 @@ public class LuckPermsUUIDService implements UUIDService {
         }
         return mappings;
     }
-
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
@@ -77,5 +70,4 @@ public class LuckPermsUUIDService implements UUIDService {
         }
         return mappings;
     }
-
 }

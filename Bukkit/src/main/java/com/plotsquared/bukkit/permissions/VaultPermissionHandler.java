@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.permissions;
-
 import com.plotsquared.bukkit.player.BukkitOfflinePlayer;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.core.permissions.ConsolePermissionProfile;
@@ -32,15 +31,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
-
 public class VaultPermissionHandler implements PermissionHandler {
-
     private Permission permissions;
-
     @Override
     public void initialize() {
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -52,7 +47,6 @@ public class VaultPermissionHandler implements PermissionHandler {
             this.permissions = permissionProvider.getProvider();
         }
     }
-
     @NonNull
     @Override
     public Optional<PermissionProfile> getPermissionProfile(
@@ -65,7 +59,6 @@ public class VaultPermissionHandler implements PermissionHandler {
         }
         return Optional.empty();
     }
-
     @NonNull
     @Override
     public Optional<PermissionProfile> getPermissionProfile(
@@ -76,7 +69,6 @@ public class VaultPermissionHandler implements PermissionHandler {
         }
         return Optional.empty();
     }
-
     @NonNull
     @Override
     public Set<PermissionHandlerCapability> getCapabilities() {
@@ -86,16 +78,11 @@ public class VaultPermissionHandler implements PermissionHandler {
                 PermissionHandlerCapability.OFFLINE_PERMISSIONS
         );
     }
-
-
     private final class VaultPermissionProfile implements PermissionProfile {
-
         private final OfflinePlayer offlinePlayer;
-
         private VaultPermissionProfile(final @NonNull OfflinePlayer offlinePlayer) {
             this.offlinePlayer = offlinePlayer;
         }
-
         @Override
         public boolean hasPermission(
                 final @Nullable String world,
@@ -109,7 +96,6 @@ public class VaultPermissionHandler implements PermissionHandler {
             }
             return permissions.playerHas(world, offlinePlayer, permission);
         }
-
         @Override
         public boolean hasKeyedPermission(
                 final @Nullable String world,
@@ -129,7 +115,5 @@ public class VaultPermissionHandler implements PermissionHandler {
                     stub + "." + key
             );
         }
-
     }
-
 }

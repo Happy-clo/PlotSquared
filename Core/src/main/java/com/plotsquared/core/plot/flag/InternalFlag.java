@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag;
-
 /**
  * These are flags used in PlotSquared and PlotSquared
  * add-ons that can be used to associate information
@@ -32,5 +31,4 @@ package com.plotsquared.core.plot.flag;
  * of such a scenario would be the flag listing in Dynmap.
  */
 public interface InternalFlag {
-
 }

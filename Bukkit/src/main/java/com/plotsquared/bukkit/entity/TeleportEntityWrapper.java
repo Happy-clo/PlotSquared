@@ -17,26 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.entity;
-
 import com.plotsquared.bukkit.BukkitPlatform;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.metadata.FixedMetadataValue;
-
 public class TeleportEntityWrapper extends EntityWrapper {
-
     private Location oldLocation;
     private boolean gravityOld;
     private boolean invulnerableOld;
     private int fireTicksOld;
     private int livingTicksOld;
-
     public TeleportEntityWrapper(final Entity entity) {
         super(entity);
     }
-
     @Override
     public Entity spawn(final World world, final int xOffset, final int zOffset) {
         if (!getEntity().getLocation().getChunk().equals(oldLocation.getChunk())) {
@@ -51,7 +46,6 @@ public class TeleportEntityWrapper extends EntityWrapper {
         }
         return getEntity();
     }
-
     @Override
     public void saveEntity() {
         if (getEntity().hasMetadata("ps-tmp-teleport")) {
@@ -59,13 +53,10 @@ public class TeleportEntityWrapper extends EntityWrapper {
         } else {
             this.oldLocation = this.getEntity().getLocation();
         }
-
-        // To account for offsets in the chunk manager
         this.oldLocation = oldLocation.clone();
         this.oldLocation.setX(this.getX());
         this.oldLocation.setY(this.getY());
         this.oldLocation.setZ(this.getZ());
-
         this.gravityOld = this.getEntity().hasGravity();
         this.getEntity().setGravity(false);
         this.invulnerableOld = this.getEntity().isInvulnerable();
@@ -80,11 +71,9 @@ public class TeleportEntityWrapper extends EntityWrapper {
         this.getEntity().teleport(
                 new Location(newChunk.getWorld(), newChunk.getX() << 4, 5000, newChunk.getZ() << 4));
     }
-
     private Chunk getNewChunk() {
         final Chunk oldChunk = oldLocation.getChunk();
         Chunk chunk = null;
-
         for (Chunk lChunk : oldChunk.getWorld().getLoadedChunks()) {
             if (!lChunk.equals(oldChunk) && lChunk.isLoaded()) {
                 chunk = lChunk;
@@ -108,9 +97,7 @@ public class TeleportEntityWrapper extends EntityWrapper {
         }
         return chunk;
     }
-
     private Chunk getChunkRelative(final Chunk chunk, final int dx, final int dz) {
         return chunk.getWorld().getChunkAt(chunk.getX() + dx, chunk.getZ() + dz);
     }
-
 }

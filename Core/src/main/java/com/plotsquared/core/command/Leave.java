@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
@@ -29,25 +28,20 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
 @CommandDeclaration(command = "leave",
         permission = "plots.leave",
         usage = "/plot leave",
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.PLAYER)
 public class Leave extends Command {
-
     private final EventDispatcher eventDispatcher;
-
     @Inject
     public Leave(final @NonNull EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
     }
-
     @Override
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
@@ -79,5 +73,4 @@ public class Leave extends Command {
         }
         return CompletableFuture.completedFuture(true);
     }
-
 }

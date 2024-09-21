@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.player.PlotPlayer;
@@ -26,14 +25,12 @@ import com.plotsquared.core.util.task.TaskManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 @CommandDeclaration(command = "plugin",
         permission = "plots.use",
         usage = "/plot plugin",
         aliases = "version",
         category = CommandCategory.INFO)
 public class PluginCmd extends SubCommand {
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.getPlatformImplementation().taskAsync(() -> {
@@ -56,5 +53,4 @@ public class PluginCmd extends SubCommand {
         });
         return true;
     }
-
 }

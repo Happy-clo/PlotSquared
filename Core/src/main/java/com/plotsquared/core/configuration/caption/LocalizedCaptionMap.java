@@ -17,24 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
-
 import com.google.common.collect.ImmutableSet;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
 public class LocalizedCaptionMap implements CaptionMap {
-
     private final Locale locale;
     private final Map<TranslatableCaption, String> captions;
-
     public LocalizedCaptionMap(Locale locale, Map<TranslatableCaption, String> captions) {
         this.locale = locale;
         this.captions = captions;
     }
-
     @Override
     public @NonNull String getMessage(final @NonNull TranslatableCaption caption) {
         String message = this.captions.get(caption);
@@ -43,28 +37,23 @@ public class LocalizedCaptionMap implements CaptionMap {
         }
         return message;
     }
-
     @Override
     public @NonNull String getMessage(
             final @NonNull TranslatableCaption caption,
             final @NonNull LocaleHolder localeHolder
     ) {
-        return getMessage(caption); // use the translation of this locale
+        return getMessage(caption);
     }
-
     @Override
     public boolean supportsLocale(final @NonNull Locale locale) {
         return this.locale.equals(locale);
     }
-
     @Override
     public @NonNull Locale getLocale() {
         return this.locale;
     }
-
     @Override
     public @NonNull Set<TranslatableCaption> getCaptions() {
         return ImmutableSet.copyOf(this.captions.keySet());
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.world;
-
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotWorld;
@@ -30,24 +29,19 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.PRTree;
 import org.khelekore.prtree.SimpleMBR;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
 /**
  * Plot world that contains several plot areas (clusters)
  */
 public class ScatteredPlotWorld extends PlotWorld {
-
     private static final PlotAreaConverter MBR_CONVERTER = new PlotAreaConverter();
     private static final int BRANCH_FACTOR = 30;
-
     private final List<PlotArea> areas = new LinkedList<>();
     private final Object treeLock = new Object();
     private PRTree<PlotArea> areaTree;
-
     /**
      * Create a new plot world with a given world name
      *
@@ -56,7 +50,6 @@ public class ScatteredPlotWorld extends PlotWorld {
     public ScatteredPlotWorld(final @NonNull String world) {
         super(world);
     }
-
     @Override
     public @Nullable PlotArea getArea(final @NonNull Location location) {
         if (this.areas.isEmpty()) {
@@ -71,24 +64,20 @@ public class ScatteredPlotWorld extends PlotWorld {
         }
         return null;
     }
-
     @Override
     public @NonNull Collection<PlotArea> getAreas() {
         return Collections.unmodifiableCollection(this.areas);
     }
-
     @Override
     public void addArea(final @NonNull PlotArea area) {
         this.areas.add(area);
         this.buildTree();
     }
-
     @Override
     public void removeArea(final @NonNull PlotArea area) {
         this.areas.remove(area);
         this.buildTree();
     }
-
     @Override
     public @NonNull Collection<PlotArea> getAreasInRegion(final @NonNull CuboidRegion region) {
         if (this.areas.isEmpty()) {
@@ -96,21 +85,17 @@ public class ScatteredPlotWorld extends PlotWorld {
         }
         synchronized (this.treeLock) {
             final List<PlotArea> areas = new LinkedList<>();
-
             final BlockVector3 min = region.getMinimumPoint();
             final BlockVector3 max = region.getMaximumPoint();
             final MBR mbr = new SimpleMBR(min.getX(), max.getX(), min.getY(), max.getY(), min.getZ(), max.getZ());
-
             for (final PlotArea area : this.areaTree.find(mbr)) {
                 if (RegionUtil.intersects(area.getRegion(), region)) {
                     areas.add(area);
                 }
             }
-
             return areas;
         }
     }
-
     /**
      * Rebuild the area tree
      */
@@ -120,5 +105,4 @@ public class ScatteredPlotWorld extends PlotWorld {
             this.areaTree.load(this.areas);
         }
     }
-
 }

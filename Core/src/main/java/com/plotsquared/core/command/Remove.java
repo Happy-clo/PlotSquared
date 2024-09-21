@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
@@ -32,12 +31,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
-
 @CommandDeclaration(command = "remove",
         aliases = {"r", "untrust", "ut", "undeny", "unban", "ud", "pardon"},
         usage = "/plot remove <player | *>",
@@ -45,15 +42,12 @@ import java.util.concurrent.TimeoutException;
         requiredType = RequiredType.NONE,
         permission = "plots.remove")
 public class Remove extends SubCommand {
-
     private final EventDispatcher eventDispatcher;
-
     @Inject
     public Remove(final @NonNull EventDispatcher eventDispatcher) {
         super(Argument.PlayerName);
         this.eventDispatcher = eventDispatcher;
     }
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -70,7 +64,6 @@ public class Remove extends SubCommand {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
-
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             int count = 0;
             if (throwable instanceof TimeoutException) {
@@ -129,7 +122,6 @@ public class Remove extends SubCommand {
         });
         return true;
     }
-
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         Location location = player.getLocation();
@@ -141,5 +133,4 @@ public class Remove extends SubCommand {
                 Collections.singletonList(player.getName())
         );
     }
-
 }

@@ -17,9 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.serialization;
-
 import java.util.Map;
-
 /**
  * Represents an object that may be serialized.
  * <p>These objects MUST implement one of the following, in addition to
@@ -39,7 +37,6 @@ import java.util.Map;
  * @see SerializableAs
  */
 public interface ConfigurationSerializable {
-
     /**
      * Creates a Map representation of this class.
      *
@@ -49,5 +46,4 @@ public interface ConfigurationSerializable {
      * @return Map containing the current state of this class
      */
     Map<String, Object> serialize();
-
 }

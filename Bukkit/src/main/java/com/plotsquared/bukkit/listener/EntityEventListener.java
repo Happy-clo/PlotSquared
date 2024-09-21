@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
@@ -74,18 +73,14 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Iterator;
 import java.util.List;
-
 @SuppressWarnings("unused")
 public class EntityEventListener implements Listener {
-
     private final BukkitPlatform platform;
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private float lastRadius;
-
     @Inject
     public EntityEventListener(
             final @NonNull BukkitPlatform platform,
@@ -96,17 +91,14 @@ public class EntityEventListener implements Listener {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
     }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityCombustByEntity(EntityCombustByEntityEvent event) {
         onEntityDamageByEntityCommon(event.getCombuster(), event.getEntity(), EntityDamageEvent.DamageCause.FIRE_TICK, event);
     }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         onEntityDamageByEntityCommon(event.getDamager(), event.getEntity(), event.getCause(), event);
     }
-
     private void onEntityDamageByEntityCommon(
             final Entity damager,
             final Entity victim,
@@ -129,7 +121,6 @@ public class EntityEventListener implements Listener {
             event.setCancelled(true);
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void creatureSpawnEvent(CreatureSpawnEvent event) {
         Entity entity = event.getEntity();
@@ -138,7 +129,6 @@ public class EntityEventListener implements Listener {
         if (area == null) {
             return;
         }
-        // Armour-stands are handled elsewhere and should not be handled by area-wide entity-spawn options
         if (entity.getType() == EntityType.ARMOR_STAND) {
             return;
         }
@@ -169,11 +159,10 @@ public class EntityEventListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-                // No need to clutter metadata if running paper
                 if (!PaperLib.isPaper()) {
                     entity.setMetadata("ps_custom_spawned", new FixedMetadataValue(this.platform, true));
                 }
-                return; // Don't cancel if mob spawning is disabled
+                return;
             }
             case "BUILD_IRONGOLEM", "BUILD_SNOWMAN", "BUILD_WITHER" -> {
                 if (!area.isSpawnCustom()) {
@@ -199,7 +188,6 @@ public class EntityEventListener implements Listener {
             event.setCancelled(true);
         }
     }
-
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onEntityFall(EntityChangeBlockEvent event) {
         if (event.getEntityType() != EntityType.FALLING_BLOCK) {
@@ -242,7 +230,6 @@ public class EntityEventListener implements Listener {
             event.getEntity().setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
         }
     }
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntityType() != EntityType.PLAYER) {
@@ -265,7 +252,6 @@ public class EntityEventListener implements Listener {
             event.setCancelled(true);
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBigBoom(EntityExplodeEvent event) {
         Location location = BukkitUtil.adapt(event.getLocation());
@@ -312,12 +298,10 @@ public class EntityEventListener implements Listener {
             }
         }
         event.setCancelled(true);
-        //Spawn Explosion Particles when enabled in settings
         if (Settings.General.ALWAYS_SHOW_EXPLOSIONS) {
             event.getLocation().getWorld().spawnParticle(Particle.EXPLOSION_HUGE, event.getLocation(), 0);
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPeskyMobsChangeTheWorldLikeWTFEvent(EntityChangeBlockEvent event) {
         Entity e = event.getEntity();
@@ -328,18 +312,14 @@ public class EntityEventListener implements Listener {
             return;
         }
         if (e instanceof FallingBlock) {
-            // allow falling blocks converting to blocks and vice versa
             return;
         } else if (e instanceof Boat) {
-            // allow boats destroying lily pads
             if (type == Material.LILY_PAD) {
                 return;
             }
         } else if (e instanceof Player player) {
             BukkitPlayer pp = BukkitUtil.adapt(player);
             if (type.toString().equals("POWDER_SNOW")) {
-                // Burning player evaporating powder snow. Use same checks as
-                // trampling farmland
                 BlockType blockType = BukkitAdapter.asBlockType(type);
                 if (!this.eventDispatcher.checkPlayerBlockEvent(pp,
                         PlayerBlockEventType.TRIGGER_PHYSICAL, location, blockType, true
@@ -348,17 +328,9 @@ public class EntityEventListener implements Listener {
                 }
                 return;
             } else {
-                // already handled by other flags (mainly the 'use' flag):
-                // - player tilting big dripleaf by standing on it
-                // - player picking glow berries from cave vine
-                // - player trampling farmland
-                // - player standing on or clicking redstone ore
                 return;
             }
         } else if (e instanceof Projectile entity) {
-            // Exact same as the ProjectileHitEvent listener, except that we let
-            // the entity-change-block determine what to do with shooters that
-            // aren't players and aren't blocks
             Plot plot = area.getPlot(location);
             ProjectileSource shooter = entity.getShooter();
             if (shooter instanceof Player) {
@@ -397,21 +369,17 @@ public class EntityEventListener implements Listener {
                 }
                 return;
             }
-            // fall back to entity-change-block flag
         }
-
         Plot plot = area.getOwnedPlot(location);
         if (plot != null && !plot.getFlag(EntityChangeBlockFlag.class)) {
             plot.debug(e.getType() + " could not change block because entity-change-block = false");
             event.setCancelled(true);
         }
     }
-
     @EventHandler
     public void onPrime(ExplosionPrimeEvent event) {
         this.lastRadius = event.getRadius() + 1;
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVehicleCreate(VehicleCreateEvent event) {
         Vehicle entity = event.getVehicle();
@@ -429,5 +397,4 @@ public class EntityEventListener implements Listener {
             entity.setMetadata("plot", new FixedMetadataValue((Plugin) PlotSquared.platform(), plot));
         }
     }
-
 }

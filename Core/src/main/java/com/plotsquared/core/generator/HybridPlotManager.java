@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
-
 import com.google.common.collect.Sets;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.Template;
@@ -42,21 +41,16 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Objects;
-
 public class HybridPlotManager extends ClassicPlotManager {
-
     public static boolean REGENERATIVE_CLEAR = true;
-
     private final HybridPlotWorld hybridPlotWorld;
     private final RegionManager regionManager;
     private final ProgressSubscriberFactory subscriberFactory;
-
     public HybridPlotManager(
             final @NonNull HybridPlotWorld hybridPlotWorld,
             final @NonNull RegionManager regionManager,
@@ -67,7 +61,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         this.regionManager = regionManager;
         this.subscriberFactory = subscriberFactory;
     }
-
     @Override
     public void exportTemplate() throws IOException {
         HashSet<FileBytes> files = Sets.newHashSet(new FileBytes(
@@ -96,7 +89,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         }
         Template.zipAll(hybridPlotWorld.getWorldName(), files);
     }
-
     @Override
     public boolean createRoadEast(final @NonNull Plot plot, @Nullable QueueCoordinator queue) {
         boolean enqueue = false;
@@ -128,7 +120,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         createSchemAbs(queue, pos1, pos2, true);
         return !enqueue || queue.enqueue();
     }
-
     private void resetBiome(
             final @NonNull HybridPlotWorld hybridPlotWorld,
             final @NonNull Location pos1,
@@ -148,7 +139,6 @@ public class HybridPlotManager extends ClassicPlotManager {
             );
         }
     }
-
     private void createSchemAbs(
             final @NonNull QueueCoordinator queue,
             final @NonNull Location pos1,
@@ -180,8 +170,6 @@ public class HybridPlotManager extends ClassicPlotManager {
                         if (blocks[y] != null) {
                             queue.setBlock(x, minY + y, z, blocks[y]);
                         } else if (y > schemYDiff) {
-                            // This is necessary, otherwise any blocks not specified in the schematic will remain after a clear.
-                            // This should only be done where the schematic has actually "started"
                             queue.setBlock(x, minY + y, z, airBlock);
                         } else if (isRoad) {
                             queue.setBlock(x, minY + y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
@@ -199,7 +187,6 @@ public class HybridPlotManager extends ClassicPlotManager {
             }
         }
     }
-
     @Override
     public boolean createRoadSouth(final @NonNull Plot plot, @Nullable QueueCoordinator queue) {
         boolean enqueue = false;
@@ -231,7 +218,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         createSchemAbs(queue, pos1, pos2, true);
         return !enqueue || queue.enqueue();
     }
-
     @Override
     public boolean createRoadSouthEast(final @NonNull Plot plot, @Nullable QueueCoordinator queue) {
         boolean enqueue = false;
@@ -250,7 +236,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         }
         return !enqueue || queue.enqueue();
     }
-
     @Override
     public boolean clearPlot(
             final @NonNull Plot plot,
@@ -259,27 +244,22 @@ public class HybridPlotManager extends ClassicPlotManager {
             @Nullable QueueCoordinator queue
     ) {
         if (this.regionManager.notifyClear(this)) {
-            //If this returns false, the clear didn't work
             if (this.regionManager.handleClear(plot, whenDone, this, actor)) {
                 return true;
             }
         }
         final Location pos1 = plot.getBottomAbs();
         final Location pos2 = plot.getExtendedTopAbs();
-        // If augmented
         final boolean canRegen =
                 (hybridPlotWorld.getType() == PlotAreaType.AUGMENTED) && (hybridPlotWorld.getTerrain() != PlotAreaTerrainType.NONE) && REGENERATIVE_CLEAR;
-        // The component blocks
         final Pattern plotfloor = hybridPlotWorld.TOP_BLOCK.toPattern();
         final Pattern filling = hybridPlotWorld.MAIN_BLOCK.toPattern();
-
         final Pattern bedrock;
         if (hybridPlotWorld.PLOT_BEDROCK) {
             bedrock = BlockTypes.BEDROCK.getDefaultState();
         } else {
             bedrock = hybridPlotWorld.MAIN_BLOCK.toPattern();
         }
-
         final BiomeType biome = hybridPlotWorld.getPlotBiome();
         boolean enqueue = false;
         if (queue == null) {
@@ -305,7 +285,6 @@ public class HybridPlotManager extends ClassicPlotManager {
                     pos2.withY(hybridPlotWorld.getMinGenHeight()),
                     hybridPlotWorld.PLOT_BEDROCK ? bedrock : filling
             );
-            // Each component has a different layer
             queue.setCuboid(
                     pos1.withY(hybridPlotWorld.getMinGenHeight() + 1),
                     pos2.withY(hybridPlotWorld.PLOT_HEIGHT - 1),
@@ -331,7 +310,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         pastePlotSchematic(queue, pos1, pos2);
         return !enqueue || queue.enqueue();
     }
-
     public void pastePlotSchematic(
             final @NonNull QueueCoordinator queue,
             final @NonNull Location bottom,
@@ -342,7 +320,6 @@ public class HybridPlotManager extends ClassicPlotManager {
         }
         createSchemAbs(queue, bottom, top, false);
     }
-
     /**
      * Retrieves the location of where a sign should be for a plot.
      *
@@ -353,9 +330,7 @@ public class HybridPlotManager extends ClassicPlotManager {
     public Location getSignLoc(final @NonNull Plot plot) {
         return hybridPlotWorld.getSignLocation(plot);
     }
-
     public HybridPlotWorld getHybridPlotWorld() {
         return this.hybridPlotWorld;
     }
-
 }

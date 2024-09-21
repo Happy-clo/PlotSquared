@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -36,7 +35,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Locale;
@@ -44,16 +42,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 @CommandDeclaration(command = "debug",
         category = CommandCategory.DEBUG,
         usage = "/plot debug",
         permission = "plots.admin")
 public class Debug extends SubCommand {
-
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
-
     @Inject
     public Debug(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -62,7 +57,6 @@ public class Debug extends SubCommand {
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;
     }
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -182,7 +176,6 @@ public class Debug extends SubCommand {
         player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(information.build())));
         return true;
     }
-
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
         return Stream.of("debug-players", "entitytypes")
@@ -190,5 +183,4 @@ public class Debug extends SubCommand {
                 .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());
     }
-
 }

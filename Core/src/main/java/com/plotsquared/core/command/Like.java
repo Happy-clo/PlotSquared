@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -37,7 +36,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,21 +43,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 @CommandDeclaration(command = "like",
         permission = "plots.like",
         usage = "/plot like [next | purge]",
         category = CommandCategory.INFO,
         requiredType = RequiredType.PLAYER)
 public class Like extends SubCommand {
-
     private final EventDispatcher eventDispatcher;
-
     @Inject
     public Like(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
-
     /**
      * Get the likes to dislike ratio of a plot as a percentage (in decimal form)
      *
@@ -86,7 +80,6 @@ public class Like extends SubCommand {
         }
         return numLikes / (numLikes + numDislikes);
     }
-
     protected boolean handleLike(
             final PlotPlayer<?> player, String[] args,
             final boolean like
@@ -194,12 +187,10 @@ public class Like extends SubCommand {
         run.run();
         return true;
     }
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         return handleLike(player, args, true);
     }
-
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -219,5 +210,4 @@ public class Like extends SubCommand {
         }
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
-
 }

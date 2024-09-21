@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.listener;
-
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.util.WEManager;
 import com.plotsquared.core.util.WorldUtil;
@@ -36,14 +35,11 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 public class ProcessedWEExtent extends AbstractDelegateExtent {
-
     private final Set<CuboidRegion> mask;
     private final String world;
     private final int max;
@@ -53,7 +49,6 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
     boolean Eblocked = false;
     private int count;
     private Extent parent;
-
     public ProcessedWEExtent(
             String world,
             Set<CuboidRegion> mask,
@@ -73,11 +68,9 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         this.count = 0;
         this.parent = parent;
     }
-
     private static long getChunkKey(final BlockVector3 location) {
         return (long) (location.getBlockX() >> 4) & 4294967295L | ((long) (location.getBlockZ() >> 4) & 4294967295L) << 32;
     }
-
     @Override
     public BlockState getBlock(BlockVector3 position) {
         if (WEManager.maskContains(this.mask, position.getX(), position.getY(), position.getZ())) {
@@ -85,7 +78,6 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         }
         return WEExtent.AIRSTATE;
     }
-
     @Override
     public BaseBlock getFullBlock(BlockVector3 position) {
         if (WEManager.maskContains(this.mask, position.getX(), position.getY(), position.getZ())) {
@@ -93,11 +85,9 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         }
         return WEExtent.AIRBASE;
     }
-
     @Override
     public <T extends BlockStateHolder<T>> boolean setBlock(BlockVector3 location, T block)
             throws WorldEditException {
-
         final boolean isTile = this.worldUtil.getTileEntityTypes().contains(block.getBlockType());
         if (isTile) {
             final Integer[] tileEntityCount = this.tileEntityCount.computeIfAbsent(
@@ -130,10 +120,8 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
             }
             return super.setBlock(location, block);
         }
-
         return !isTile;
     }
-
     @Override
     public Entity createEntity(Location location, BaseEntity entity) {
         if (this.Eblocked) {
@@ -150,12 +138,10 @@ public class ProcessedWEExtent extends AbstractDelegateExtent {
         }
         return null;
     }
-
     @SuppressWarnings("deprecation")
     @Override
     public boolean setBiome(BlockVector2 position, BiomeType biome) {
         return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
                 .setBiome(position, biome);
     }
-
 }

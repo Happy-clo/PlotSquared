@@ -17,16 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.plotsquared.core.PlotSquared;
-
 public final class ThreadUtils {
-
     private ThreadUtils() {
         throw new UnsupportedOperationException(
                 "This is a utility class and cannot be instantiated");
     }
-
     /**
      * Throws {@link IllegalStateException} if the method
      * is called from the server main thread
@@ -38,7 +34,6 @@ public final class ThreadUtils {
             throw new IllegalStateException(message);
         }
     }
-
     /**
      * Throws {@link IllegalStateException} if the method
      * is not called from the server main thread
@@ -50,5 +45,4 @@ public final class ThreadUtils {
             throw new IllegalStateException(message);
         }
     }
-
 }

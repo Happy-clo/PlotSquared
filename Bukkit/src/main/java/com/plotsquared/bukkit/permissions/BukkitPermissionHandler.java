@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.permissions;
-
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.core.permissions.ConsolePermissionProfile;
 import com.plotsquared.core.permissions.PermissionHandler;
@@ -28,18 +27,14 @@ import com.plotsquared.core.player.PlotPlayer;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.lang.ref.WeakReference;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
-
 public class BukkitPermissionHandler implements PermissionHandler {
-
     @Override
     public void initialize() {
     }
-
     @NonNull
     @Override
     public Optional<PermissionProfile> getPermissionProfile(
@@ -52,7 +47,6 @@ public class BukkitPermissionHandler implements PermissionHandler {
         }
         return Optional.empty();
     }
-
     @NonNull
     @Override
     public Optional<PermissionProfile> getPermissionProfile(
@@ -60,22 +54,16 @@ public class BukkitPermissionHandler implements PermissionHandler {
     ) {
         return Optional.empty();
     }
-
     @NonNull
     @Override
     public Set<PermissionHandlerCapability> getCapabilities() {
         return EnumSet.of(PermissionHandlerCapability.ONLINE_PERMISSIONS);
     }
-
-
     private static final class BukkitPermissionProfile implements PermissionProfile {
-
         private final WeakReference<Player> playerReference;
-
         private BukkitPermissionProfile(final @NonNull Player player) {
             this.playerReference = new WeakReference<>(player);
         }
-
         @Override
         public boolean hasPermission(
                 final @Nullable String world,
@@ -84,7 +72,6 @@ public class BukkitPermissionHandler implements PermissionHandler {
             final Player player = this.playerReference.get();
             return player != null && player.hasPermission(permission);
         }
-
         @Override
         public boolean hasKeyedPermission(
                 final @Nullable String world,
@@ -94,7 +81,5 @@ public class BukkitPermissionHandler implements PermissionHandler {
             final Player player = this.playerReference.get();
             return player != null && (player.hasPermission(stub + "." + key) || player.hasPermission(stub + ".*"));
         }
-
     }
-
 }

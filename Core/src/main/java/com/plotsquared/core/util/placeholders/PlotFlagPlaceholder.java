@@ -17,29 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.placeholders;
-
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.GlobalFlagContainer;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public final class PlotFlagPlaceholder extends PlotSpecificPlaceholder {
-
     private final PlotFlag<?, ?> flag;
     private final boolean local;
-
     public PlotFlagPlaceholder(final @NonNull PlotFlag<?, ?> flag, final boolean local) {
         super(String.format("currentplot_%sflag_%s", local ? "local" : "", flag.getName()));
         this.flag = flag;
         this.local = local;
     }
-
     @Override
     public @NonNull String getValue(final @NonNull PlotPlayer<?> player, final @NonNull Plot plot) {
         return this.getFlagValue(plot, this.flag.getName(), !this.local);
     }
-
     /**
      * Return the flag value from its name on the current plot.
      * If the flag doesn't exist it returns an empty string.
@@ -67,5 +61,4 @@ public final class PlotFlagPlaceholder extends PlotSpecificPlaceholder {
             return (plotFlag != null) ? plotFlag.getValue().toString() : "";
         }
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -48,7 +47,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,23 +60,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
 @CommandDeclaration(command = "list",
         aliases = {"l", "find", "search"},
         permission = "plots.list",
         category = CommandCategory.INFO,
         usage = "/plot list <forsale | mine | shared | world | top | all | unowned | player | world | done | fuzzy <search...>> [#]")
 public class ListCmd extends SubCommand {
-
     private final PlotAreaManager plotAreaManager;
     private final EconHandler econHandler;
-
     @Inject
     public ListCmd(final @NonNull PlotAreaManager plotAreaManager, final @NonNull EconHandler econHandler) {
         this.plotAreaManager = plotAreaManager;
         this.econHandler = econHandler;
     }
-
     private String[] getArgumentList(PlotPlayer<?> player) {
         List<String> args = new ArrayList<>();
         if (this.econHandler != null && player.hasPermission(Permission.PERMISSION_LIST_FOR_SALE)) {
@@ -119,21 +113,18 @@ public class ListCmd extends SubCommand {
         }
         return args.toArray(new String[args.size()]);
     }
-
     public void noArgs(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.subcommand_set_options_header"),
                 TagResolver.resolver("values", Tag.inserting(Component.text(Arrays.toString(getArgumentList(player)))))
         );
     }
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
             noArgs(player);
             return false;
         }
-
         final int page;
         if (args.length > 1) {
             int tempPage = -1;
@@ -149,12 +140,10 @@ public class ListCmd extends SubCommand {
         } else {
             page = 0;
         }
-
         String world = player.getLocation().getWorldName();
         PlotArea area = player.getApplicablePlotArea();
         String arg = args[0].toLowerCase();
         final boolean[] sort = new boolean[]{true};
-
         final Consumer<PlotQuery> plotConsumer = query -> {
             if (query == null) {
                 player.sendMessage(
@@ -171,24 +160,19 @@ public class ListCmd extends SubCommand {
                 );
                 return;
             }
-
             if (area != null) {
                 query.relativeToArea(area);
             }
-
             if (sort[0]) {
                 query.withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
             }
-
             final List<Plot> plots = query.asList();
-
             if (plots.isEmpty()) {
                 player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
                 return;
             }
             displayPlots(player, plots, 12, page, args);
         };
-
         switch (arg) {
             case "mine" -> {
                 if (!player.hasPermission(Permission.PERMISSION_LIST_MINE)) {
@@ -406,12 +390,9 @@ public class ListCmd extends SubCommand {
                 });
             }
         }
-
         return true;
     }
-
     public void displayPlots(final PlotPlayer<?> player, List<Plot> plots, int pageSize, int page, String[] args) {
-        // Header
         plots.removeIf(plot -> !plot.isBasePlot());
         this.paginate(player, plots, pageSize, page, new RunnableVal3<>() {
             @Override
@@ -523,7 +504,6 @@ public class ListCmd extends SubCommand {
             }
         }, "/plot list " + args[0], TranslatableCaption.of("list.plot_list_header_paged"));
     }
-
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<String> completions = new LinkedList<>();
@@ -554,18 +534,14 @@ public class ListCmd extends SubCommand {
         if (player.hasPermission(Permission.PERMISSION_LIST_EXPIRED)) {
             completions.add("expired");
         }
-
         final List<Command> commands = completions.stream().filter(completion -> completion
                         .toLowerCase()
                         .startsWith(args[0].toLowerCase()))
                 .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.TELEPORT) {
                 }).collect(Collectors.toCollection(LinkedList::new));
-
         if (player.hasPermission(Permission.PERMISSION_LIST_PLAYER) && args[0].length() > 0) {
             commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
         }
-
         return commands;
     }
-
 }

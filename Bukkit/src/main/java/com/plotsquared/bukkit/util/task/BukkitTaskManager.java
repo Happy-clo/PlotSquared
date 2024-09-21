@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util.task;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.BukkitPlatform;
@@ -27,21 +26,17 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.plotsquared.core.util.task.TaskTime;
 import org.bukkit.Bukkit;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
 /**
  * Bukkit implementation of {@link TaskManager} using
  * by {@link org.bukkit.scheduler.BukkitScheduler} and {@link BukkitPlotSquaredTask}
  */
 @Singleton
 public class BukkitTaskManager extends TaskManager {
-
     private final BukkitPlatform bukkitMain;
     private final TaskTime.TimeConverter timeConverter;
-
     @Inject
     public BukkitTaskManager(
             final @NonNull BukkitPlatform bukkitMain,
@@ -50,7 +45,6 @@ public class BukkitTaskManager extends TaskManager {
         this.bukkitMain = bukkitMain;
         this.timeConverter = timeConverter;
     }
-
     @Override
     public PlotSquaredTask taskRepeat(
             final @NonNull Runnable runnable,
@@ -61,7 +55,6 @@ public class BukkitTaskManager extends TaskManager {
         bukkitPlotSquaredTask.runTaskTimer(this.bukkitMain, ticks, ticks);
         return bukkitPlotSquaredTask;
     }
-
     @Override
     public PlotSquaredTask taskRepeatAsync(
             final @NonNull Runnable runnable,
@@ -72,7 +65,6 @@ public class BukkitTaskManager extends TaskManager {
         bukkitPlotSquaredTask.runTaskTimerAsynchronously(this.bukkitMain, ticks, ticks);
         return bukkitPlotSquaredTask;
     }
-
     @Override
     public void taskAsync(final @NonNull Runnable runnable) {
         if (this.bukkitMain.isEnabled()) {
@@ -81,7 +73,6 @@ public class BukkitTaskManager extends TaskManager {
             runnable.run();
         }
     }
-
     @Override
     public <T> T sync(final @NonNull Callable<T> function, final int timeout) throws Exception {
         if (PlotSquared.get().isMainThread(Thread.currentThread())) {
@@ -89,17 +80,14 @@ public class BukkitTaskManager extends TaskManager {
         }
         return this.callMethodSync(function).get(timeout, TimeUnit.MILLISECONDS);
     }
-
     @Override
     public <T> Future<T> callMethodSync(final @NonNull Callable<T> method) {
         return Bukkit.getScheduler().callSyncMethod(this.bukkitMain, method);
     }
-
     @Override
     public void task(final @NonNull Runnable runnable) {
         new BukkitPlotSquaredTask(runnable).runTask(this.bukkitMain);
     }
-
     @Override
     public void taskLater(
             final @NonNull Runnable runnable,
@@ -108,7 +96,6 @@ public class BukkitTaskManager extends TaskManager {
         final long delay = this.timeConverter.toTicks(taskTime);
         new BukkitPlotSquaredTask(runnable).runTaskLater(this.bukkitMain, delay);
     }
-
     @Override
     public void taskLaterAsync(
             final @NonNull Runnable runnable,
@@ -117,5 +104,4 @@ public class BukkitTaskManager extends TaskManager {
         final long delay = this.timeConverter.toTicks(taskTime);
         new BukkitPlotSquaredTask(runnable).runTaskLaterAsynchronously(this.bukkitMain, delay);
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
@@ -29,15 +28,13 @@ import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerSignOpenEvent;
-
 /**
  * For events since 1.20.1
  * @since 7.2.1
  */
 public class PlayerEventListener1201 implements Listener {
-
     @EventHandler(ignoreCancelled = true)
-    @SuppressWarnings({"removal", "UnstableApiUsage"}) // thanks Paper, thanks Spigot
+    @SuppressWarnings({"removal", "UnstableApiUsage"})
     public void onPlayerSignOpenEvent(PlayerSignOpenEvent event) {
         Sign sign = event.getSign();
         Location location = BukkitUtil.adapt(sign.getLocation());
@@ -54,7 +51,7 @@ public class PlayerEventListener1201 implements Listener {
             return;
         }
         if (plot.isAdded(event.getPlayer().getUniqueId())) {
-            return; // allow for added players
+            return;
         }
         if (!plot.getFlag(EditSignFlag.class)
                 && !event.getPlayer().hasPermission(Permission.PERMISSION_ADMIN_INTERACT_OTHER.toString())) {
@@ -62,5 +59,4 @@ public class PlayerEventListener1201 implements Listener {
             event.setCancelled(true);
         }
     }
-
 }

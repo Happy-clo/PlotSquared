@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.queue;
-
 import com.plotsquared.bukkit.schematic.StateWrapper;
 import com.plotsquared.core.queue.DelegateQueueCoordinator;
 import com.sk89q.jnbt.CompoundTag;
@@ -33,19 +32,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.generator.LimitedRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * Wraps a {@link LimitedRegion} inside a {@link com.plotsquared.core.queue.QueueCoordinator} so it can be written to.
  *
  * @since 6.9.0
  */
 public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + LimitedRegionWrapperQueue.class.getSimpleName());
-
     private final LimitedRegion limitedRegion;
     private boolean useOtherRestoreTagMethod = false;
-
     /**
      * @since 6.9.0
      */
@@ -53,12 +48,10 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
         super(null);
         this.limitedRegion = limitedRegion;
     }
-
     @Override
     public boolean setBlock(final int x, final int y, final int z, @NonNull final Pattern pattern) {
         return setBlock(x, y, z, pattern.applyBlock(BlockVector3.at(x, y, z)));
     }
-
     @Override
     public boolean setBlock(final int x, final int y, final int z, @NonNull final BaseBlock id) {
         boolean result = setBlock(x, y, z, id.toImmutableState());
@@ -82,7 +75,6 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
         }
         return result;
     }
-
     @Override
     public boolean setBlock(final int x, final int y, final int z, @NonNull final BlockState id) {
         try {
@@ -94,7 +86,6 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
         }
         return true;
     }
-
     @Override
     public boolean setEntity(@NonNull final Entity entity) {
         EntityType type = BukkitAdapter.adapt(entity.getState().getType());
@@ -110,7 +101,6 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
         }
         return true;
     }
-
     @Override
     public boolean setTile(final int x, final int y, final int z, @NonNull final CompoundTag tag) {
         StateWrapper sw = new StateWrapper(tag);
@@ -121,10 +111,8 @@ public class LimitedRegionWrapperQueue extends DelegateQueueCoordinator {
             return false;
         }
     }
-
     @Override
     public boolean isSettingTiles() {
         return true;
     }
-
 }

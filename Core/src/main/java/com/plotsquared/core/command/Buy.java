@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -37,20 +36,16 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-
 @CommandDeclaration(command = "buy",
         usage = "/plot buy",
         permission = "plots.buy",
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.NONE)
 public class Buy extends Command {
-
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
-
     @Inject
     public Buy(
             final @NonNull EventDispatcher eventDispatcher,
@@ -60,14 +55,12 @@ public class Buy extends Command {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
-
     @Override
     public CompletableFuture<Boolean> execute(
             final PlotPlayer<?> player, String[] args,
             RunnableVal3<Command, Runnable, Runnable> confirm,
             final RunnableVal2<Command, CommandResult> whenDone
     ) {
-
         PlotArea area = player.getPlotAreaAbs();
         check(area, TranslatableCaption.of("errors.not_in_plot_world"));
         check(this.econHandler.isEnabled(area), TranslatableCaption.of("economy.econ_disabled"));
@@ -97,12 +90,10 @@ public class Buy extends Command {
                 this.econHandler.isSupported(),
                 TranslatableCaption.of("economy.vault_or_consumer_null")
         );
-
         PlayerBuyPlotEvent event = this.eventDispatcher.callPlayerBuyPlot(player, plot, priceFlag);
         if (event.getEventResult() == Result.DENY) {
             throw new CommandException(TranslatableCaption.of("economy.cannot_buy_blocked"));
         }
-
         double price = event.getEventResult() == Result.FORCE ? 0 : event.price();
         if (this.econHandler.getMoney(player) < price) {
             throw new CommandException(
@@ -114,17 +105,13 @@ public class Buy extends Command {
             );
         }
         this.econHandler.withdrawMoney(player, price);
-        // Failure
-        // Success
         confirm.run(this, () -> {
             player.sendMessage(
                     TranslatableCaption.of("economy.removed_balance"),
                     TagResolver.resolver("money", Tag.inserting(Component.text(this.econHandler.format(price))))
             );
-
             OfflinePlotPlayer previousOwner = PlotSquared.platform().playerManager().getOfflinePlayer(plot.getOwnerAbs());
             this.econHandler.depositMoney(previousOwner, price);
-
             PlotPlayer<?> owner = PlotSquared.platform().playerManager().getPlayerIfExists(plot.getOwnerAbs());
             if (owner != null) {
                 owner.sendMessage(
@@ -154,5 +141,4 @@ public class Buy extends Command {
         });
         return CompletableFuture.completedFuture(true);
     }
-
 }

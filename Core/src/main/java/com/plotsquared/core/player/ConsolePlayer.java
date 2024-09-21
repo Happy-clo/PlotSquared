@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.player;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.command.RequiredType;
@@ -44,16 +43,11 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.UUID;
-
 public class ConsolePlayer extends PlotPlayer<Actor> {
-
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static ConsolePlayer instance;
-
     private final Actor actor;
-
     @Inject
     private ConsolePlayer(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -83,7 +77,6 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         }
         setMeta("location", location);
     }
-
     public static ConsolePlayer getConsole() {
         if (instance == null) {
             instance = PlotSquared.platform().injector().getInstance(ConsolePlayer.class);
@@ -91,56 +84,46 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         }
         return instance;
     }
-
     @Override
     public Actor toActor() {
         return this.actor;
     }
-
     @Override
     public Actor getPlatformPlayer() {
         return this.toActor();
     }
-
     @Override
     public boolean canTeleport(@NonNull Location location) {
         return true;
     }
-
     @Override
     public void sendTitle(
             final @NonNull Caption title, final @NonNull Caption subtitle,
             final int fadeIn, final int stay, final int fadeOut, final @NonNull TagResolver... resolvers
     ) {
     }
-
     @NonNull
     @Override
     public Location getLocation() {
         return this.getMeta("location");
     }
-
     @Override
     public Location getLocationFull() {
         return getLocation();
     }
-
     @NonNull
     @Override
     public UUID getUUID() {
         return DBFunc.EVERYONE;
     }
-
     @Override
     public long getLastPlayed() {
         return System.currentTimeMillis();
     }
-
     @Override
     public boolean hasPermission(@NonNull String permission) {
         return true;
     }
-
     @Override
     public void sendMessage(
             final @NonNull Caption caption,
@@ -153,10 +136,8 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
         message = CaptionUtility.format(this, message)
                 .replace('\u2010', '%').replace('\u2020', '&').replace('\u2030', '&')
                 .replace("<prefix>", TranslatableCaption.of("core.prefix").getComponent(this));
-        // Parse the message
         PlotSquared.platform().consoleAudience().sendMessage(MINI_MESSAGE.deserialize(message, replacements));
     }
-
     @Override
     public void teleport(Location location, TeleportCause cause) {
         try (final MetaDataAccess<Plot> lastPlot = accessTemporaryMetaData(PlayerMetaDataKeys.TEMPORARY_LAST_PLOT)) {
@@ -170,89 +151,69 @@ public class ConsolePlayer extends PlotPlayer<Actor> {
             locationMetaDataAccess.set(location);
         }
     }
-
     @Override
     public String getName() {
         return "*";
     }
-
     @Override
     public void setCompassTarget(Location location) {
     }
-
     @Override
     public void setAttribute(String key) {
     }
-
     @Override
     public boolean getAttribute(String key) {
         return false;
     }
-
     @Override
     public void removeAttribute(String key) {
     }
-
     @Override
     public @NonNull RequiredType getSuperCaller() {
         return RequiredType.CONSOLE;
     }
-
     @Override
     public void setWeather(@NonNull PlotWeather weather) {
     }
-
     @Override
     public @NonNull GameMode getGameMode() {
         return GameModes.SPECTATOR;
     }
-
     @Override
     public void setGameMode(@NonNull GameMode gameMode) {
     }
-
     @Override
     public void setTime(long time) {
     }
-
     @Override
     public boolean getFlight() {
         return true;
     }
-
     @Override
     public void setFlight(boolean fly) {
     }
-
     @Override
     public void playMusic(@NonNull Location location, @NonNull ItemType id) {
     }
-
     @Override
     public void kick(String message) {
     }
-
     @Override
     public void stopSpectating() {
     }
-
     @Override
     public boolean isBanned() {
         return false;
     }
-
     @Override
     public @NonNull Audience getAudience() {
         return PlotSquared.platform().consoleAudience();
     }
-
     @Override
     public void removeEffect(@NonNull String name) {
     }
-
     @Override
     public boolean canSee(final PlotPlayer<?> other) {
         return true;
     }
-
 }

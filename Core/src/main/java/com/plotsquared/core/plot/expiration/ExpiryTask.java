@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.expiration;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
@@ -25,7 +24,6 @@ import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.query.PlotQuery;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,27 +32,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
 public class ExpiryTask {
-
     private final Settings.Auto_Clear settings;
     private final PlotAreaManager plotAreaManager;
     private long cutoffThreshold = Long.MIN_VALUE;
-
     public ExpiryTask(final Settings.Auto_Clear settings, final @NonNull PlotAreaManager plotAreaManager) {
         this.settings = settings;
         this.plotAreaManager = plotAreaManager;
     }
-
     public Settings.Auto_Clear getSettings() {
         return settings;
     }
-
     public boolean allowsArea(PlotArea area) {
         return settings.WORLDS.contains(area.toString()) || settings.WORLDS
                 .contains(area.getWorldName()) || settings.WORLDS.contains("*");
     }
-
     public boolean applies(PlotArea area) {
         if (allowsArea(area)) {
             if (settings.REQUIRED_PLOTS <= 0) {
@@ -64,7 +56,6 @@ public class ExpiryTask {
             if (cutoffThreshold != Long.MAX_VALUE
                     && area.getPlots().size() > settings.REQUIRED_PLOTS
                     || (plots = getPlotsToCheck()).size() > settings.REQUIRED_PLOTS) {
-                // calculate cutoff
                 if (cutoffThreshold == Long.MIN_VALUE) {
                     plots = plots != null ? plots : getPlotsToCheck();
                     int diff = settings.REQUIRED_PLOTS;
@@ -108,7 +99,6 @@ public class ExpiryTask {
                         }
                         cutoffThreshold = top.get(top.size() - 1);
                     }
-                    // Add half a day, as expiry is performed each day
                     cutoffThreshold += (TimeUnit.DAYS.toMillis(1) / 2);
                 }
                 return true;
@@ -118,7 +108,6 @@ public class ExpiryTask {
         }
         return false;
     }
-
     public Set<Plot> getPlotsToCheck() {
         final Collection<PlotArea> areas = new LinkedList<>();
         for (final PlotArea plotArea : this.plotAreaManager.getAllPlotAreas()) {
@@ -128,30 +117,24 @@ public class ExpiryTask {
         }
         return PlotQuery.newQuery().inAreas(areas).asSet();
     }
-
     public boolean applies(long diff) {
         return diff > TimeUnit.DAYS.toMillis(settings.DAYS) && diff > cutoffThreshold;
     }
-
     public boolean appliesAccountAge(long accountAge) {
         if (settings.SKIP_ACCOUNT_AGE_DAYS != -1) {
             return accountAge <= TimeUnit.DAYS.toMillis(settings.SKIP_ACCOUNT_AGE_DAYS);
         }
         return false;
     }
-
     public boolean needsAnalysis() {
         return settings.THRESHOLD > 0;
     }
-
     public boolean applies(PlotAnalysis analysis) {
         return analysis.getComplexity(settings) <= settings.THRESHOLD;
     }
-
     public boolean requiresConfirmation() {
         return settings.CONFIRMATION;
     }
-
     /**
      * Returns {@code true} if this task respects unknown owners
      *
@@ -161,5 +144,4 @@ public class ExpiryTask {
     public boolean shouldDeleteForUnknownOwner() {
         return settings.DELETE_IF_OWNER_IS_UNKNOWN;
     }
-
 }

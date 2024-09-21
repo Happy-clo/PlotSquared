@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class CropGrowFlag extends BooleanFlag<CropGrowFlag> {
-
     public static final CropGrowFlag CROP_GROW_TRUE = new CropGrowFlag(true);
     public static final CropGrowFlag CROP_GROW_FALSE = new CropGrowFlag(false);
-
     private CropGrowFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_crop_grow"));
     }
-
     @Override
     protected CropGrowFlag flagOf(@NonNull Boolean value) {
         return value ? CROP_GROW_TRUE : CROP_GROW_FALSE;
     }
-
 }

@@ -17,23 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events.post;
-
 import com.plotsquared.core.events.PlotPlayerEvent;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.index.qual.NonNegative;
-
 /**
  * Called after a player has successfully bought a plot.
  *
  * @since 7.3.2
  */
 public class PostPlayerBuyPlotEvent extends PlotPlayerEvent {
-
     private final OfflinePlotPlayer previousOwner;
     private final double price;
-
     public PostPlayerBuyPlotEvent(
             final PlotPlayer<?> plotPlayer, final OfflinePlotPlayer previousOwner, final Plot plot,
             @NonNegative final double price
@@ -42,7 +38,6 @@ public class PostPlayerBuyPlotEvent extends PlotPlayerEvent {
         this.previousOwner = previousOwner;
         this.price = price;
     }
-
     /**
      * The previous owner of the bought plot.
      *
@@ -51,7 +46,6 @@ public class PostPlayerBuyPlotEvent extends PlotPlayerEvent {
     public OfflinePlotPlayer previousOwner() {
         return previousOwner;
     }
-
     /**
      * Returns the price after potential modifications by {@link com.plotsquared.core.events.PlayerBuyPlotEvent}.
      *
@@ -60,5 +54,4 @@ public class PostPlayerBuyPlotEvent extends PlotPlayerEvent {
     public double price() {
         return price;
     }
-
 }

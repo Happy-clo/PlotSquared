@@ -17,11 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.entity;
-
 class AgeableStats {
-
     int age;
     boolean locked;
     boolean adult;
-
 }

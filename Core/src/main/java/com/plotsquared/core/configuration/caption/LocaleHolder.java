@@ -17,17 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
-
 import com.plotsquared.core.player.ConsolePlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Locale;
-
 /**
  * Any entity that has a locale
  */
 public interface LocaleHolder {
-
     /**
      * Get the console locale holder.
      * <p>
@@ -40,19 +36,16 @@ public interface LocaleHolder {
     static LocaleHolder console() {
         return ConsolePlayer.getConsole();
     }
-
     /**
      * Get the locale used by the holder
      *
      * @return Locale
      */
     @NonNull Locale getLocale();
-
     /**
      * Set the locale for the holder
      *
      * @param locale New locale
      */
     void setLocale(@NonNull Locale locale);
-
 }

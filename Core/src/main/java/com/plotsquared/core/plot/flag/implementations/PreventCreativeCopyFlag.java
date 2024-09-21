@@ -17,25 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class PreventCreativeCopyFlag extends BooleanFlag<PreventCreativeCopyFlag> {
-
     public static final PreventCreativeCopyFlag PREVENT_CREATIVE_COPY_TRUE =
             new PreventCreativeCopyFlag(true);
     public static final PreventCreativeCopyFlag PREVENT_CREATIVE_COPY_FALSE =
             new PreventCreativeCopyFlag(false);
-
     private PreventCreativeCopyFlag(final @NonNull Boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_prevent_creative_copy"));
     }
-
     @Override
     protected PreventCreativeCopyFlag flagOf(final @NonNull Boolean value) {
         return value ? PREVENT_CREATIVE_COPY_TRUE : PREVENT_CREATIVE_COPY_FALSE;
     }
-
 }

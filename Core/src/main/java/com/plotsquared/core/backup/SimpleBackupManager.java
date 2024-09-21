@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
@@ -34,26 +33,22 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
 /**
  * {@inheritDoc}
  */
 @Singleton
 public class SimpleBackupManager implements BackupManager {
-
     private final Path backupPath;
     private final boolean automaticBackup;
     private final int backupLimit;
     private final Cache<PlotCacheKey, BackupProfile> backupProfileCache = CacheBuilder.newBuilder()
             .expireAfterAccess(3, TimeUnit.MINUTES).build();
     private final PlayerBackupProfileFactory playerBackupProfileFactory;
-
     @Inject
     public SimpleBackupManager(final @NonNull PlayerBackupProfileFactory playerBackupProfileFactory) throws Exception {
         this.playerBackupProfileFactory = playerBackupProfileFactory;
@@ -64,7 +59,6 @@ public class SimpleBackupManager implements BackupManager {
         this.automaticBackup = Settings.Backup.AUTOMATIC_BACKUPS;
         this.backupLimit = Settings.Backup.BACKUP_LIMIT;
     }
-
     public SimpleBackupManager(
             final Path backupPath, final boolean automaticBackup,
             final int backupLimit, final PlayerBackupProfileFactory playerBackupProfileFactory
@@ -74,7 +68,6 @@ public class SimpleBackupManager implements BackupManager {
         this.backupLimit = backupLimit;
         this.playerBackupProfileFactory = playerBackupProfileFactory;
     }
-
     @Override
     public @NonNull BackupProfile getProfile(final @NonNull Plot plot) {
         if (plot.hasOwner()) {
@@ -91,7 +84,6 @@ public class SimpleBackupManager implements BackupManager {
         }
         return new NullBackupProfile();
     }
-
     @Override
     public void automaticBackup(@Nullable PlotPlayer<?> player, final @NonNull Plot plot, @NonNull Runnable whenDone) {
         final BackupProfile profile;
@@ -122,24 +114,19 @@ public class SimpleBackupManager implements BackupManager {
             });
         }
     }
-
     @Override
     public boolean shouldAutomaticallyBackup() {
         return this.automaticBackup;
     }
-
     public Path getBackupPath() {
         return this.backupPath;
     }
-
     public int getBackupLimit() {
         return this.backupLimit;
     }
-
     private record PlotCacheKey(
             Plot plot
     ) {
-
         @Override
         public boolean equals(final Object o) {
             if (this == o) {
@@ -153,12 +140,9 @@ public class SimpleBackupManager implements BackupManager {
                     && Objects.equals(plot.getId(), that.plot.getId())
                     && Objects.equals(plot.getOwnerAbs(), that.plot.getOwnerAbs());
         }
-
         @Override
         public int hashCode() {
             return Objects.hash(plot.getArea(), plot.getId(), plot.getOwnerAbs());
         }
-
     }
-
 }

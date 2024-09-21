@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotFlagAddEvent;
@@ -39,35 +38,29 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
-
 @CommandDeclaration(command = "music",
         permission = "plots.music",
         usage = "/plot music",
         category = CommandCategory.APPEARANCE,
         requiredType = RequiredType.PLAYER)
 public class Music extends SubCommand {
-
     private static final Collection<String> DISCS = Arrays
             .asList("music_disc_13", "music_disc_cat", "music_disc_blocks", "music_disc_chirp",
                     "music_disc_far", "music_disc_mall", "music_disc_mellohi", "music_disc_stal",
                     "music_disc_strad", "music_disc_ward", "music_disc_11", "music_disc_wait", "music_disc_otherside",
                     "music_disc_pigstep", "music_disc_5", "music_disc_relic"
             );
-
     private final InventoryUtil inventoryUtil;
     private final EventDispatcher eventDispatcher;
-
     @Inject
     public Music(final @Nullable InventoryUtil inventoryUtil, final @NonNull EventDispatcher eventDispatcher) {
         this.inventoryUtil = inventoryUtil;
         this.eventDispatcher = eventDispatcher;
     }
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -147,7 +140,6 @@ public class Music extends SubCommand {
             }
         };
         int index = 0;
-
         for (final String disc : DISCS) {
             final String name = String.format("<gold>%s</gold>", disc);
             final String[] lore = {TranslatableCaption.of("plotjukebox.click_to_play").getComponent(player)};
@@ -160,16 +152,10 @@ public class Music extends SubCommand {
                 index++;
             }
         }
-
-        // Always add the cancel button
-        // if (player.getMeta("music") != null) {
         String name = TranslatableCaption.of("plotjukebox.cancel_music").getComponent(player);
         String[] lore = {TranslatableCaption.of("plotjukebox.reset_music").getComponent(player)};
         inv.setItem(index, new PlotItemStack("bedrock", 1, name, lore));
-        // }
-
         inv.openInventory();
         return true;
     }
-
 }

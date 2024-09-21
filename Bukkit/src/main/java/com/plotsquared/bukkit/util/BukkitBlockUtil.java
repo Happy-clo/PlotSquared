@@ -17,20 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
-
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.block.BlockState;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-
 public class BukkitBlockUtil {
-
     public static BlockState get(Block block) {
         return get(block.getType());
     }
-
     public static BlockState get(Material material) {
         return BukkitAdapter.asBlockType(material).getDefaultState();
     }
-
 }

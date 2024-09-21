@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParseException;
@@ -68,7 +67,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -105,22 +103,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
 public abstract class SchematicHandler {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SchematicHandler.class.getSimpleName());
     private static final Gson GSON = new Gson();
     public static SchematicHandler manager;
     private final WorldUtil worldUtil;
     private final ProgressSubscriberFactory subscriberFactory;
     private boolean exportAll = false;
-
     @Inject
     public SchematicHandler(final @NonNull WorldUtil worldUtil, @NonNull ProgressSubscriberFactory subscriberFactory) {
         this.worldUtil = worldUtil;
         this.subscriberFactory = subscriberFactory;
     }
-
     @Deprecated(forRemoval = true, since = "6.0.0")
     public static void upload(
             @Nullable UUID uuid,
@@ -174,7 +168,7 @@ public abstract class SchematicHandler {
                     writeTask.value = new AbstractDelegateOutputStream(output) {
                         @Override
                         public void close() {
-                        } // Don't close
+                        }
                     };
                     writeTask.run();
                     output.flush();
@@ -198,7 +192,6 @@ public abstract class SchematicHandler {
             }
         });
     }
-
     public boolean exportAll(
             Collection<Plot> collection,
             final File outputDir,
@@ -224,14 +217,12 @@ public abstract class SchematicHandler {
                 Iterator<Plot> i = plots.iterator();
                 final Plot plot = i.next();
                 i.remove();
-
                 final String owner;
                 if (plot.hasOwner()) {
                     owner = plot.getOwnerAbs().toString();
                 } else {
                     owner = "unknown";
                 }
-
                 final String name;
                 if (namingScheme == null) {
                     name = plot.getId().getX() + ";" + plot.getId().getY() + ',' + plot.getArea() + ',' + owner;
@@ -239,14 +230,12 @@ public abstract class SchematicHandler {
                     name = namingScheme.replaceAll("%id%", plot.getId().toString()).replaceAll("%idx%", plot.getId().getX() + "")
                             .replaceAll("%idy%", plot.getId().getY() + "").replaceAll("%world%", plot.getArea().toString());
                 }
-
                 final String directory;
                 if (outputDir == null) {
                     directory = Settings.Paths.SCHEMATICS;
                 } else {
                     directory = outputDir.getAbsolutePath();
                 }
-
                 final Runnable THIS = this;
                 getCompoundTag(plot)
                         .whenComplete((compoundTag, throwable) -> {
@@ -264,7 +253,6 @@ public abstract class SchematicHandler {
         });
         return true;
     }
-
     /**
      * Paste a schematic.
      *
@@ -300,7 +288,6 @@ public abstract class SchematicHandler {
             final int LENGTH = dimension.getZ();
             final int HEIGHT = dimension.getY();
             final int worldHeight = plot.getArea().getMaxGenHeight() - plot.getArea().getMinGenHeight() + 1;
-            // Validate dimensions
             CuboidRegion region = plot.getLargestRegion();
             boolean sizeMismatch =
                     ((region.getMaximumPoint().getX() - region.getMinimumPoint().getX() + xOffset + 1) < WIDTH) || (
@@ -311,9 +298,7 @@ public abstract class SchematicHandler {
                 TaskManager.runTask(whenDone);
                 return;
             }
-            // block type and data arrays
             final Clipboard blockArrayClipboard = schematic.getClipboard();
-            // Calculate the optimal height to paste the schematic at
             final int y_offset_actual;
             if (autoHeight) {
                 if (HEIGHT >= worldHeight) {
@@ -332,7 +317,6 @@ public abstract class SchematicHandler {
             } else {
                 y_offset_actual = yOffset;
             }
-
             final int p1x;
             final int p1z;
             final int p2x;
@@ -352,9 +336,7 @@ public abstract class SchematicHandler {
                 p2z = corners[1].getZ() + zOffset;
                 allRegion = new RegionIntersection(null, plot.getRegions().toArray(new CuboidRegion[]{}));
             }
-            // Paste schematic here
             final QueueCoordinator queue = plot.getArea().getQueue();
-
             for (int ry = 0; ry < Math.min(worldHeight, HEIGHT); ry++) {
                 int yy = y_offset_actual + ry;
                 if (yy > plot.getArea().getMaxGenHeight() || yy < plot.getArea().getMinGenHeight()) {
@@ -392,9 +374,7 @@ public abstract class SchematicHandler {
             TaskManager.runTask(whenDone);
         }
     }
-
     public abstract boolean restoreTile(QueueCoordinator queue, CompoundTag tag, int x, int y, int z);
-
     /**
      * Get a schematic
      *
@@ -418,7 +398,6 @@ public abstract class SchematicHandler {
         }
         return getSchematic(file);
     }
-
     /**
      * Get an immutable collection containing all schematic names
      *
@@ -431,14 +410,12 @@ public abstract class SchematicHandler {
             final String[] rawNames = parent.list((dir, name) -> name.endsWith(".schematic") || name.endsWith(".schem"));
             if (rawNames != null) {
                 final List<String> transformed = Arrays.stream(rawNames)
-                        //.map(rawName -> rawName.substring(0, rawName.length() - 10))
                         .collect(Collectors.toList());
                 names.addAll(transformed);
             }
         }
         return Collections.unmodifiableList(names);
     }
-
     /**
      * Get a schematic
      *
@@ -463,7 +440,6 @@ public abstract class SchematicHandler {
         }
         return null;
     }
-
     public Schematic getSchematic(@NonNull URL url) {
         try {
             ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
@@ -474,7 +450,6 @@ public abstract class SchematicHandler {
         }
         return null;
     }
-
     public Schematic getSchematic(@NonNull InputStream is) {
         try {
             SpongeSchematicReader schematicReader = new SpongeSchematicReader(new NBTInputStream(new GZIPInputStream(is)));
@@ -491,7 +466,6 @@ public abstract class SchematicHandler {
         }
         return null;
     }
-
     /**
      * The legacy web interface is deprecated for removal in favor of Arkitektonika.
      */
@@ -519,7 +493,6 @@ public abstract class SchematicHandler {
         }
         return null;
     }
-
     @Deprecated(forRemoval = true, since = "6.0.0")
     public void upload(final CompoundTag tag, UUID uuid, String file, RunnableVal<URL> whenDone) {
         if (tag == null) {
@@ -537,7 +510,6 @@ public abstract class SchematicHandler {
             }
         }, whenDone);
     }
-
     /**
      * Saves a schematic to a file path.
      *
@@ -563,7 +535,6 @@ public abstract class SchematicHandler {
         }
         return true;
     }
-
     private void writeSchematicData(
             final @NonNull Map<String, Tag> schematic,
             final @NonNull Map<String, Integer> palette,
@@ -573,27 +544,20 @@ public abstract class SchematicHandler {
             final @NonNull ByteArrayOutputStream biomeBuffer
     ) {
         schematic.put("PaletteMax", new IntTag(palette.size()));
-
         Map<String, Tag> paletteTag = new HashMap<>();
         palette.forEach((key, value) -> paletteTag.put(key, new IntTag(value)));
-
         schematic.put("Palette", new CompoundTag(paletteTag));
         schematic.put("BlockData", new ByteArrayTag(buffer.toByteArray()));
         schematic.put("BlockEntities", new ListTag(CompoundTag.class, tileEntities));
-
         if (biomeBuffer.size() == 0 || biomePalette.size() == 0) {
             return;
         }
-
         schematic.put("BiomePaletteMax", new IntTag(biomePalette.size()));
-
         Map<String, Tag> biomePaletteTag = new HashMap<>();
         biomePalette.forEach((key, value) -> biomePaletteTag.put(key, new IntTag(value)));
-
         schematic.put("BiomePalette", new CompoundTag(biomePaletteTag));
         schematic.put("BiomeData", new ByteArrayTag(biomeBuffer.toByteArray()));
     }
-
     @NonNull
     private Map<String, Tag> initSchematic(short width, short height, short length) {
         Map<String, Tag> schematic = new HashMap<>();
@@ -606,23 +570,17 @@ public abstract class SchematicHandler {
                         .queryCapability(Capability.WORLD_EDITING)
                         .getDataVersion())
         );
-
         Map<String, Tag> metadata = new HashMap<>();
         metadata.put("WEOffsetX", new IntTag(0));
         metadata.put("WEOffsetY", new IntTag(0));
         metadata.put("WEOffsetZ", new IntTag(0));
-
         schematic.put("Metadata", new CompoundTag(metadata));
-
         schematic.put("Width", new ShortTag(width));
         schematic.put("Height", new ShortTag(height));
         schematic.put("Length", new ShortTag(length));
-
-        // The Sponge format Offset refers to the 'min' points location in the world. That's our 'Origin'
         schematic.put("Offset", new IntArrayTag(new int[]{0, 0, 0,}));
         return schematic;
     }
-
     /**
      * Get the given plot as {@link CompoundTag} matching the Sponge schematic format.
      *
@@ -632,7 +590,6 @@ public abstract class SchematicHandler {
     public CompletableFuture<CompoundTag> getCompoundTag(final @NonNull Plot plot) {
         return getCompoundTag(Objects.requireNonNull(plot.getWorldName()), plot.getRegions());
     }
-
     /**
      * Get the contents of the given regions in the given world as {@link CompoundTag}
      * matching the Sponge schematic format.
@@ -648,43 +605,32 @@ public abstract class SchematicHandler {
         CompletableFuture<CompoundTag> completableFuture = new CompletableFuture<>();
         TaskManager.runTaskAsync(() -> {
             World world = this.worldUtil.getWeWorld(worldName);
-            // All positions
             CuboidRegion aabb = RegionUtil.getAxisAlignedBoundingBox(regions);
             aabb.setWorld(world);
-
             RegionIntersection intersection = new RegionIntersection(new ArrayList<>(regions));
-
             final int width = aabb.getWidth();
             int height = aabb.getHeight();
             final int length = aabb.getLength();
             final boolean multipleRegions = regions.size() > 1;
-
             Map<String, Tag> schematic = initSchematic((short) width, (short) height, (short) length);
-
             Map<String, Integer> palette = new HashMap<>();
             Map<String, Integer> biomePalette = new HashMap<>();
-
             List<CompoundTag> tileEntities = new ArrayList<>();
             ByteArrayOutputStream buffer = new ByteArrayOutputStream(width * height * length);
             ByteArrayOutputStream biomeBuffer = new ByteArrayOutputStream(width * length);
-            // Queue
             TaskManager.runTaskAsync(() -> {
                 final BlockVector3 minimum = aabb.getMinimumPoint();
                 final BlockVector3 maximum = aabb.getMaximumPoint();
-
                 final int minX = minimum.getX();
                 final int minZ = minimum.getZ();
                 final int minY = minimum.getY();
-
                 final int maxX = maximum.getX();
                 final int maxZ = maximum.getZ();
                 final int maxY = maximum.getY();
-
                 final Runnable yTask = new YieldRunnable() {
                     int currentY = minY;
                     int currentX = minX;
                     int currentZ = minZ;
-
                     @Override
                     public void run() {
                         long start = System.currentTimeMillis();
@@ -694,9 +640,6 @@ public abstract class SchematicHandler {
                             for (; currentZ <= maxZ; currentZ++) {
                                 int relativeZ = currentZ - minZ;
                                 for (; currentX <= maxX; currentX++) {
-                                    // if too much time was spent here, we yield this task
-                                    // note that current(X/Y/Z) aren't incremented, so the same position
-                                    // as *right now* will be visited again
                                     if (System.currentTimeMillis() - start > 40) {
                                         this.yield();
                                         return;
@@ -717,12 +660,9 @@ public abstract class SchematicHandler {
                                             blockId >>>= 7;
                                         }
                                         buffer.write(blockId);
-
                                         if (relativeY > 0) {
                                             continue;
                                         }
-
-                                        // Write the last biome if we're not getting it from the plot;
                                         int biomeId = lastBiome;
                                         while ((biomeId & -128) != 0) {
                                             biomeBuffer.write(biomeId & 127 | 128);
@@ -737,20 +677,12 @@ public abstract class SchematicHandler {
                                         for (Map.Entry<String, Tag> entry : block.getNbtData().getValue().entrySet()) {
                                             values.put(entry.getKey(), entry.getValue());
                                         }
-
-                                        // Positions are kept in NBT, we don't want that.
                                         values.remove("x");
                                         values.remove("y");
                                         values.remove("z");
-
                                         values.put("Id", new StringTag(block.getNbtId()));
-
-                                        // Remove 'id' if it exists. We want 'Id'.
-                                        // Do this after we get "getNbtId" cos otherwise "getNbtId" doesn't work.
-                                        // Dum.
                                         values.remove("id");
                                         values.put("Pos", new IntArrayTag(new int[]{relativeX, relativeY, relativeZ}));
-
                                         tileEntities.add(new CompoundTag(values));
                                     }
                                     String blockKey = block.toImmutableState().getAsString();
@@ -761,13 +693,11 @@ public abstract class SchematicHandler {
                                         blockId = palette.size();
                                         palette.put(blockKey, palette.size());
                                     }
-
                                     while ((blockId & -128) != 0) {
                                         buffer.write(blockId & 127 | 128);
                                         blockId >>>= 7;
                                     }
                                     buffer.write(blockId);
-
                                     if (relativeY > 0) {
                                         continue;
                                     }
@@ -787,9 +717,9 @@ public abstract class SchematicHandler {
                                     }
                                     biomeBuffer.write(biomeId);
                                 }
-                                currentX = minX; // reset manually as not using local variable
+                                currentX = minX;
                             }
-                            currentZ = minZ; // reset manually as not using local variable
+                            currentZ = minZ;
                         }
                         TaskManager.runTaskAsync(() -> {
                             writeSchematicData(schematic, palette, biomePalette, tileEntities, buffer, biomeBuffer);
@@ -802,10 +732,7 @@ public abstract class SchematicHandler {
         });
         return completableFuture;
     }
-
-
     public static class UnsupportedFormatException extends Exception {
-
         /**
          * Throw with a message.
          *
@@ -814,7 +741,6 @@ public abstract class SchematicHandler {
         public UnsupportedFormatException(String message) {
             super(message);
         }
-
         /**
          * Throw with a message and a cause.
          *
@@ -824,7 +750,5 @@ public abstract class SchematicHandler {
         public UnsupportedFormatException(String message, Throwable cause) {
             super(message, cause);
         }
-
     }
-
 }

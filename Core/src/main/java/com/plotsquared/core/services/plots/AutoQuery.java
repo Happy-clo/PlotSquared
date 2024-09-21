@@ -17,13 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.services.plots;
-
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 /**
  * Crate a new auto query
  *
@@ -40,7 +38,6 @@ public record AutoQuery(
         int sizeZ,
         @NonNull PlotArea plotArea
 ) {
-
     /**
      * Get the player that the plots are meant for
      *
@@ -50,7 +47,6 @@ public record AutoQuery(
     public @NonNull PlotPlayer<?> player() {
         return this.player;
     }
-
     /**
      * Get the plot ID to start searching from
      *
@@ -60,7 +56,6 @@ public record AutoQuery(
     public @Nullable PlotId startId() {
         return this.startId;
     }
-
     /**
      * Get the number of plots along the X axis
      *
@@ -70,7 +65,6 @@ public record AutoQuery(
     public int sizeX() {
         return this.sizeX;
     }
-
     /**
      * Get the number of plots along the Z axis
      *
@@ -80,7 +74,6 @@ public record AutoQuery(
     public int sizeZ() {
         return this.sizeZ;
     }
-
     /**
      * Get the plot area to search in
      *
@@ -90,5 +83,4 @@ public record AutoQuery(
     public @NonNull PlotArea plotArea() {
         return this.plotArea;
     }
-
 }

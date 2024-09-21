@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.components;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
@@ -45,7 +44,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,17 +55,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 public class ComponentPresetManager {
-
     private static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ComponentPresetManager.class.getSimpleName());
-
     private final List<ComponentPreset> presets;
     private final EconHandler econHandler;
     private final InventoryUtil inventoryUtil;
     private File componentsFile;
-
     @SuppressWarnings("unchecked")
     @Inject
     public ComponentPresetManager(final @NonNull EconHandler econHandler, final @NonNull InventoryUtil inventoryUtil) throws
@@ -92,11 +86,8 @@ public class ComponentPresetManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         ConfigurationSerialization.registerClass(ComponentPreset.class, "ComponentPreset");
-
         final YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(this.componentsFile);
-
         if (yamlConfiguration.contains("title")) {
             yamlConfiguration.set("title", "#Now in /lang/messages_%.json, preset.title");
             try {
@@ -105,7 +96,6 @@ public class ComponentPresetManager {
                 LOGGER.error("Failed to save default values to components.yml", e);
             }
         }
-
         if (yamlConfiguration.contains("presets")) {
             this.presets = yamlConfiguration
                     .getMapList("presets")
@@ -132,10 +122,8 @@ public class ComponentPresetManager {
             }
             this.presets = defaultPreset;
         }
-
         MainCommand.getInstance().register(new ComponentCommand(this));
     }
-
     /**
      * Build the component inventory for a player. This also checks
      * if the player is in a compatible plot, and sends appropriate
@@ -146,7 +134,6 @@ public class ComponentPresetManager {
      */
     public @Nullable PlotInventory buildInventory(final PlotPlayer<?> player) {
         final Plot plot = player.getCurrentPlot();
-
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return null;
@@ -162,7 +149,6 @@ public class ComponentPresetManager {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
             return null;
         }
-
         final List<ComponentPreset> allowedPresets = new ArrayList<>(this.presets.size());
         for (final ComponentPreset componentPreset : this.presets) {
             if (!componentPreset.permission().isEmpty() && !player.hasPermission(
@@ -185,27 +171,22 @@ public class ComponentPresetManager {
                 if (!getPlayer().getCurrentPlot().equals(plot)) {
                     return false;
                 }
-
                 if (index < 0 || index >= allowedPresets.size()) {
                     return false;
                 }
-
                 final ComponentPreset componentPreset = allowedPresets.get(index);
                 if (componentPreset == null) {
                     return false;
                 }
-
                 if (plot.getRunning() > 0) {
                     getPlayer().sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                     return false;
                 }
-
                 final Pattern pattern = PatternUtil.parse(null, componentPreset.pattern(), false);
                 if (pattern == null) {
                     getPlayer().sendMessage(TranslatableCaption.of("preset.preset_invalid"));
                     return false;
                 }
-
                 if (componentPreset.cost() > 0.0D && !player.hasPermission(Permission.PERMISSION_ADMIN_BYPASS_ECON)) {
                     if (!econHandler.isEnabled(plot.getArea())) {
                         getPlayer().sendMessage(
@@ -228,7 +209,6 @@ public class ComponentPresetManager {
                         );
                     }
                 }
-
                 BackupManager.backup(getPlayer(), plot, () -> {
                     plot.addRunning();
                     QueueCoordinator queue = plot.getArea().getQueue();
@@ -247,8 +227,6 @@ public class ComponentPresetManager {
                 return false;
             }
         };
-
-
         for (int i = 0; i < allowedPresets.size(); i++) {
             final ComponentPreset preset = allowedPresets.get(i);
             final List<String> lore = new ArrayList<>();
@@ -282,8 +260,6 @@ public class ComponentPresetManager {
                     )
             );
         }
-
         return plotInventory;
     }
-
 }

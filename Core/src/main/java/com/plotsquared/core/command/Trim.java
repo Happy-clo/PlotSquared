@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -41,27 +40,22 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 @CommandDeclaration(command = "trim",
         permission = "plots.admin",
         usage = "/plot trim <world> [regenerate]",
         requiredType = RequiredType.CONSOLE,
         category = CommandCategory.ADMINISTRATION)
 public class Trim extends SubCommand {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Trim.class.getSimpleName());
     private static volatile boolean TASK = false;
-
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
     private final GlobalBlockQueue blockQueue;
     private final RegionManager regionManager;
-
     @Inject
     public Trim(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -74,7 +68,6 @@ public class Trim extends SubCommand {
         this.blockQueue = blockQueue;
         this.regionManager = regionManager;
     }
-
     /**
      * Runs the result task with the parameters (viable, nonViable).
      *
@@ -121,7 +114,6 @@ public class Trim extends SubCommand {
                 TaskManager.getPlatformImplementation().taskLater(result, TaskTime.ticks(1L)));
         return true;
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -161,7 +153,6 @@ public class Trim extends SubCommand {
                             iterator.remove();
                             int cbx = mcr.getX() << 5;
                             int cbz = mcr.getZ() << 5;
-                            // get all 1024 chunks
                             HashSet<BlockVector2> chunks = new HashSet<>();
                             for (int x = cbx; x < cbx + 32; x++) {
                                 for (int z = cbz; z < cbz + 32; z++) {
@@ -208,10 +199,8 @@ public class Trim extends SubCommand {
                     };
                 }
                 regionManager.deleteRegionFiles(world, viable, regenTask);
-
             }
         });
         return true;
     }
-
 }

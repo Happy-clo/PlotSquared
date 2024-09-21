@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
-
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.BukkitPlatform;
 import com.plotsquared.bukkit.player.BukkitPlayer;
@@ -92,7 +91,6 @@ import org.bukkit.entity.WaterMob;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -101,17 +99,14 @@ import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import java.util.stream.Stream;
-
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Singleton
 public class BukkitUtil extends WorldUtil {
-
     public static final BukkitAudiences BUKKIT_AUDIENCES = BukkitAudiences.create(BukkitPlatform.getPlugin(BukkitPlatform.class));
     public static final LegacyComponentSerializer LEGACY_COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection();
     public static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitUtil.class.getSimpleName());
     private final Collection<BlockType> tileEntityTypes = new HashSet<>();
-
     /**
      * Turn a Bukkit {@link Player} into a PlotSquared {@link PlotPlayer}
      *
@@ -122,7 +117,6 @@ public class BukkitUtil extends WorldUtil {
         final PlayerManager<?, ?> playerManager = PlotSquared.platform().playerManager();
         return ((BukkitPlayerManager) playerManager).getPlayer(player);
     }
-
     /**
      * Turn a Bukkit {@link org.bukkit.Location} into a PlotSquared {@link Location}.
      * This only copies the 4-tuple (world,x,y,z) and does not include the yaw and the pitch
@@ -139,7 +133,6 @@ public class BukkitUtil extends WorldUtil {
                         MathMan.roundInt(location.getZ())
                 );
     }
-
     /**
      * Turn a Bukkit {@link org.bukkit.Location} into a PlotSquared {@link Location}.
      * This copies the entire 6-tuple (world,x,y,z,yaw,pitch).
@@ -158,7 +151,6 @@ public class BukkitUtil extends WorldUtil {
                         location.getPitch()
                 );
     }
-
     /**
      * Turn a PlotSquared {@link Location} into a Bukkit {@link org.bukkit.Location}.
      * This only copies the 4-tuple (world,x,y,z) and does not include the yaw and the pitch
@@ -174,7 +166,6 @@ public class BukkitUtil extends WorldUtil {
                 location.getZ()
         );
     }
-
     /**
      * Get a Bukkit {@link World} from its name
      *
@@ -184,7 +175,6 @@ public class BukkitUtil extends WorldUtil {
     public static @Nullable World getWorld(final @NonNull String string) {
         return Bukkit.getWorld(string);
     }
-
     private static void ensureLoaded(
             final @NonNull String world,
             final int x,
@@ -194,11 +184,9 @@ public class BukkitUtil extends WorldUtil {
         PaperLib.getChunkAtAsync(Objects.requireNonNull(getWorld(world)), x >> 4, z >> 4, true)
                 .thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
-
     private static void ensureLoaded(final @NonNull Location location, final @NonNull Consumer<Chunk> chunkConsumer) {
         PaperLib.getChunkAtAsync(adapt(location), true).thenAccept(chunk -> ensureMainThread(chunkConsumer, chunk));
     }
-
     private static <T> void ensureMainThread(final @NonNull Consumer<T> consumer, final @NonNull T value) {
         if (Bukkit.isPrimaryThread()) {
             consumer.accept(value);
@@ -206,7 +194,6 @@ public class BukkitUtil extends WorldUtil {
             Bukkit.getScheduler().runTask(BukkitPlatform.getPlugin(BukkitPlatform.class), () -> consumer.accept(value));
         }
     }
-
     @Override
     public boolean isBlockSame(final @NonNull BlockState block1, final @NonNull BlockState block2) {
         if (block1.equals(block2)) {
@@ -216,27 +203,22 @@ public class BukkitUtil extends WorldUtil {
         final Material mat2 = BukkitAdapter.adapt(block2.getBlockType());
         return mat1 == mat2;
     }
-
     @Override
     public boolean isWorld(final @NonNull String worldName) {
         return getWorld(worldName) != null;
     }
-
     @Override
     public void getBiome(final @NonNull String world, final int x, final int z, final @NonNull Consumer<BiomeType> result) {
         ensureLoaded(world, x, z, chunk -> result.accept(BukkitAdapter.adapt(getWorld(world).getBiome(x, z))));
     }
-
     @Override
     public @NonNull BiomeType getBiomeSynchronous(final @NonNull String world, final int x, final int z) {
         return BukkitAdapter.adapt(Objects.requireNonNull(getWorld(world)).getBiome(x, z));
     }
-
     @Override
     public void getHighestBlock(final @NonNull String world, final int x, final int z, final @NonNull IntConsumer result) {
         ensureLoaded(world, x, z, chunk -> {
             final World bukkitWorld = Objects.requireNonNull(getWorld(world));
-            // Skip top and bottom block
             int air = 1;
             int maxY = com.plotsquared.bukkit.util.BukkitWorld.getMaxWorldHeight(bukkitWorld);
             int minY = com.plotsquared.bukkit.util.BukkitWorld.getMinWorldHeight(bukkitWorld);
@@ -260,12 +242,10 @@ public class BukkitUtil extends WorldUtil {
             result.accept(bukkitWorld.getMaxHeight() - 1);
         });
     }
-
     @Override
     @NonNegative
     public int getHighestBlockSynchronous(final @NonNull String world, final int x, final int z) {
         final World bukkitWorld = Objects.requireNonNull(getWorld(world));
-        // Skip top and bottom block
         int air = 1;
         int maxY = com.plotsquared.bukkit.util.BukkitWorld.getMaxWorldHeight(bukkitWorld);
         int minY = com.plotsquared.bukkit.util.BukkitWorld.getMinWorldHeight(bukkitWorld);
@@ -286,7 +266,6 @@ public class BukkitUtil extends WorldUtil {
         }
         return bukkitWorld.getMaxHeight() - 1;
     }
-
     @Override
     public @NonNull String[] getSignSynchronous(final @NonNull Location location) {
         Block block = Objects.requireNonNull(getWorld(location.getWorldName())).getBlockAt(
@@ -306,13 +285,11 @@ public class BukkitUtil extends WorldUtil {
         }
         return new String[0];
     }
-
     @Override
     public @NonNull Location getSpawn(final @NonNull String world) {
         final org.bukkit.Location temp = getWorld(world).getSpawnLocation();
         return Location.at(world, temp.getBlockX(), temp.getBlockY(), temp.getBlockZ(), temp.getYaw(), temp.getPitch());
     }
-
     @Override
     public void setSpawn(final @NonNull Location location) {
         final World world = getWorld(location.getWorldName());
@@ -320,7 +297,6 @@ public class BukkitUtil extends WorldUtil {
             world.setSpawnLocation(location.getX(), location.getY(), location.getZ());
         }
     }
-
     @Override
     public void saveWorld(final @NonNull String worldName) {
         final World world = getWorld(worldName);
@@ -328,7 +304,6 @@ public class BukkitUtil extends WorldUtil {
             world.save();
         }
     }
-
     @Override
     @SuppressWarnings("deprecation")
     public void setSign(
@@ -374,23 +349,19 @@ public class BukkitUtil extends WorldUtil {
             }
         });
     }
-
     @Override
     public @NonNull StringComparison<BlockState>.ComparisonResult getClosestBlock(@NonNull String name) {
         BlockState state = BlockUtil.get(name);
         return new StringComparison<BlockState>().new ComparisonResult(1, state);
     }
-
     @Override
     public com.sk89q.worldedit.world.@NonNull World getWeWorld(final @NonNull String world) {
         return new BukkitWorld(Bukkit.getWorld(world));
     }
-
     @Override
     public void refreshChunk(int x, int z, String world) {
         Bukkit.getWorld(world).refreshChunk(x, z);
     }
-
     @Override
     public void getBlock(final @NonNull Location location, final @NonNull Consumer<BlockState> result) {
         ensureLoaded(location, chunk -> {
@@ -399,36 +370,30 @@ public class BukkitUtil extends WorldUtil {
             result.accept(Objects.requireNonNull(BukkitAdapter.asBlockType(block.getType())).getDefaultState());
         });
     }
-
     @Override
     public @NonNull BlockState getBlockSynchronous(final @NonNull Location location) {
         final World world = getWorld(location.getWorldName());
         final Block block = Objects.requireNonNull(world).getBlockAt(location.getX(), location.getY(), location.getZ());
         return Objects.requireNonNull(BukkitAdapter.asBlockType(block.getType())).getDefaultState();
     }
-
     @Override
     @NonNegative
     public double getHealth(final @NonNull PlotPlayer<?> player) {
         return Objects.requireNonNull(Bukkit.getPlayer(player.getUUID())).getHealth();
     }
-
     @Override
     @NonNegative
     public int getFoodLevel(final @NonNull PlotPlayer<?> player) {
         return Objects.requireNonNull(Bukkit.getPlayer(player.getUUID())).getFoodLevel();
     }
-
     @Override
     public void setHealth(final @NonNull PlotPlayer<?> player, @NonNegative final double health) {
         Objects.requireNonNull(Bukkit.getPlayer(player.getUUID())).setHealth(health);
     }
-
     @Override
     public void setFoodLevel(final @NonNull PlotPlayer<?> player, @NonNegative final int foodLevel) {
         Bukkit.getPlayer(player.getUUID()).setFoodLevel(foodLevel);
     }
-
     @Override
     public @NonNull Set<com.sk89q.worldedit.world.entity.EntityType> getTypesInCategory(final @NonNull String category) {
         final Collection<Class<?>> allowedInterfaces = new HashSet<>();
@@ -488,17 +453,13 @@ public class BukkitUtil extends WorldUtil {
         }
         return types;
     }
-
     @Override
     public @NonNull Collection<BlockType> getTileEntityTypes() {
         if (this.tileEntityTypes.isEmpty()) {
-            // Categories
             tileEntityTypes.addAll(BlockCategories.BANNERS.getAll());
             tileEntityTypes.addAll(BlockCategories.SIGNS.getAll());
             tileEntityTypes.addAll(BlockCategories.BEDS.getAll());
             tileEntityTypes.addAll(BlockCategories.FLOWER_POTS.getAll());
-            // Individual Types
-            // Add these from strings
             Stream.of(
                             "barrel",
                             "beacon",
@@ -543,14 +504,12 @@ public class BukkitUtil extends WorldUtil {
         }
         return this.tileEntityTypes;
     }
-
     @Override
     @NonNegative
     public int getTileEntityCount(final @NonNull String world, final @NonNull BlockVector2 chunk) {
         return Objects.requireNonNull(getWorld(world)).
                 getChunkAt(chunk.getBlockX(), chunk.getBlockZ()).getTileEntities().length;
     }
-
     @Override
     public Set<BlockVector2> getChunkChunks(String world) {
         Set<BlockVector2> chunks = super.getChunkChunks(world);
@@ -577,5 +536,4 @@ public class BukkitUtil extends WorldUtil {
         }
         return chunks;
     }
-
 }

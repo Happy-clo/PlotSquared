@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -38,13 +37,11 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
-
 @CommandDeclaration(command = "setowner",
         permission = "plots.admin.command.setowner",
         usage = "/plot setowner <player>",
@@ -53,14 +50,11 @@ import java.util.function.Consumer;
         requiredType = RequiredType.NONE,
         confirmation = true)
 public class Owner extends SetCommand {
-
     private final EventDispatcher eventDispatcher;
-
     @Inject
     public Owner(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
-
     @Override
     public boolean set(final PlotPlayer<?> player, final Plot plot, String value) {
         if (value == null || value.isEmpty()) {
@@ -72,7 +66,6 @@ public class Owner extends SetCommand {
         }
         @Nullable final UUID oldOwner = plot.getOwnerAbs();
         Set<Plot> plots = plot.getConnectedPlots();
-
         final Consumer<UUID> uuidConsumer = uuid -> {
             if (uuid == null && !value.equalsIgnoreCase("none") && !value.equalsIgnoreCase("null")
                     && !value.equalsIgnoreCase("-")) {
@@ -204,7 +197,6 @@ public class Owner extends SetCommand {
                 }
             });
         };
-
         if (value.length() == 36) {
             try {
                 uuidConsumer.accept(UUID.fromString(value));
@@ -215,10 +207,8 @@ public class Owner extends SetCommand {
         }
         return true;
     }
-
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
-
 }

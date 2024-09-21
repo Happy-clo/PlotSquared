@@ -17,22 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
-
 import com.plotsquared.core.player.MetaDataAccess;
 import com.plotsquared.core.player.PlayerMetaDataKeys;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.InventoryUtil;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class PlotInventory {
-
     private final PlotPlayer<?> player;
     private final int lines;
     private final PlotItemStack[] items;
     private final InventoryUtil inventoryUtil;
     private String title;
     private boolean open = false;
-
     public PlotInventory(
             final @NonNull InventoryUtil inventoryUtil,
             PlotPlayer<?> player, int lines, String name
@@ -43,18 +39,15 @@ public class PlotInventory {
         this.items = new PlotItemStack[lines * 9];
         this.inventoryUtil = inventoryUtil;
     }
-
     public static boolean hasPlotInventoryOpen(final @NonNull PlotPlayer<?> plotPlayer) {
         return getOpenPlotInventory(plotPlayer) != null;
     }
-
     public static PlotInventory getOpenPlotInventory(final @NonNull PlotPlayer<?> plotPlayer) {
         try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
                 PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
             return inventoryAccess.get().orElse(null);
         }
     }
-
     public static void setPlotInventoryOpen(
             final @NonNull PlotPlayer<?> plotPlayer,
             final @NonNull PlotInventory plotInventory
@@ -64,18 +57,15 @@ public class PlotInventory {
             inventoryAccess.set(plotInventory);
         }
     }
-
     public static void removePlotInventoryOpen(final @NonNull PlotPlayer<?> plotPlayer) {
         try (final MetaDataAccess<PlotInventory> inventoryAccess = plotPlayer.accessTemporaryMetaData(
                 PlayerMetaDataKeys.TEMPORARY_INVENTORY)) {
             inventoryAccess.remove();
         }
     }
-
     public boolean onClick(int index) {
         return true;
     }
-
     public void openInventory() {
         if (this.title == null) {
             return;
@@ -86,7 +76,6 @@ public class PlotInventory {
             this.inventoryUtil.open(this);
         }
     }
-
     public void close() {
         if (this.title == null) {
             return;
@@ -95,7 +84,6 @@ public class PlotInventory {
         this.inventoryUtil.close(this);
         this.open = false;
     }
-
     /**
      * Put an item into this inventory
      *
@@ -106,7 +94,6 @@ public class PlotInventory {
     public void setItem(int index, PlotItemStack item) {
         setItemChecked(index, item);
     }
-
     /**
      * Put an item into this inventory, while also checking the existence of the material in the current version
      *
@@ -123,22 +110,18 @@ public class PlotInventory {
         this.items[index] = item;
         return true;
     }
-
     public PlotItemStack getItem(int index) {
         if ((index < 0) || (index >= this.items.length)) {
             return null;
         }
         return this.items[index];
     }
-
     public PlotItemStack[] getItems() {
         return this.items;
     }
-
     public String getTitle() {
         return this.title;
     }
-
     public void setTitle(String title) {
         if (title == null) {
             return;
@@ -150,17 +133,13 @@ public class PlotInventory {
             openInventory();
         }
     }
-
     public boolean isOpen() {
         return this.open;
     }
-
     public PlotPlayer<?> getPlayer() {
         return player;
     }
-
     public int getLines() {
         return lines;
     }
-
 }

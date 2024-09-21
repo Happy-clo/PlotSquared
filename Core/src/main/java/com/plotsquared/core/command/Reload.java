@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -30,21 +29,17 @@ import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.io.File;
 import java.util.Objects;
-
 @CommandDeclaration(command = "reload",
         aliases = "rl",
         permission = "plots.admin.command.reload",
         usage = "/plot reload",
         category = CommandCategory.ADMINISTRATION)
 public class Reload extends SubCommand {
-
     private final PlotAreaManager plotAreaManager;
     private YamlConfiguration worldConfiguration;
     private File worldFile;
-
     @Inject
     public Reload(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -55,12 +50,9 @@ public class Reload extends SubCommand {
         this.worldConfiguration = worldConfiguration;
         this.worldFile = worldFile;
     }
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         try {
-            // The following won't affect world generation, as that has to be
-            // loaded during startup unfortunately.
             PlotSquared.get().setupConfigs();
             this.worldConfiguration = PlotSquared.get().getWorldConfiguration();
             this.worldFile = PlotSquared.get().getWorldsFile();
@@ -95,7 +87,6 @@ public class Reload extends SubCommand {
                         }
                     }
                     area.saveConfiguration(clone);
-                    // netSections is the combination of
                     for (String key : clone.getKeys(true)) {
                         if (clone.get(key) instanceof MemorySection) {
                             continue;
@@ -120,5 +111,4 @@ public class Reload extends SubCommand {
         }
         return true;
     }
-
 }

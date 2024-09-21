@@ -17,24 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
-
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 class GlobalPlotProvider implements PlotProvider {
-
     private final PlotAreaManager plotAreaManager;
-
     GlobalPlotProvider(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
-
     @Override
     public Collection<Plot> getPlots() {
         final List<Plot> plots = new ArrayList<>();
@@ -43,5 +37,4 @@ class GlobalPlotProvider implements PlotProvider {
         }
         return plots;
     }
-
 }

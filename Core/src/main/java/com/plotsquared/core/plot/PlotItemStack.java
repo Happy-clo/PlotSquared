@@ -17,18 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
-
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
-
 public class PlotItemStack {
-
     private final int amount;
     private final String name;
     private final String[] lore;
     private final ItemType type;
-
     /**
      * @param id     String ID
      * @param amount Amount of items in the stack
@@ -41,7 +37,6 @@ public class PlotItemStack {
     ) {
         this(ItemTypes.get(id), amount, name, lore);
     }
-
     /**
      * @param type   The item type
      * @param amount Amount of items in the stack
@@ -58,15 +53,12 @@ public class PlotItemStack {
         this.name = name;
         this.lore = lore;
     }
-
     public BlockState getBlockState() {
         return getType().getBlockType().getDefaultState();
     }
-
     public ItemType getType() {
         return this.type;
     }
-
     /**
      * Returns the number of items in this stack.
      * Valid values range from 1-255.
@@ -76,7 +68,6 @@ public class PlotItemStack {
     public int getAmount() {
         return amount;
     }
-
     /**
      * Returns the given name of this stack of items. The name is displayed when
      * hovering over the item.
@@ -89,5 +80,4 @@ public class PlotItemStack {
     public String[] getLore() {
         return lore;
     }
-
 }

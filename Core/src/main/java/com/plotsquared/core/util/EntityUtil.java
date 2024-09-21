@@ -17,30 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MISC;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
-
 /**
  * Entity related general utility methods
  */
 public class EntityUtil {
-
     private EntityUtil() {
         throw new UnsupportedOperationException(
                 "This is a utility class and cannot be instantiated");
     }
-
     private static int capNumeral(final @NonNull String flagName) {
         return switch (flagName) {
             case "mob-cap" -> CAP_MOB;
@@ -51,7 +46,6 @@ public class EntityUtil {
             default -> CAP_ENTITY;
         };
     }
-
     @SuppressWarnings("unchecked")
     public static boolean checkEntity(Plot plot, PlotFlag<Integer, ?>... flags) {
         if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
@@ -87,5 +81,4 @@ public class EntityUtil {
         }
         return false;
     }
-
 }

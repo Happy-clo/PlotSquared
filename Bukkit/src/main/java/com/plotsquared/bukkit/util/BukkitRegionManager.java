@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.plotsquared.core.generator.AugmentedUtils;
@@ -49,24 +48,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MISC;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
-
 @Singleton
 public class BukkitRegionManager extends RegionManager {
-
     private final GlobalBlockQueue blockQueue;
-
     @Inject
     public BukkitRegionManager(
             @NonNull WorldUtil worldUtil, @NonNull GlobalBlockQueue blockQueue, @NonNull
@@ -75,7 +69,6 @@ public class BukkitRegionManager extends RegionManager {
         super(worldUtil, blockQueue, subscriberFactory);
         this.blockQueue = blockQueue;
     }
-
     @Override
     public boolean handleClear(
             @NonNull Plot plot,
@@ -85,7 +78,6 @@ public class BukkitRegionManager extends RegionManager {
     ) {
         return false;
     }
-
     @Override
     public int[] countEntities(@NonNull Plot plot) {
         int[] existing = (int[]) plot.getMeta("EntityCount");
@@ -98,12 +90,9 @@ public class BukkitRegionManager extends RegionManager {
         Location top = plot.getTopAbs();
         int bx = bot.getX() >> 4;
         int bz = bot.getZ() >> 4;
-
         int tx = top.getX() >> 4;
         int tz = top.getZ() >> 4;
-
         int size = tx - bx << 4;
-
         Set<Chunk> chunks = new HashSet<>();
         for (int X = bx; X <= tx; X++) {
             for (int Z = bz; Z <= tz; Z++) {
@@ -112,7 +101,6 @@ public class BukkitRegionManager extends RegionManager {
                 }
             }
         }
-
         boolean doWhole = false;
         List<Entity> entities = null;
         if (size > 200 && chunks.size() > 200) {
@@ -121,7 +109,6 @@ public class BukkitRegionManager extends RegionManager {
                 doWhole = true;
             }
         }
-
         int[] count = new int[6];
         if (doWhole) {
             for (Entity entity : entities) {
@@ -160,7 +147,6 @@ public class BukkitRegionManager extends RegionManager {
         }
         return count;
     }
-
     @Override
     public boolean regenerateRegion(
             final @NonNull Location pos1,
@@ -169,7 +155,6 @@ public class BukkitRegionManager extends RegionManager {
             final @Nullable Runnable whenDone
     ) {
         final BukkitWorld world = (BukkitWorld) worldUtil.getWeWorld(pos1.getWorldName());
-
         final int p1x = pos1.getX();
         final int p1z = pos1.getZ();
         final int p2x = pos2.getX();
@@ -178,12 +163,10 @@ public class BukkitRegionManager extends RegionManager {
         final int bcz = p1z >> 4;
         final int tcx = p2x >> 4;
         final int tcz = p2z >> 4;
-
         final QueueCoordinator queue = blockQueue.getNewQueue(world);
         final QueueCoordinator regenQueue = blockQueue.getNewQueue(world);
         queue.addReadChunks(new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3()).getChunks());
         queue.setChunkConsumer(chunk -> {
-
             int x = chunk.getX();
             int z = chunk.getZ();
             int xxb = x << 4;
@@ -195,9 +178,7 @@ public class BukkitRegionManager extends RegionManager {
                 return;
             }
             boolean checkX1 = false;
-
             int xxb2;
-
             if (x == bcx) {
                 xxb2 = p1x - 1;
                 checkX1 = true;
@@ -230,28 +211,28 @@ public class BukkitRegionManager extends RegionManager {
             }
             final ContentMap map = new ContentMap();
             if (checkX1) {
-                map.saveRegion(world, xxb, xxb2, zzb2, zzt2); //
+                map.saveRegion(world, xxb, xxb2, zzb2, zzt2);
             }
             if (checkX2) {
-                map.saveRegion(world, xxt2, xxt, zzb2, zzt2); //
+                map.saveRegion(world, xxt2, xxt, zzb2, zzt2);
             }
             if (checkZ1) {
-                map.saveRegion(world, xxb2, xxt2, zzb, zzb2); //
+                map.saveRegion(world, xxb2, xxt2, zzb, zzb2);
             }
             if (checkZ2) {
-                map.saveRegion(world, xxb2, xxt2, zzt2, zzt); //
+                map.saveRegion(world, xxb2, xxt2, zzt2, zzt);
             }
             if (checkX1 && checkZ1) {
-                map.saveRegion(world, xxb, xxb2, zzb, zzb2); //
+                map.saveRegion(world, xxb, xxb2, zzb, zzb2);
             }
             if (checkX2 && checkZ1) {
-                map.saveRegion(world, xxt2, xxt, zzb, zzb2); // ?
+                map.saveRegion(world, xxt2, xxt, zzb, zzb2);
             }
             if (checkX1 && checkZ2) {
-                map.saveRegion(world, xxb, xxb2, zzt2, zzt); // ?
+                map.saveRegion(world, xxb, xxb2, zzt2, zzt);
             }
             if (checkX2 && checkZ2) {
-                map.saveRegion(world, xxt2, xxt, zzt2, zzt); //
+                map.saveRegion(world, xxt2, xxt, zzt2, zzt);
             }
             CuboidRegion currentPlotClear = new CuboidRegion(pos1.getBlockVector3(), pos2.getBlockVector3());
             map.saveEntitiesOut(Bukkit.getWorld(world.getName()).getChunkAt(x, z), currentPlotClear);
@@ -284,7 +265,6 @@ public class BukkitRegionManager extends RegionManager {
                         }
                     }, world.getName(), chunk)
             );
-            //map.restoreBlocks(worldObj, 0, 0);
             map.restoreEntities(Bukkit.getWorld(world.getName()));
         });
         regenQueue.setCompleteTask(whenDone);
@@ -292,11 +272,9 @@ public class BukkitRegionManager extends RegionManager {
         queue.enqueue();
         return true;
     }
-
     @Override
     public void clearAllEntities(@NonNull Location pos1, @NonNull Location pos2) {
         String world = pos1.getWorldName();
-
         final World bukkitWorld = BukkitUtil.getWorld(world);
         final List<Entity> entities;
         if (bukkitWorld != null) {
@@ -304,7 +282,6 @@ public class BukkitRegionManager extends RegionManager {
         } else {
             entities = new ArrayList<>();
         }
-
         int bx = pos1.getX();
         int bz = pos1.getZ();
         int tx = pos2.getX();
@@ -321,10 +298,8 @@ public class BukkitRegionManager extends RegionManager {
             }
         }
     }
-
     private void count(int[] count, @NonNull Entity entity) {
         final com.sk89q.worldedit.world.entity.EntityType entityType = BukkitAdapter.adapt(entity.getType());
-
         if (EntityCategories.PLAYER.contains(entityType)) {
             return;
         } else if (EntityCategories.PROJECTILE.contains(entityType) || EntityCategories.OTHER.contains(entityType) || EntityCategories.HANGING
@@ -342,5 +317,4 @@ public class BukkitRegionManager extends RegionManager {
         }
         count[CAP_ENTITY]++;
     }
-
 }

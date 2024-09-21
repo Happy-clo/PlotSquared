@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.location;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
@@ -29,18 +28,15 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.SimpleMBR;
-
 /**
  * An unmodifiable 6-tuple (world,x,y,z,yaw,pitch)
  */
 @SuppressWarnings("unused")
 public sealed class Location extends BlockLoc implements Comparable<Location> permits UncheckedWorldLocation {
-
     private final float yaw;
     private final float pitch;
     private final BlockVector3 blockVector3;
     private final World<?> world;
-
     /**
      * @since 6.9.0
      */
@@ -54,7 +50,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
         this.yaw = yaw;
         this.pitch = pitch;
     }
-
     private Location(
             final @NonNull String worldName, final @NonNull BlockVector3 blockVector3,
             final float yaw, final float pitch
@@ -70,7 +65,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
         this.yaw = yaw;
         this.pitch = pitch;
     }
-
     /**
      * Construct a new location
      *
@@ -86,7 +80,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     ) {
         return new Location(world, blockVector3, yaw, pitch);
     }
-
     /**
      * Construct a new location with yaw and pitch equal to 0
      *
@@ -100,7 +93,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     ) {
         return at(world, blockVector3, 0f, 0f);
     }
-
     /**
      * Construct a new location
      *
@@ -118,7 +110,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     ) {
         return at(world, BlockVector3.at(x, y, z), yaw, pitch);
     }
-
     /**
      * Construct a new location with yaw and pitch equal to 0
      *
@@ -134,7 +125,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     ) {
         return at(world, BlockVector3.at(x, y, z));
     }
-
     /**
      * Construct a new location
      *
@@ -150,7 +140,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     ) {
         return new Location(world, blockVector3, yaw, pitch);
     }
-
     /**
      * Construct a new location with yaw and pitch equal to 0
      *
@@ -164,7 +153,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     ) {
         return at(world, blockVector3, 0f, 0f);
     }
-
     /**
      * Construct a new location
      *
@@ -182,7 +170,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     ) {
         return at(world, BlockVector3.at(x, y, z), yaw, pitch);
     }
-
     /**
      * Construct a new location with yaw and pitch equal to 0
      *
@@ -198,7 +185,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     ) {
         return at(world, BlockVector3.at(x, y, z));
     }
-
     /**
      * Get the world object
      *
@@ -207,7 +193,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull World<?> getWorld() {
         return this.world;
     }
-
     /**
      * Get the name of the world this location is in
      *
@@ -216,7 +201,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull String getWorldName() {
         return this.world.getName();
     }
-
     /**
      * Get the X coordinate
      *
@@ -225,7 +209,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public int getX() {
         return this.blockVector3.getBlockX();
     }
-
     /**
      * Get the Y coordinate
      *
@@ -234,7 +217,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public int getY() {
         return this.blockVector3.getY();
     }
-
     /**
      * Get the Z coordinate
      *
@@ -243,7 +225,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public int getZ() {
         return this.blockVector3.getZ();
     }
-
     /**
      * Get the {@link PlotArea}, if any, that contains this location
      *
@@ -252,7 +233,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @Nullable PlotArea getPlotArea() {
         return PlotSquared.get().getPlotAreaManager().getPlotArea(this);
     }
-
     /**
      * Get the owned {@link Plot}, if any, that contains this location
      *
@@ -266,7 +246,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
             return null;
         }
     }
-
     /**
      * Get the (absolute) owned {@link Plot}, if any, that contains this location
      *
@@ -280,7 +259,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
             return null;
         }
     }
-
     /**
      * Check whether the location belongs to a plot area
      *
@@ -289,7 +267,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public boolean isPlotArea() {
         return this.getPlotArea() != null;
     }
-
     /**
      * Check whether the location belongs to a plot road
      *
@@ -299,7 +276,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
         final PlotArea area = this.getPlotArea();
         return area != null && area.getPlotAbs(this) == null;
     }
-
     /**
      * Checks if anyone owns a plot at the current location.
      *
@@ -309,7 +285,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
         final PlotArea area = this.getPlotArea();
         return area != null && area.getOwnedPlotAbs(this) == null;
     }
-
     /**
      * Get the absolute {@link Plot}, if any, that contains this location
      *
@@ -323,7 +298,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
             return null;
         }
     }
-
     /**
      * Get the {@link Plot}, if any, that contains this location
      *
@@ -337,7 +311,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
             return null;
         }
     }
-
     /**
      * Get the coordinates of the chunk that contains this location
      *
@@ -346,7 +319,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull BlockVector2 getChunkLocation() {
         return BlockVector2.at(this.getX() >> 4, this.getZ() >> 4);
     }
-
     /**
      * Return a new location offset by the given coordinates
      *
@@ -358,7 +330,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull Location add(final int x, final int y, final int z) {
         return new Location(this.world, this.blockVector3.add(x, y, z), this.yaw, this.pitch);
     }
-
     /**
      * Return a new location using the given X coordinate
      *
@@ -368,7 +339,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull Location withX(final int x) {
         return new Location(this.world, this.blockVector3.withX(x), this.yaw, this.pitch);
     }
-
     /**
      * Return a new location using the given Y coordinate
      *
@@ -378,7 +348,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull Location withY(final int y) {
         return new Location(this.world, this.blockVector3.withY(y), this.yaw, this.pitch);
     }
-
     /**
      * Return a new location using the given Z coordinate
      *
@@ -388,7 +357,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull Location withZ(final int z) {
         return new Location(this.world, this.blockVector3.withZ(z), this.yaw, this.pitch);
     }
-
     /**
      * Return a new location using the given yaw
      *
@@ -398,7 +366,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull Location withYaw(final float yaw) {
         return new Location(this.world, this.blockVector3, yaw, this.pitch);
     }
-
     /**
      * Return a new location using the given pitch
      *
@@ -408,7 +375,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull Location withPitch(final float pitch) {
         return new Location(this.world, this.blockVector3, this.yaw, pitch);
     }
-
     /**
      * Return a new location using the given world
      *
@@ -418,18 +384,15 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull Location withWorld(final @NonNull String world) {
         return new Location(world, this.blockVector3, this.yaw, this.pitch);
     }
-
     public double getEuclideanDistanceSquared(final @NonNull Location l2) {
         double x = getX() - l2.getX();
         double y = getY() - l2.getY();
         double z = getZ() - l2.getZ();
         return x * x + y * y + z * z;
     }
-
     public double getEuclideanDistance(final @NonNull Location l2) {
         return Math.sqrt(getEuclideanDistanceSquared(l2));
     }
-
     /**
      * Return a new location offset by (-) the given coordinates
      *
@@ -441,7 +404,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
     public @NonNull Location subtract(int x, int y, int z) {
         return this.add(-x, -y, -z);
     }
-
     /**
      * Get a minimum bounding rectangle that contains this location only
      *
@@ -452,7 +414,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
                 this.getZ()
         );
     }
-
     @Override
     public int compareTo(final @NonNull Location o) {
         if (this.getX() == o.getX() && this.getY() == o.getY() || this.getZ() == o.getZ()) {
@@ -463,7 +424,6 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
         }
         return 1;
     }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -481,30 +441,24 @@ public sealed class Location extends BlockLoc implements Comparable<Location> pe
                 .equal(getBlockVector3(), location.getBlockVector3()) && Objects
                 .equal(getWorld(), location.getWorld());
     }
-
     @Override
     public int hashCode() {
         return Objects
                 .hashCode(super.hashCode(), getYaw(), getPitch(), getBlockVector3(), getWorld());
     }
-
     @Override
     public String toString() {
         return "\"plotsquaredlocation\":{\"x\":" + this.getX() + ",\"y\":" + this.getY() + ",\"z\":"
                 + this.getZ() + ",\"yaw\":" + this.yaw + ",\"pitch\":" + this.pitch + ",\"world\":\""
                 + this.world + "\"}";
     }
-
     public float getYaw() {
         return this.yaw;
     }
-
     public float getPitch() {
         return this.pitch;
     }
-
     public BlockVector3 getBlockVector3() {
         return this.blockVector3;
     }
-
 }

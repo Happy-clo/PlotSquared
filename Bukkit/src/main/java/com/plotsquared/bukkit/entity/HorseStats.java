@@ -17,15 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.entity;
-
 import org.bukkit.entity.Horse;
-
 class HorseStats {
-
     double jump;
     boolean chest;
     Horse.Variant variant;
     Horse.Color color;
     Horse.Style style;
-
 }

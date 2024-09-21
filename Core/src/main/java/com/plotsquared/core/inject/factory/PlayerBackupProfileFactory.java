@@ -17,15 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.inject.factory;
-
 import com.plotsquared.core.backup.PlayerBackupProfile;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.UUID;
-
 public interface PlayerBackupProfileFactory {
-
     @NonNull PlayerBackupProfile create(@NonNull UUID uuid, @NonNull Plot plot);
-
 }

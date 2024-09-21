@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -30,13 +29,11 @@ import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
-
 @CommandDeclaration(command = "alias",
         permission = "plots.alias",
         usage = "/plot alias <set | remove> <alias>",
@@ -44,34 +41,27 @@ import java.util.concurrent.TimeoutException;
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER)
 public class Alias extends SubCommand {
-
     private static final Command SET_COMMAND = new Command(null, false, "set", null, RequiredType.NONE, null) {
     };
     private static final Command REMOVE_COMMAND = new Command(null, false, "remove", null, RequiredType.NONE, null) {
     };
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
-
         if (args.length == 0) {
             sendUsage(player);
             return false;
         }
-
         Location location = player.getLocation();
         Plot plot = location.getPlotAbs();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
-
         if (!plot.hasOwner()) {
             player.sendMessage(TranslatableCaption.of("working.plot_not_claimed"));
             return false;
         }
-
         boolean result = false;
-
         boolean owner = plot.isOwner(player.getUUID());
         boolean permission;
         boolean admin;
@@ -87,7 +77,7 @@ public class Alias extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
                     return false;
                 }
-                if (permission) { // is either admin or owner
+                if (permission) {
                     setAlias(player, plot, args[1]);
                     return true;
                 } else {
@@ -124,10 +114,8 @@ public class Alias extends SubCommand {
                 result = false;
             }
         }
-
         return result;
     }
-
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> commands = new ArrayList<>(2);
@@ -142,14 +130,13 @@ public class Alias extends SubCommand {
         }
         return Collections.emptySet();
     }
-
     private void setAlias(PlotPlayer<?> player, Plot plot, String alias) {
         if (alias.isEmpty()) {
             sendUsage(player);
         } else if (alias.length() >= 50) {
             player.sendMessage(TranslatableCaption.of("alias.alias_too_long"));
         } else if (MathMan.isInteger(alias)) {
-            player.sendMessage(TranslatableCaption.of("flag.not_valid_value")); // TODO this is obviously wrong
+            player.sendMessage(TranslatableCaption.of("flag.not_valid_value"));
         } else {
             if (PlotQuery.newQuery().inArea(plot.getArea())
                     .withAlias(alias)
@@ -186,7 +173,6 @@ public class Alias extends SubCommand {
             }));
         }
     }
-
     private boolean removeAlias(PlotPlayer<?> player, Plot plot) {
         String alias = plot.getAlias();
         if (!plot.getAlias().isEmpty()) {
@@ -202,9 +188,7 @@ public class Alias extends SubCommand {
         plot.setAlias(null);
         return true;
     }
-
     private boolean isPermitted(PlotPlayer<?> player, Permission permission) {
         return player.hasPermission(permission);
     }
-
 }

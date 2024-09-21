@@ -17,19 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.components;
-
 import com.plotsquared.core.configuration.serialization.ConfigurationSerializable;
 import com.plotsquared.core.configuration.serialization.SerializableAs;
 import com.plotsquared.core.generator.ClassicPlotManagerComponent;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 /**
  * A preset that can be used to set a component from
  * the component GUI
@@ -44,7 +41,6 @@ public record ComponentPreset(
         List<String> description,
         ItemType icon
 ) implements ConfigurationSerializable {
-
     @SuppressWarnings("unchecked")
     public static ComponentPreset deserialize(final @NonNull Map<String, Object> map) {
         final ClassicPlotManagerComponent classicPlotManagerComponent = ClassicPlotManagerComponent
@@ -61,7 +57,6 @@ public record ComponentPreset(
                 displayName, description, icon
         );
     }
-
     @Override
     public Map<String, Object> serialize() {
         final Map<String, Object> map = new HashMap<>();
@@ -74,5 +69,4 @@ public record ComponentPreset(
         map.put("icon", this.icon.getId().replace("minecraft:", ""));
         return map;
     }
-
 }

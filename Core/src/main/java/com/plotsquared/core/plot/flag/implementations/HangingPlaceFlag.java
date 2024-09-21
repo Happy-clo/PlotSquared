@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class HangingPlaceFlag extends BooleanFlag<HangingPlaceFlag> {
-
     public static final HangingPlaceFlag HANGING_PLACE_TRUE = new HangingPlaceFlag(true);
     public static final HangingPlaceFlag HANGING_PLACE_FALSE = new HangingPlaceFlag(false);
-
     private HangingPlaceFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_hanging_place"));
     }
-
     @Override
     protected HangingPlaceFlag flagOf(@NonNull Boolean value) {
         return value ? HANGING_PLACE_TRUE : HANGING_PLACE_FALSE;
     }
-
 }

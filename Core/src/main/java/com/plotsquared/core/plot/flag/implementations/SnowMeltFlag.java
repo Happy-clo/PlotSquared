@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class SnowMeltFlag extends BooleanFlag<SnowMeltFlag> {
-
     public static final SnowMeltFlag SNOW_MELT_TRUE = new SnowMeltFlag(true);
     public static final SnowMeltFlag SNOW_MELT_FALSE = new SnowMeltFlag(false);
-
     private SnowMeltFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_snow_melt"));
     }
-
     @Override
     protected SnowMeltFlag flagOf(@NonNull Boolean value) {
         return value ? SNOW_MELT_TRUE : SNOW_MELT_FALSE;
     }
-
 }

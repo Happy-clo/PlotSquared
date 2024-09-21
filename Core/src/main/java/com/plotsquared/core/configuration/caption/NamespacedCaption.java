@@ -17,26 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * A {@link Caption} that can be identified by a namespace-key pair
  */
 public interface NamespacedCaption extends Caption {
-
     /**
      * Get the key that identifies this caption
      *
      * @return Caption key
      */
     @NonNull String getKey();
-
     /**
      * Get the namespace that this caption belongs to
      *
      * @return Namespace
      */
     @NonNull String getNamespace();
-
 }

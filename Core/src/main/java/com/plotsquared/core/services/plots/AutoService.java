@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.services.plots;
-
 import cloud.commandframework.services.types.Service;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -26,29 +25,21 @@ import com.plotsquared.core.plot.PlotAreaType;
 import com.plotsquared.core.plot.PlotId;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-
 public interface AutoService extends Service<AutoQuery, List<Plot>> {
-
     Cache<PlotId, Plot> plotCandidateCache = CacheBuilder.newBuilder()
             .expireAfterWrite(20, TimeUnit.SECONDS).build();
     Object plotLock = new Object();
-
     final class DefaultAutoService implements AutoService {
-
         @Override
         public List<Plot> handle(final @NonNull AutoQuery autoQuery) {
             return Collections.emptyList();
         }
-
     }
-
     final class SinglePlotService implements AutoService, Predicate<AutoQuery> {
-
         @Nullable
         @Override
         public List<Plot> handle(@NonNull AutoQuery autoQuery) {
@@ -61,7 +52,6 @@ public interface AutoService extends Service<AutoQuery, List<Plot>> {
                         plotCandidateCache.put(plot.getId(), plot);
                         return Collections.singletonList(plot);
                     }
-                    // if the plot is already in the cache, we want to make sure we skip it the next time
                     if (plot != null) {
                         nextId = plot.getId();
                     }
@@ -69,19 +59,14 @@ public interface AutoService extends Service<AutoQuery, List<Plot>> {
             } while (plot != null);
             return null;
         }
-
         @Override
         public boolean test(final @NonNull AutoQuery autoQuery) {
             return autoQuery.sizeX() == 1 && autoQuery.sizeZ() == 1;
         }
-
     }
-
     final class MultiPlotService implements AutoService, Predicate<AutoQuery> {
-
         @Override
         public List<Plot> handle(final @NonNull AutoQuery autoQuery) {
-            /* TODO: Add timeout? */
             outer:
             while (true) {
                 synchronized (plotLock) {
@@ -93,7 +78,7 @@ public interface AutoService extends Service<AutoQuery, List<Plot>> {
                     );
                     final List<Plot> plots =
                             autoQuery.plotArea().canClaim(autoQuery.player(), start, end);
-                    autoQuery.plotArea().setMeta("lastPlot", start); // set entry point for next try
+                    autoQuery.plotArea().setMeta("lastPlot", start);
                     if (plots != null && !plots.isEmpty()) {
                         for (final Plot plot : plots) {
                             if (plotCandidateCache.getIfPresent(plot.getId()) != null) {
@@ -106,12 +91,9 @@ public interface AutoService extends Service<AutoQuery, List<Plot>> {
                 }
             }
         }
-
         @Override
         public boolean test(final @NonNull AutoQuery autoQuery) {
             return autoQuery.plotArea().getType() != PlotAreaType.PARTIAL;
         }
-
     }
-
 }

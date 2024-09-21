@@ -17,24 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
-
 /**
  * {@link CaptionMap} implementation that throws exception on all getters
  */
 public class DummyCaptionMap implements CaptionMap {
-
     @Override
     public @NonNull String getMessage(final @NonNull TranslatableCaption caption)
             throws NoSuchCaptionException {
         throw new NoSuchCaptionException(caption);
     }
-
     @Override
     public @NonNull String getMessage(
             final @NonNull TranslatableCaption caption,
@@ -42,20 +37,16 @@ public class DummyCaptionMap implements CaptionMap {
     ) throws NoSuchCaptionException {
         throw new NoSuchCaptionException(caption);
     }
-
     @Override
     public boolean supportsLocale(@NonNull Locale locale) {
         return false;
     }
-
     @Override
     public @NonNull Locale getLocale() {
         throw new UnsupportedOperationException("Cannot get locale of DummyCaptionMap");
     }
-
     @Override
     public @NonNull Set<TranslatableCaption> getCaptions() {
         return Collections.emptySet();
     }
-
 }

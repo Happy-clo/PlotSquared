@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.managers;
-
 import com.google.inject.Singleton;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.util.PlatformWorldManager;
@@ -27,24 +26,20 @@ import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 /**
  * Default Bukkit world manager. It will handle world creation by
  * registering the generator in bukkit.yml
  */
 @Singleton
 public class BukkitWorldManager implements PlatformWorldManager<World> {
-
     @Override
     public void initialize() {
     }
-
     @Override
     public @Nullable World handleWorldCreation(@NonNull String worldName, @Nullable String generator) {
         this.setGenerator(worldName, generator);
@@ -56,7 +51,6 @@ public class BukkitWorldManager implements PlatformWorldManager<World> {
         }
         return Bukkit.createWorld(wc);
     }
-
     protected void setGenerator(final @Nullable String worldName, final @Nullable String generator) {
         if (generator == null) {
             return;
@@ -70,12 +64,10 @@ public class BukkitWorldManager implements PlatformWorldManager<World> {
             e.printStackTrace();
         }
     }
-
     @Override
     public String getName() {
         return "bukkit";
     }
-
     @Override
     public Collection<String> getWorlds() {
         final List<World> worlds = Bukkit.getWorlds();
@@ -85,5 +77,4 @@ public class BukkitWorldManager implements PlatformWorldManager<World> {
         }
         return worldNames;
     }
-
 }

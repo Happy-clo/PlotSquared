@@ -17,36 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
-
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.plot.BlockBucket;
 import com.plotsquared.core.util.StringMan;
 import com.sk89q.worldedit.world.block.BlockState;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 /**
  * Configuration Node.
  */
 public class ConfigurationNode {
-
     private final String constant;
     private final Object defaultValue;
     private final Caption description;
     private final ConfigurationUtil.SettingValue<?> type;
     private final Collection<String> suggestions;
     private Object value;
-
     public ConfigurationNode(
             String constant, Object defaultValue, Caption description,
             ConfigurationUtil.SettingValue<?> type
     ) {
         this(constant, defaultValue, description, type, new ArrayList<>());
     }
-
     public ConfigurationNode(
             String constant, Object defaultValue, Caption description,
             ConfigurationUtil.SettingValue<?> type, Collection<String> suggestions
@@ -58,11 +52,9 @@ public class ConfigurationNode {
         this.type = type;
         this.suggestions = suggestions;
     }
-
     public ConfigurationUtil.SettingValue<?> getType() {
         return this.type;
     }
-
     public boolean isValid(String string) {
         try {
             Object result = this.type.parseString(string);
@@ -74,7 +66,6 @@ public class ConfigurationNode {
             return false;
         }
     }
-
     public boolean setValue(String string) {
         if (!this.type.validateValue(string)) {
             return false;
@@ -82,7 +73,6 @@ public class ConfigurationNode {
         this.value = this.type.parseString(string);
         return true;
     }
-
     public Object getValue() {
         if (this.value instanceof String[]) {
             return Arrays.asList((String[]) this.value);
@@ -102,24 +92,19 @@ public class ConfigurationNode {
         }
         return this.value;
     }
-
     public Object getDefaultValue() {
         if (this.defaultValue instanceof Object[]) {
             return StringMan.join((Object[]) this.defaultValue, ",");
         }
         return this.defaultValue;
     }
-
     public String getConstant() {
         return this.constant;
     }
-
     public Caption getDescription() {
         return this.description;
     }
-
     public Collection<String> getSuggestions() {
         return this.suggestions;
     }
-
 }

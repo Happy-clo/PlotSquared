@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
-
 import com.google.common.base.Charsets;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.uuid.UUIDMapping;
@@ -25,21 +24,18 @@ import com.plotsquared.core.uuid.UUIDService;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
 /**
  * UUID service that use {@link org.bukkit.OfflinePlayer offline players}
  */
 public class OfflinePlayerUUIDService implements UUIDService {
-
     @Override
     public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         if (Settings.UUID.FORCE_LOWERCASE || Bukkit.getWorlds().isEmpty()) {
-            return Collections.emptyList(); // This is useless now
+            return Collections.emptyList();
         }
         final List<UUIDMapping> wrappers = new ArrayList<>(uuids.size());
         for (final UUID uuid : uuids) {
@@ -55,7 +51,6 @@ public class OfflinePlayerUUIDService implements UUIDService {
         }
         return wrappers;
     }
-
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(final @NonNull List<String> usernames) {
         final List<UUIDMapping> wrappers = new ArrayList<>(usernames.size());
@@ -77,5 +72,4 @@ public class OfflinePlayerUUIDService implements UUIDService {
         }
         return wrappers;
     }
-
 }

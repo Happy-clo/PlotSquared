@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.inject;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -26,10 +25,8 @@ import com.plotsquared.bukkit.managers.MultiverseWorldManager;
 import com.plotsquared.core.util.PlatformWorldManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-
 public class WorldManagerModule extends AbstractModule {
-
-    @SuppressWarnings("removal") // Internal use only
+    @SuppressWarnings("removal")
     @Provides
     @Singleton
     PlatformWorldManager<World> provideWorldManager() {
@@ -39,5 +36,4 @@ public class WorldManagerModule extends AbstractModule {
             return new BukkitWorldManager();
         }
     }
-
 }

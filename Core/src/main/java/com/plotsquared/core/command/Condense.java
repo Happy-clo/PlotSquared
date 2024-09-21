@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
@@ -33,7 +32,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,19 +40,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 @CommandDeclaration(command = "condense",
         permission = "plots.admin",
         usage = "/plot condense <area> <start|stop|info> [radius]",
         category = CommandCategory.ADMINISTRATION,
         requiredType = RequiredType.CONSOLE)
 public class Condense extends SubCommand {
-
     public static boolean TASK = false;
-
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
-
     @Inject
     public Condense(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -63,7 +57,6 @@ public class Condense extends SubCommand {
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;
     }
-
     @SuppressWarnings("unchecked")
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
@@ -102,9 +95,7 @@ public class Condense extends SubCommand {
                     return false;
                 }
                 int radius = Integer.parseInt(args[2]);
-
                 final List<Plot> plots = new ArrayList<>(area.getPlots());
-                // remove non base plots
                 Iterator<Plot> iterator = plots.iterator();
                 int maxSize = 0;
                 ArrayList<Integer> sizes = new ArrayList<>();
@@ -120,7 +111,6 @@ public class Condense extends SubCommand {
                     }
                     sizes.add(size - 1);
                 }
-                // Sort plots by size (buckets?)]
                 ArrayList<Plot>[] buckets = new ArrayList[maxSize];
                 for (int i = 0; i < plots.size(); i++) {
                     Plot plot = plots.get(i);
@@ -285,7 +275,6 @@ public class Condense extends SubCommand {
         );
         return false;
     }
-
     public Set<PlotId> getPlots(Collection<Plot> plots, int radius) {
         HashSet<PlotId> outside = new HashSet<>();
         for (Plot plot : plots) {
@@ -296,5 +285,4 @@ public class Condense extends SubCommand {
         }
         return outside;
     }
-
 }

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
@@ -33,19 +32,16 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ANIMAL;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_ENTITY;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MISC;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MOB;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_MONSTER;
 import static com.plotsquared.core.util.entity.EntityCategories.CAP_VEHICLE;
-
 @CommandDeclaration(command = "caps",
         category = CommandCategory.INFO,
         usage = "/plot caps")
 public class Caps extends SubCommand {
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final Plot plot = player.getCurrentPlot();
@@ -74,7 +70,6 @@ public class Caps extends SubCommand {
         sendFormatted(plot, player, EntityCapFlag.class, countedEntities, "entities", CAP_ENTITY);
         return true;
     }
-
     private <T extends PlotFlag<Integer, T>> void sendFormatted(
             final Plot plot,
             final PlotPlayer<?> player, final Class<T> capFlag, final int[] countedEntities,
@@ -96,5 +91,4 @@ public class Caps extends SubCommand {
                         .build()
         );
     }
-
 }

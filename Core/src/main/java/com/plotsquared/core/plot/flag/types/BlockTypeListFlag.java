@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
-
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
@@ -26,21 +25,16 @@ import com.sk89q.worldedit.world.block.BlockCategory;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockType;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
 public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         extends ListFlag<BlockTypeWrapper, F> {
-
     public static boolean skipCategoryVerification = false;
-
     protected BlockTypeListFlag(List<BlockTypeWrapper> blockTypeList, Caption description) {
         super(blockTypeList, TranslatableCaption.of("flags.flag_category_block_list"), description);
     }
-
     @Override
     public F parse(@NonNull String input) throws FlagParseException {
         final List<BlockTypeWrapper> parsedBlocks = new ArrayList<>();
@@ -52,7 +46,6 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
             final BlockTypeWrapper blockTypeWrapper;
             final BlockState blockState = BlockUtil.get(blockString);
             if (blockState == null) {
-                // If it's not a block state, we assume it's a block category
                 blockTypeWrapper = getCategory(blockString);
             } else {
                 blockTypeWrapper = BlockTypeWrapper.get(blockState.getBlockType());
@@ -63,12 +56,10 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         }
         return this.flagOf(parsedBlocks);
     }
-
     @Override
     public String getExample() {
         return "air,grass_block";
     }
-
     @Override
     public Collection<String> getTabCompletions() {
         final Collection<String> tabCompletions = new ArrayList<>();
@@ -80,7 +71,6 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
                         .collect(Collectors.toList()));
         return tabCompletions;
     }
-
     private BlockTypeWrapper getCategory(final String blockString) throws FlagParseException {
         if (!blockString.startsWith("#")) {
             throw new FlagParseException(this, blockString, TranslatableCaption.of("flags.flag_error_invalid_block"));
@@ -98,5 +88,4 @@ public abstract class BlockTypeListFlag<F extends ListFlag<BlockTypeWrapper, F>>
         }
         return blockTypeWrapper;
     }
-
 }

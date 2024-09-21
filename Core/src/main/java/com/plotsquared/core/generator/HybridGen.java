@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
-
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
@@ -41,24 +40,18 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.EnumSet;
-
 public class HybridGen extends IndependentPlotGenerator {
-
     private static final CuboidRegion CHUNK = new CuboidRegion(BlockVector3.ZERO, BlockVector3.at(15, 396, 15));
     private final HybridPlotWorldFactory hybridPlotWorldFactory;
-
     @Inject
     public HybridGen(final @NonNull HybridPlotWorldFactory hybridPlotWorldFactory) {
         this.hybridPlotWorldFactory = hybridPlotWorldFactory;
     }
-
     @Override
     public String getName() {
         return PlotSquared.platform().pluginName();
     }
-
     private void placeSchem(
             HybridPlotWorld world,
             ZeroedDelegateScopedQueueCoordinator result,
@@ -68,7 +61,7 @@ public class HybridGen extends IndependentPlotGenerator {
             int z,
             EnumSet<SchematicFeature> features
     ) {
-        int minY; // Math.min(world.PLOT_HEIGHT, world.ROAD_HEIGHT);
+        int minY;
         boolean isRoad = features.contains(SchematicFeature.ROAD);
         if ((isRoad && Settings.Schematics.PASTE_ROAD_ON_TOP) || (!isRoad && Settings.Schematics.PASTE_ON_TOP)) {
             minY = world.SCHEM_Y;
@@ -93,18 +86,14 @@ public class HybridGen extends IndependentPlotGenerator {
             result.setBiome(x, z, biome);
         }
     }
-
     @Override
     public void generateChunk(@NonNull ZeroedDelegateScopedQueueCoordinator result, @NonNull PlotArea settings, boolean biomes) {
         Preconditions.checkNotNull(result, "result cannot be null");
         Preconditions.checkNotNull(settings, "settings cannot be null");
-
         HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
-        // Biome
         if (biomes) {
             result.fillBiome(hybridPlotWorld.getPlotBiome());
         }
-        // Bedrock
         if (hybridPlotWorld.PLOT_BEDROCK) {
             for (short x = 0; x < 16; x++) {
                 for (short z = 0; z < 16; z++) {
@@ -118,22 +107,11 @@ public class HybridGen extends IndependentPlotGenerator {
             roadFeatures.add(SchematicFeature.BIOMES);
             plotFeatures.add(SchematicFeature.BIOMES);
         }
-
-        // Coords
         Location min = result.getMin();
         int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
         int bz = min.getZ() - hybridPlotWorld.ROAD_OFFSET_Z;
-
-        // The relative X-coordinate (within the plot) of the minimum X coordinate
-        // contained in the scoped queue
         short relativeOffsetX = (short) Math.floorMod(bx, hybridPlotWorld.SIZE);
-        // The relative Z-coordinate (within the plot) of the minimum Z coordinate
-        // contained in the scoped queue
         short relativeOffsetZ = (short) Math.floorMod(bz, hybridPlotWorld.SIZE);
-
-        // The X-coordinate of a given X coordinate, relative to the
-        // plot (Counting from the corner with the least positive
-        // coordinates)
         short[] relativeX = new short[16];
         boolean[] insideRoadX = new boolean[16];
         boolean[] insideWallX = new boolean[16];
@@ -149,9 +127,6 @@ public class HybridGen extends IndependentPlotGenerator {
             }
             offsetX++;
         }
-        // The Z-coordinate of a given Z coordinate, relative to the
-        // plot (Counting from the corner with the least positive
-        // coordinates)
         short[] relativeZ = new short[16];
         boolean[] insideRoadZ = new boolean[16];
         boolean[] insideWallZ = new boolean[16];
@@ -167,12 +142,10 @@ public class HybridGen extends IndependentPlotGenerator {
             }
             offsetZ++;
         }
-        // generation
         int startY = hybridPlotWorld.getMinGenHeight() + (hybridPlotWorld.PLOT_BEDROCK ? 1 : 0);
         for (short x = 0; x < 16; x++) {
             if (insideRoadX[x]) {
                 for (short z = 0; z < 16; z++) {
-                    // Road
                     for (int y = startY; y <= hybridPlotWorld.ROAD_HEIGHT; y++) {
                         result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                     }
@@ -183,7 +156,6 @@ public class HybridGen extends IndependentPlotGenerator {
             } else if (insideWallX[x]) {
                 for (short z = 0; z < 16; z++) {
                     if (insideRoadZ[z]) {
-                        // road
                         for (int y = startY; y <= hybridPlotWorld.ROAD_HEIGHT; y++) {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
@@ -191,7 +163,6 @@ public class HybridGen extends IndependentPlotGenerator {
                             placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else {
-                        // wall
                         for (int y = startY; y <= hybridPlotWorld.WALL_HEIGHT; y++) {
                             result.setBlock(x, y, z, hybridPlotWorld.WALL_FILLING.toPattern());
                         }
@@ -207,7 +178,6 @@ public class HybridGen extends IndependentPlotGenerator {
             } else {
                 for (short z = 0; z < 16; z++) {
                     if (insideRoadZ[z]) {
-                        // road
                         for (int y = startY; y <= hybridPlotWorld.ROAD_HEIGHT; y++) {
                             result.setBlock(x, y, z, hybridPlotWorld.ROAD_BLOCK.toPattern());
                         }
@@ -215,7 +185,6 @@ public class HybridGen extends IndependentPlotGenerator {
                             placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else if (insideWallZ[z]) {
-                        // wall
                         for (int y = startY; y <= hybridPlotWorld.WALL_HEIGHT; y++) {
                             result.setBlock(x, y, z, hybridPlotWorld.WALL_FILLING.toPattern());
                         }
@@ -227,7 +196,6 @@ public class HybridGen extends IndependentPlotGenerator {
                             placeSchem(hybridPlotWorld, result, relativeX[x], relativeZ[z], x, z, roadFeatures);
                         }
                     } else {
-                        // plot
                         for (int y = startY; y < hybridPlotWorld.PLOT_HEIGHT; y++) {
                             result.setBlock(x, y, z, hybridPlotWorld.MAIN_BLOCK.toPattern());
                         }
@@ -240,7 +208,6 @@ public class HybridGen extends IndependentPlotGenerator {
             }
         }
     }
-
     @Override
     public void populateChunk(final ZeroedDelegateScopedQueueCoordinator result, final PlotArea settings) {
         HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
@@ -249,25 +216,13 @@ public class HybridGen extends IndependentPlotGenerator {
         }
         EnumSet<SchematicFeature> roadFeatures = EnumSet.of(SchematicFeature.POPULATING, SchematicFeature.ROAD);
         EnumSet<SchematicFeature> plotFeatures = EnumSet.of(SchematicFeature.POPULATING);
-
-        // Coords
         Location min = result.getMin();
         int bx = min.getX() - hybridPlotWorld.ROAD_OFFSET_X;
         int bz = min.getZ() - hybridPlotWorld.ROAD_OFFSET_Z;
-
-        // The relative X-coordinate (within the plot) of the minimum X coordinate
-        // contained in the scoped queue
         short relativeOffsetX = (short) Math.floorMod(bx, hybridPlotWorld.SIZE);
-        // The relative Z-coordinate (within the plot) of the minimum Z coordinate
-        // contained in the scoped queue
         short relativeOffsetZ = (short) Math.floorMod(bz, hybridPlotWorld.SIZE);
-
         boolean allRoad = true;
         boolean overlap = false;
-
-        // The X-coordinate of a given X coordinate, relative to the
-        // plot (Counting from the corner with the least positive
-        // coordinates)
         short[] relativeX = new short[16];
         boolean[] insideRoadX = new boolean[16];
         boolean[] insideWallX = new boolean[16];
@@ -287,10 +242,6 @@ public class HybridGen extends IndependentPlotGenerator {
             }
             offsetX++;
         }
-
-        // The Z-coordinate of a given Z coordinate, relative to the
-        // plot (Counting from the corner with the least positive
-        // coordinates)
         short[] relativeZ = new short[16];
         boolean[] insideRoadZ = new boolean[16];
         boolean[] insideWallZ = new boolean[16];
@@ -370,17 +321,13 @@ public class HybridGen extends IndependentPlotGenerator {
         }
         return;
     }
-
     @Override
     public PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max) {
         return this.hybridPlotWorldFactory.create(world, id, this, min, max);
     }
-
     @Override
     public void initialize(PlotArea area) {
-        // All initialization is done in the PlotArea class
     }
-
     @Override
     public BiomeType getBiome(final PlotArea settings, final int worldX, final int worldY, final int worldZ) {
         HybridPlotWorld hybridPlotWorld = (HybridPlotWorld) settings;
@@ -401,13 +348,11 @@ public class HybridGen extends IndependentPlotGenerator {
         BiomeType biome = hybridPlotWorld.G_SCH_B.get(MathMan.pair((short) relativeX, (short) relativeZ));
         return biome == null ? hybridPlotWorld.getPlotBiome() : biome;
     }
-
     private enum SchematicFeature {
         BIOMES,
         ROAD,
         POPULATING
     }
-
     /**
      * Wrapper to allow a WorldEdit {@link Entity} to effectively have a mutable location as the location in its NBT should be changed
      * when set to the world.
@@ -415,10 +360,8 @@ public class HybridGen extends IndependentPlotGenerator {
      * @since 6.9.0
      */
     private static final class PopulatingEntity implements Entity {
-
         private final Entity parent;
         private com.sk89q.worldedit.util.Location location;
-
         /**
          * @since 6.9.0
          */
@@ -426,40 +369,32 @@ public class HybridGen extends IndependentPlotGenerator {
             this.parent = parent;
             this.location = location;
         }
-
         @Nullable
         @Override
         public BaseEntity getState() {
             return parent.getState();
         }
-
         @Override
         public boolean remove() {
             return parent.remove();
         }
-
         @Override
         public com.sk89q.worldedit.util.Location getLocation() {
             return location;
         }
-
         @Override
         public boolean setLocation(final com.sk89q.worldedit.util.Location location) {
             this.location = location;
             return true;
         }
-
         @Override
         public Extent getExtent() {
             return parent.getExtent();
         }
-
         @Nullable
         @Override
         public <T> T getFacet(final Class<? extends T> cls) {
             return parent.getFacet(cls);
         }
-
     }
-
 }

@@ -17,19 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
-
 import com.plotsquared.core.PlotSquared;
 import com.sk89q.worldedit.world.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class GlobalBlockQueue {
-
     private QueueProvider provider;
-
     public GlobalBlockQueue(@NonNull QueueProvider provider) {
         this.provider = provider;
     }
-
     /**
      * Get a new {@link QueueCoordinator} for the given world.
      *
@@ -38,17 +33,13 @@ public class GlobalBlockQueue {
      */
     public @NonNull QueueCoordinator getNewQueue(@NonNull World world) {
         QueueCoordinator queue = provider.getNewQueue(world);
-        // Auto-inject into the queue
         PlotSquared.platform().injector().injectMembers(queue);
         return queue;
     }
-
     public QueueProvider getProvider() {
         return this.provider;
     }
-
     public void setQueueProvider(@NonNull QueueProvider provider) {
         this.provider = provider;
     }
-
 }

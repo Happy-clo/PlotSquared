@@ -17,11 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
-
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 /**
  * Called every time after PlotSquared calculated a players plot limit based on their permission.
  * <p>
@@ -30,16 +28,12 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since 7.3.0
  */
 public class PlayerPlotLimitEvent {
-
     private final PlotPlayer<?> player;
-
     private int limit;
-
     public PlayerPlotLimitEvent(@NonNull final PlotPlayer<?> player, @NonNegative final int limit) {
         this.player = player;
         this.limit = limit;
     }
-
     /**
      * Overrides the previously calculated or set plot limit for {@link #player()}.
      *
@@ -52,7 +46,6 @@ public class PlayerPlotLimitEvent {
         }
         this.limit = limit;
     }
-
     /**
      * Returns the previous set limit, if none was overridden before this event handler the default limit based on the players
      * permissions node is returned.
@@ -63,7 +56,6 @@ public class PlayerPlotLimitEvent {
     public @NonNegative int limit() {
         return limit;
     }
-
     /**
      * The player for which the limit is queried.
      *
@@ -73,5 +65,4 @@ public class PlayerPlotLimitEvent {
     public @NonNull PlotPlayer<?> player() {
         return player;
     }
-
 }

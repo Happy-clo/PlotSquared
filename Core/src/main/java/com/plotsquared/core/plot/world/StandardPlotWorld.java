@@ -17,34 +17,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.world;
-
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Collection;
 import java.util.Collections;
-
 /**
  * Ordinary plot world with a single plot area
  */
 public class StandardPlotWorld extends PlotWorld {
-
     private final PlotArea area;
-
     public StandardPlotWorld(final @NonNull String world, final @Nullable PlotArea area) {
         super(world);
         this.area = area;
     }
-
     @Override
     public @Nullable PlotArea getArea(final @NonNull Location location) {
         return this.area;
     }
-
     @Override
     public @NonNull Collection<PlotArea> getAreas() {
         if (this.area == null) {
@@ -52,10 +45,8 @@ public class StandardPlotWorld extends PlotWorld {
         }
         return Collections.singletonList(this.area);
     }
-
     @Override
     public @NonNull Collection<PlotArea> getAreasInRegion(final @NonNull CuboidRegion region) {
         return this.getAreas();
     }
-
 }

@@ -17,18 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
-
 import com.plotsquared.core.configuration.caption.Caption;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public abstract class NonNegativeIntegerFlag<F extends IntegerFlag<F>> extends IntegerFlag<F> {
-
     protected NonNegativeIntegerFlag(int value, @NonNull Caption flagDescription) {
         super(value, 0, Integer.MAX_VALUE, flagDescription);
     }
-
     public NonNegativeIntegerFlag(int value, int maximum, @NonNull Caption flagDescription) {
         super(value, 0, maximum, flagDescription);
     }
-
 }

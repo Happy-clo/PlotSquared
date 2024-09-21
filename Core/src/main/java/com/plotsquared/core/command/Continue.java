@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -33,20 +32,16 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 @CommandDeclaration(command = "continue",
         permission = "plots.continue",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER)
 public class Continue extends SubCommand {
-
     private final EventDispatcher eventDispatcher;
-
     @Inject
     public Continue(final @NonNull EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
-
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Plot plot = player.getCurrentPlot();
@@ -94,5 +89,4 @@ public class Continue extends SubCommand {
         player.sendMessage(TranslatableCaption.of("done.done_removed"));
         return true;
     }
-
 }

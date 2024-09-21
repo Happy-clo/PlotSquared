@@ -17,10 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 public record FileBytes(
         String path,
         byte[] data
 ) {
-
 }

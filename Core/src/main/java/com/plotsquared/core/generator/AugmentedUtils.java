@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.plot.PlotArea;
@@ -34,19 +33,14 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Set;
-
 public class AugmentedUtils {
-
     private static boolean enabled = true;
-
     public static void bypass(boolean bypass, Runnable run) {
         enabled = bypass;
         run.run();
         enabled = true;
     }
-
     /**
      * Generate an augmented world chunk at the given location. If a queue is given, the data will be written to it, else a new
      * queue will be created and written to world. Returns true if generation occurred.
@@ -68,14 +62,9 @@ public class AugmentedUtils {
         if (!enabled) {
             return false;
         }
-        // The coordinates of the block on the
-        // least positive corner of the chunk
         final int blockX = chunkX << 4;
         final int blockZ = chunkZ << 4;
-        // Create a region that contains the
-        // entire chunk
         CuboidRegion region = RegionUtil.createRegion(blockX, blockX + 15, 0, 0, blockZ, blockZ + 15);
-        // Query for plot areas in the chunk
         final Set<PlotArea> areas = PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world, region);
         if (areas.isEmpty()) {
             return false;
@@ -83,18 +72,13 @@ public class AugmentedUtils {
         boolean enqueue = false;
         boolean generationResult = false;
         for (final PlotArea area : areas) {
-            // A normal plot world may not contain any clusters
-            // and so there's no reason to continue searching
             if (area.getType() == PlotAreaType.NORMAL) {
                 return false;
             }
-            // This means that full vanilla generation is used
-            // so we do not interfere
             if (area.getTerrain() == PlotAreaTerrainType.ALL || !area.contains(blockX, blockZ)) {
                 continue;
             }
             IndependentPlotGenerator generator = area.getGenerator();
-            // Mask
             if (queue == null) {
                 enqueue = true;
                 queue = PlotSquared.platform().globalBlockQueue().getNewQueue(PlotSquared
@@ -103,18 +87,15 @@ public class AugmentedUtils {
                         .getWeWorld(world));
             }
             QueueCoordinator primaryMask;
-            // coordinates
             int relativeBottomX;
             int relativeBottomZ;
             int relativeTopX;
             int relativeTopZ;
-            // Generation
             if (area.getType() == PlotAreaType.PARTIAL) {
                 relativeBottomX = Math.max(0, area.getRegion().getMinimumPoint().getX() - blockX);
                 relativeBottomZ = Math.max(0, area.getRegion().getMinimumPoint().getZ() - blockZ);
                 relativeTopX = Math.min(15, area.getRegion().getMaximumPoint().getX() - blockX);
                 relativeTopZ = Math.min(15, area.getRegion().getMaximumPoint().getZ() - blockZ);
-
                 primaryMask = new AreaBoundDelegateQueueCoordinator(area, queue);
             } else {
                 relativeBottomX = relativeBottomZ = 0;
@@ -158,9 +139,6 @@ public class AugmentedUtils {
                 }
                 generationResult = true;
             }
-
-            // This queue should not be enqueued as it is simply used to restrict block setting, and then delegate to the
-            // actual queue
             ZeroedDelegateScopedQueueCoordinator scoped =
                     new ZeroedDelegateScopedQueueCoordinator(
                             secondaryMask,
@@ -175,5 +153,4 @@ public class AugmentedUtils {
         }
         return generationResult;
     }
-
 }

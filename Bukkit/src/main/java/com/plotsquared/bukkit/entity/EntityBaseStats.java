@@ -17,9 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.entity;
-
 class EntityBaseStats {
-
     EntityWrapper passenger;
     float fall;
     short fire;
@@ -27,5 +25,4 @@ class EntityBaseStats {
     double vZ;
     double vY;
     double vX;
-
 }

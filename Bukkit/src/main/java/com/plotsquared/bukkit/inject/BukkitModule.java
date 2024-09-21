@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.inject;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -74,19 +73,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Objects;
-
 public class BukkitModule extends AbstractModule {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitModule.class.getSimpleName());
-
     private final BukkitPlatform bukkitPlatform;
-
     public BukkitModule(final @NonNull BukkitPlatform bukkitPlatform) {
         this.bukkitPlatform = bukkitPlatform;
     }
-
     @Override
     protected void configure() {
         bind(PlayerManager.class).to(BukkitPlayerManager.class);
@@ -94,7 +87,6 @@ public class BukkitModule extends AbstractModule {
         bind(PlotPlatform.class).toInstance(bukkitPlatform);
         bind(BukkitPlatform.class).toInstance(bukkitPlatform);
         bind(IndependentPlotGenerator.class).annotatedWith(DefaultGenerator.class).to(HybridGen.class);
-        // Console actor
         @NonNull ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
         WorldEditPlugin wePlugin = ((WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit"));
         bind(Actor.class).annotatedWith(ConsoleActor.class).toInstance(wePlugin.wrapCommandSender(console));
@@ -129,68 +121,53 @@ public class BukkitModule extends AbstractModule {
                 .build(ChunkCoordinatorFactory.class));
         install(new FactoryModuleBuilder().build(ChunkCoordinatorBuilderFactory.class));
     }
-
     @Provides
     @Singleton
     @NonNull EconHandler provideEconHandler() {
         if (!Settings.Enabled_Components.ECONOMY || !Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             return EconHandler.nullEconHandler();
         }
-        // Guice eagerly initializes singletons, so we need to bring the laziness ourselves
         return new LazyEconHandler();
     }
-
     private static final class LazyEconHandler extends EconHandler implements ServerListener.MutableEconHandler {
         private volatile EconHandler implementation;
-
         public void setImplementation(EconHandler econHandler) {
             this.implementation = econHandler;
         }
-
         @Override
         public boolean init() {
             return get().init();
         }
-
         @Override
         public double getBalance(final PlotPlayer<?> player) {
             return get().getBalance(player);
         }
-
         @Override
         public void withdrawMoney(final PlotPlayer<?> player, final double amount) {
             get().withdrawMoney(player, amount);
         }
-
         @Override
         public void depositMoney(final PlotPlayer<?> player, final double amount) {
             get().depositMoney(player, amount);
         }
-
         @Override
         public void depositMoney(final OfflinePlotPlayer player, final double amount) {
             get().depositMoney(player, amount);
         }
-
         @Override
         public boolean isEnabled(final PlotArea plotArea) {
             return get().isEnabled(plotArea);
         }
-
         @Override
         public @NonNull String format(final double balance) {
             return get().format(balance);
         }
-
         @Override
         public boolean isSupported() {
             return get().isSupported();
         }
-
         private EconHandler get() {
             return Objects.requireNonNull(this.implementation, "EconHandler not ready yet.");
         }
-
     }
-
 }

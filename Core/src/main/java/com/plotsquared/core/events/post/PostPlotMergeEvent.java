@@ -17,18 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events.post;
-
 import com.plotsquared.core.events.PlotPlayerEvent;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-
 /**
  * Called after multiple plots were merged with another.
  *
  * @since 6.2.0
  */
 public class PostPlotMergeEvent extends PlotPlayerEvent {
-
     /**
      * Instantiate a new PlotMergedEvent.
      *
@@ -38,5 +35,4 @@ public class PostPlotMergeEvent extends PlotPlayerEvent {
     public PostPlotMergeEvent(final PlotPlayer<?> plotPlayer, final Plot plot) {
         super(plotPlayer, plot);
     }
-
 }

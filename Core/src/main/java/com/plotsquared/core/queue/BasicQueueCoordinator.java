@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
-
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.plotsquared.core.util.PatternUtil;
@@ -35,18 +34,15 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.entity.EntityTypes;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-
 /**
  * Standard block setting queue that allows block setting across numerous chunks, without limits.
  */
 public abstract class BasicQueueCoordinator extends QueueCoordinator {
-
     private final World world;
     private final ConcurrentHashMap<BlockVector2, LocalChunk> blockChunks = new ConcurrentHashMap<>();
     private final List<BlockVector2> readRegion = new ArrayList<>();
@@ -67,34 +63,27 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     private SideEffectSet sideEffectSet = null;
     @Nullable
     private LightingMode lightingMode = LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
-
     public BasicQueueCoordinator(@NonNull World world) {
         super(world);
         this.world = world;
     }
-
     @Override
     public abstract BlockState getBlock(int x, int y, int z);
-
     @Override
     public final @NonNull World getWorld() {
         return world;
     }
-
     @Override
     public final int size() {
         return blockChunks.size() + readRegion.size();
     }
-
     @Override
     public final void setModified(long modified) {
     }
-
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
         return setBlock(x, y, z, PatternUtil.apply(pattern, x, y, z));
     }
-
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull BaseBlock id) {
         if ((y > world.getMaxY()) || (y < world.getMinY())) {
@@ -104,15 +93,10 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         chunk.setBlock(x & 15, y, z & 15, id);
         return true;
     }
-
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull BlockState id) {
-        // Trying to mix BlockState and BaseBlock leads to all kinds of issues.
-        // Since BaseBlock has more features than BlockState, simply convert
-        // all BlockStates to BaseBlocks
         return setBlock(x, y, z, id.toBaseBlock());
     }
-
     @SuppressWarnings("removal")
     @Override
     public boolean setBiome(int x, int z, @NonNull BiomeType biomeType) {
@@ -126,7 +110,6 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         settingBiomes = true;
         return true;
     }
-
     @Override
     public final boolean setBiome(int x, int y, int z, @NonNull BiomeType biomeType) {
         if (disableBiomes) {
@@ -137,18 +120,15 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         settingBiomes = true;
         return true;
     }
-
     @Override
     public boolean isSettingBiomes() {
         return this.settingBiomes;
     }
-
     @Override
     public void setBiomesEnabled(boolean settingBiomes) {
         this.settingBiomes = settingBiomes;
         this.disableBiomes = true;
     }
-
     @Override
     public boolean setTile(int x, int y, int z, @NonNull CompoundTag tag) {
         LocalChunk chunk = getChunk(x >> 4, z >> 4);
@@ -156,12 +136,10 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         settingTiles = true;
         return true;
     }
-
     @Override
     public boolean isSettingTiles() {
         return this.settingTiles;
     }
-
     @Override
     public boolean setEntity(@NonNull Entity entity) {
         if (entity.getState() == null || entity.getState().getType() == EntityTypes.PLAYER) {
@@ -172,36 +150,29 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         chunk.setEntity(location, entity.getState());
         return true;
     }
-
     @Override
     public @NonNull List<BlockVector2> getReadChunks() {
         return this.readRegion;
     }
-
     @Override
     public void addReadChunk(@NonNull BlockVector2 chunk) {
         this.readRegion.add(chunk);
     }
-
     @Override
     public void addReadChunks(@NonNull Set<BlockVector2> readRegion) {
         this.readRegion.addAll(readRegion);
     }
-
     @Override
     public CuboidRegion getRegenRegion() {
         return this.regenRegion != null ? this.regenRegion.clone() : null;
     }
-
     @Override
     public void setRegenRegion(@NonNull CuboidRegion regenRegion) {
         this.regenRegion = regenRegion;
     }
-
     @Override
     public void regenChunk(int x, int z) {
         regen = true;
-        // There will never only be one nullified coordinate pair
         if (regenStart == null) {
             regenStart = new int[]{x, z};
             regenEnd = new int[]{x, z};
@@ -220,17 +191,14 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
             regenEnd[1] = z;
         }
     }
-
     @Override
     public boolean isUnloadAfter() {
         return this.unloadAfter;
     }
-
     @Override
     public void setUnloadAfter(boolean unloadAfter) {
         this.unloadAfter = unloadAfter;
     }
-
     /**
      * Gets the int[x,z] chunk coordinates where regeneration should start from
      *
@@ -239,7 +207,6 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     public int[] getRegenStart() {
         return regenStart;
     }
-
     /**
      * Gets the int[x,z] chunk coordinates where regeneration should finish
      *
@@ -248,7 +215,6 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     public int[] getRegenEnd() {
         return regenEnd;
     }
-
     /**
      * Whether the queue has a start/end to chunk regeneration
      *
@@ -257,7 +223,6 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     public boolean isRegen() {
         return regen;
     }
-
     /**
      * Gets the map of ChunkCoordinates in {@link BlockVector2} form against the {@link LocalChunk} of cached chunks to be written
      *
@@ -266,7 +231,6 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     public @NonNull ConcurrentHashMap<BlockVector2, LocalChunk> getBlockChunks() {
         return this.blockChunks;
     }
-
     /**
      * Forces an {@link LocalChunk} into the list of chunks to be written. Overwrites existing chunks in the map
      *
@@ -275,30 +239,25 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
     public final void setChunk(@NonNull LocalChunk chunk) {
         this.blockChunks.put(BlockVector2.at(chunk.getX(), chunk.getZ()), chunk);
     }
-
     @Override
     public @Nullable
     final Consumer<BlockVector2> getChunkConsumer() {
         return this.consumer;
     }
-
     @Override
     public final void setChunkConsumer(@NonNull Consumer<BlockVector2> consumer) {
         this.consumer = consumer;
     }
-
     /**
      * Get the list of progress subscribers currently added to the queue to be added to the Chunk Coordinator
      */
     public final List<ProgressSubscriber> getProgressSubscribers() {
         return this.progressSubscribers;
     }
-
     @Override
     public final void addProgressSubscriber(@NonNull ProgressSubscriber progressSubscriber) {
         this.progressSubscribers.add(progressSubscriber);
     }
-
     @Override
     public @NonNull
     final LightingMode getLightingMode() {
@@ -307,33 +266,26 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         }
         return this.lightingMode;
     }
-
     @Override
     public final void setLightingMode(@Nullable LightingMode mode) {
         this.lightingMode = mode;
     }
-
     @Override
     public Runnable getCompleteTask() {
         return this.whenDone;
     }
-
     @Override
     public void setCompleteTask(Runnable whenDone) {
         this.whenDone = whenDone;
     }
-
     @Override
     public SideEffectSet getSideEffectSet() {
         return sideEffectSet;
     }
-
     @Override
     public void setSideEffectSet(SideEffectSet sideEffectSet) {
         this.sideEffectSet = sideEffectSet;
     }
-
-    // Don't ask about the @NonNull placement. That's how it needs to be else it errors.
     @Override
     public void setBiomeCuboid(
             final com.plotsquared.core.location.@NonNull Location pos1,
@@ -345,7 +297,6 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         }
         super.setBiomeCuboid(pos1, pos2, biome);
     }
-
     /**
      * Get the {@link LocalChunk} from the queue at the given chunk coordinates. Returns a new instance if one doesn't exist
      */
@@ -367,5 +318,4 @@ public abstract class BasicQueueCoordinator extends QueueCoordinator {
         }
         return lastWrappedChunk;
     }
-
 }

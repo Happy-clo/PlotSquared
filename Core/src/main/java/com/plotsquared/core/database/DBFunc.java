@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
-
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotCluster;
@@ -25,7 +24,6 @@ import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.plot.comment.PlotComment;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import com.plotsquared.core.util.task.RunnableVal;
-
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -35,77 +33,61 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-
 /**
  * Database Functions
  * - These functions do not update the local plot objects and only make changes to the DB
  */
 public class DBFunc {
-
     /**
      * The "global" uuid.
      */
-    // TODO: Use this instead. public static final UUID EVERYONE = UUID.fromString("4aa2aaa4-c06b-485c-bc58-186aa1780d9b");
     public static final UUID EVERYONE = UUID.fromString("1-1-3-3-7");
     public static final UUID SERVER = UUID.fromString("00000000-0000-0000-0000-000000000000");
-
     /**
      * Abstract Database Manager
      */
     public static AbstractDB dbManager;
-
     public static void updateTables(int[] oldVersion) {
         if (dbManager != null) {
             dbManager.updateTables(oldVersion);
         }
     }
-
     public static void addPersistentMeta(UUID uuid, String key, byte[] meta, boolean delete) {
         if (dbManager != null) {
             dbManager.addPersistentMeta(uuid, key, meta, delete);
         }
     }
-
     public static void getPersistentMeta(UUID uuid, RunnableVal<Map<String, byte[]>> result) {
         if (dbManager != null) {
             dbManager.getPersistentMeta(uuid, result);
         }
     }
-
     public static void removePersistentMeta(UUID uuid, String key) {
         if (dbManager != null) {
             dbManager.removePersistentMeta(uuid, key);
         }
     }
-
     public static CompletableFuture<Boolean> swapPlots(Plot plot1, Plot plot2) {
         if (dbManager != null) {
             return dbManager.swapPlots(plot1, plot2);
         }
         return CompletableFuture.completedFuture(false);
     }
-
     public static boolean deleteTables() {
         return dbManager != null && dbManager.deleteTables();
     }
-
     public static void movePlot(Plot originalPlot, Plot newPlot) {
         if (originalPlot.temp == -1 || newPlot.temp == -1) {
             return;
         }
         DBFunc.dbManager.movePlot(originalPlot, newPlot);
     }
-
     public static void validatePlots(Set<Plot> plots) {
         if (dbManager == null) {
             return;
         }
         DBFunc.dbManager.validateAllPlots(plots);
     }
-
-
-    //TODO Consider Removal
-
     /**
      * Check if a {@link ResultSet} contains a column.
      *
@@ -128,7 +110,6 @@ public class DBFunc {
             return false;
         }
     }
-
     /**
      * Set the owner of a plot
      *
@@ -141,7 +122,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.setOwner(plot, uuid);
     }
-
     /**
      * Create all settings + (trusted, denied, members)
      *
@@ -153,7 +133,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.createPlotsAndData(plots, whenDone);
     }
-
     public static void createPlotSafe(
             final Plot plot, final Runnable success,
             final Runnable failure
@@ -163,7 +142,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.createPlotSafe(plot, success, failure);
     }
-
     /**
      * Create a plot.
      *
@@ -175,7 +153,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.createPlotAndSettings(plot, whenDone);
     }
-
     /**
      * Create tables.
      *
@@ -187,7 +164,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.createTables();
     }
-
     /**
      * Delete a plot.
      *
@@ -200,7 +176,6 @@ public class DBFunc {
         DBFunc.dbManager.delete(plot);
         plot.temp = -1;
     }
-
     /**
      * Delete the ratings for a plot.
      *
@@ -212,7 +187,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.deleteRatings(plot);
     }
-
     /**
      * Delete the trusted list for a plot.
      *
@@ -224,7 +198,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.deleteHelpers(plot);
     }
-
     /**
      * Delete the members list for a plot.
      *
@@ -236,7 +209,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.deleteTrusted(plot);
     }
-
     /**
      * Delete the denied list for a plot.
      *
@@ -248,7 +220,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.deleteDenied(plot);
     }
-
     /**
      * Delete the comments in a plot.
      *
@@ -260,7 +231,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.deleteComments(plot);
     }
-
     /**
      * Deleting settings will
      * 1) Delete any settings (flags and such) associated with the plot
@@ -276,14 +246,12 @@ public class DBFunc {
         }
         DBFunc.dbManager.deleteSettings(plot);
     }
-
     public static void delete(PlotCluster toDelete) {
         if (dbManager == null) {
             return;
         }
         DBFunc.dbManager.delete(toDelete);
     }
-
     /**
      * Create plot settings.
      *
@@ -296,7 +264,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.createPlotSettings(id, plot);
     }
-
     /**
      * Get a plot id.
      *
@@ -309,7 +276,6 @@ public class DBFunc {
         }
         return DBFunc.dbManager.getId(plot);
     }
-
     /**
      * @return Plots
      */
@@ -319,28 +285,24 @@ public class DBFunc {
         }
         return DBFunc.dbManager.getPlots();
     }
-
     public static void setMerged(Plot plot, boolean[] merged) {
         if (plot.temp == -1 || dbManager == null) {
             return;
         }
         DBFunc.dbManager.setMerged(plot, merged);
     }
-
     public static void setFlag(Plot plot, PlotFlag<?, ?> flag) {
         if (plot.temp == -1 || dbManager == null) {
             return;
         }
         DBFunc.dbManager.setFlag(plot, flag);
     }
-
     public static void removeFlag(Plot plot, PlotFlag<?, ?> flag) {
         if (plot.temp == -1 || dbManager == null) {
             return;
         }
         DBFunc.dbManager.removeFlag(plot, flag);
     }
-
     /**
      * @param plot
      * @param alias
@@ -351,21 +313,18 @@ public class DBFunc {
         }
         DBFunc.dbManager.setAlias(plot, alias);
     }
-
     public static void purgeIds(Set<Integer> uniqueIds) {
         if (dbManager == null) {
             return;
         }
         DBFunc.dbManager.purgeIds(uniqueIds);
     }
-
     public static void purge(PlotArea area, Set<PlotId> plotIds) {
         if (dbManager == null) {
             return;
         }
         DBFunc.dbManager.purge(area, plotIds);
     }
-
     /**
      * @param plot
      * @param position
@@ -376,7 +335,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.setPosition(plot, position);
     }
-
     /**
      * @param plot
      * @param comment
@@ -387,14 +345,12 @@ public class DBFunc {
         }
         DBFunc.dbManager.removeComment(plot, comment);
     }
-
     public static void clearInbox(Plot plot, String inbox) {
         if (plot != null && plot.temp == -1 || dbManager == null) {
             return;
         }
         DBFunc.dbManager.clearInbox(plot, inbox);
     }
-
     /**
      * @param plot
      * @param comment
@@ -405,7 +361,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.setComment(plot, comment);
     }
-
     /**
      * @param plot
      */
@@ -418,7 +373,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.getComments(plot, inbox, whenDone);
     }
-
     /**
      * @param plot
      * @param uuid
@@ -429,7 +383,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.removeTrusted(plot, uuid);
     }
-
     /**
      * @param cluster
      * @param uuid
@@ -440,7 +393,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.removeHelper(cluster, uuid);
     }
-
     /**
      * @param cluster
      */
@@ -450,7 +402,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.createCluster(cluster);
     }
-
     /**
      * @param current
      * @param min
@@ -462,7 +413,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.resizeCluster(current, min, max);
     }
-
     /**
      * @param plot
      * @param uuid
@@ -473,7 +423,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.removeMember(plot, uuid);
     }
-
     /**
      * @param cluster
      * @param uuid
@@ -484,7 +433,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.removeInvited(cluster, uuid);
     }
-
     /**
      * @param plot
      * @param uuid
@@ -495,14 +443,12 @@ public class DBFunc {
         }
         DBFunc.dbManager.setTrusted(plot, uuid);
     }
-
     public static void setHelper(PlotCluster cluster, UUID uuid) {
         if (dbManager == null) {
             return;
         }
         DBFunc.dbManager.setHelper(cluster, uuid);
     }
-
     /**
      * @param plot
      * @param uuid
@@ -513,14 +459,12 @@ public class DBFunc {
         }
         DBFunc.dbManager.setMember(plot, uuid);
     }
-
     public static void setInvited(PlotCluster cluster, UUID uuid) {
         if (dbManager == null) {
             return;
         }
         DBFunc.dbManager.setInvited(cluster, uuid);
     }
-
     /**
      * @param plot
      * @param uuid
@@ -531,7 +475,6 @@ public class DBFunc {
         }
         DBFunc.dbManager.removeDenied(plot, uuid);
     }
-
     /**
      * @param plot
      * @param uuid
@@ -542,42 +485,36 @@ public class DBFunc {
         }
         DBFunc.dbManager.setDenied(plot, uuid);
     }
-
     public static HashMap<UUID, Integer> getRatings(Plot plot) {
         if (plot.temp == -1 || dbManager == null) {
             return new HashMap<>(0);
         }
         return DBFunc.dbManager.getRatings(plot);
     }
-
     public static void setRating(Plot plot, UUID rater, int value) {
         if (plot.temp == -1 || dbManager == null) {
             return;
         }
         DBFunc.dbManager.setRating(plot, rater, value);
     }
-
     public static HashMap<String, Set<PlotCluster>> getClusters() {
         if (dbManager == null) {
             return new HashMap<>();
         }
         return DBFunc.dbManager.getClusters();
     }
-
     public static void setPosition(PlotCluster cluster, String position) {
         if (dbManager == null) {
             return;
         }
         DBFunc.dbManager.setPosition(cluster, position);
     }
-
     public static void replaceWorld(String oldWorld, String newWorld, PlotId min, PlotId max) {
         if (dbManager == null) {
             return;
         }
         DBFunc.dbManager.replaceWorld(oldWorld, newWorld, min, max);
     }
-
     /**
      * Replace all occurrences of a uuid in the database with another one
      *
@@ -590,11 +527,9 @@ public class DBFunc {
         }
         DBFunc.dbManager.replaceUUID(old, now);
     }
-
     public static void close() {
         if (dbManager != null) {
             DBFunc.dbManager.close();
         }
     }
-
 }

@@ -17,11 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.plot.PlotId;
-
 public abstract class Argument<T> {
-
     public static final Argument<Integer> Integer = new Argument<>("int", 16) {
         @Override
         public Integer parse(String in) {
@@ -69,25 +66,19 @@ public abstract class Argument<T> {
             };
     private final String name;
     private final T example;
-
     public Argument(String name, T example) {
         this.name = name;
         this.example = example;
     }
-
     public abstract T parse(String in);
-
     @Override
     public final String toString() {
         return this.getName();
     }
-
     public final String getName() {
         return this.name;
     }
-
     public final T getExample() {
         return this.example;
     }
-
 }

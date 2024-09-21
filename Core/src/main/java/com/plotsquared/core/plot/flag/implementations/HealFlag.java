@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
@@ -25,15 +24,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public class HealFlag extends TimedFlag<Integer, HealFlag> {
-
     public static final HealFlag HEAL_NOTHING = new HealFlag(new Timed<>(0, 0));
-
     protected HealFlag(@NonNull Timed<Integer> value) {
         super(value, 1, TranslatableCaption.of("flags.flag_description_heal"));
     }
-
     @Override
     protected Integer parseValue(String input) throws FlagParseException {
         int parsed;
@@ -57,20 +52,16 @@ public class HealFlag extends TimedFlag<Integer, HealFlag> {
         }
         return parsed;
     }
-
     @Override
     protected Integer mergeValue(Integer other) {
         return this.getValue().value() + other;
     }
-
     @Override
     public String getExample() {
         return "20 2";
     }
-
     @Override
     protected HealFlag flagOf(@NonNull Timed<Integer> value) {
         return new HealFlag(value);
     }
-
 }

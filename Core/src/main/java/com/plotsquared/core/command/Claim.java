@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -43,7 +42,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 @CommandDeclaration(
         command = "claim",
         aliases = "c",
@@ -51,12 +49,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
         requiredType = RequiredType.PLAYER, permission = "plots.claim",
         usage = "/plot claim")
 public class Claim extends SubCommand {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Claim.class.getSimpleName());
-
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
-
     @Inject
     public Claim(
             final @NonNull EventDispatcher eventDispatcher,
@@ -65,7 +60,6 @@ public class Claim extends SubCommand {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String schematic = null;
@@ -91,9 +85,7 @@ public class Claim extends SubCommand {
         int currentPlots = Settings.Limit.GLOBAL ?
                 player.getPlotCount() :
                 player.getPlotCount(location.getWorldName());
-
         final PlotArea area = plot.getArea();
-
         try (final MetaDataAccess<Integer> metaDataAccess = player.accessPersistentMetaData(PlayerMetaDataKeys.PERSISTENT_GRANTED_PLOTS)) {
             int grants = 0;
             if (currentPlots >= player.getAllowedPlots() && !force) {
@@ -114,7 +106,6 @@ public class Claim extends SubCommand {
                     return false;
                 }
             }
-
             if (!plot.canClaim(player)) {
                 player.sendMessage(TranslatableCaption.of("working.plot_is_claimed"));
                 return false;
@@ -240,5 +231,4 @@ public class Claim extends SubCommand {
         });
         return true;
     }
-
 }

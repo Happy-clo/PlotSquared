@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -44,7 +43,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -52,7 +50,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-
 @CommandDeclaration(command = "database",
         aliases = {"convert"},
         category = CommandCategory.ADMINISTRATION,
@@ -60,12 +57,10 @@ import java.util.Map.Entry;
         requiredType = RequiredType.CONSOLE,
         usage = "/plot database [area] <sqlite | mysql | import>")
 public class DatabaseCommand extends SubCommand {
-
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final PlotListener plotListener;
     private final YamlConfiguration worldConfiguration;
-
     @Inject
     public DatabaseCommand(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -78,7 +73,6 @@ public class DatabaseCommand extends SubCommand {
         this.plotListener = plotListener;
         this.worldConfiguration = worldConfiguration;
     }
-
     public static void insertPlots(
             final SQLManager manager, final List<Plot> plots,
             final PlotPlayer<?> player
@@ -97,7 +91,6 @@ public class DatabaseCommand extends SubCommand {
             }
         });
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
@@ -271,5 +264,4 @@ public class DatabaseCommand extends SubCommand {
             return false;
         }
     }
-
 }

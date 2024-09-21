@@ -17,12 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue.subscriber;
-
 import com.plotsquared.core.queue.ChunkCoordinator;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public interface ProgressSubscriber {
-
     /**
      * Notify about a progress update in the coordinator
      *
@@ -30,10 +27,8 @@ public interface ProgressSubscriber {
      * @param progress    Progress in the range [0, 1]
      */
     void notifyProgress(final @NonNull ChunkCoordinator coordinator, final double progress);
-
     /**
      * Notify the subscriber that its parent ChunkCoordinator has finished
      */
     void notifyEnd();
-
 }

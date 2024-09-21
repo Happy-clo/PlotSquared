@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.BlockLoc;
 import com.plotsquared.core.location.Location;
@@ -26,7 +25,6 @@ import com.plotsquared.core.plot.Plot;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 @CommandDeclaration(command = "sethome",
         permission = "plots.set.home",
         usage = "/plot sethome [none]",
@@ -34,7 +32,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER)
 public class SetHome extends SetCommand {
-
     @Override
     public boolean set(PlotPlayer<?> player, Plot plot, String value) {
         if (!plot.hasOwner()) {
@@ -54,7 +51,7 @@ public class SetHome extends SetCommand {
                 Location location = player.getLocationFull();
                 BlockLoc rel = new BlockLoc(
                         location.getX() - bottom.getX(),
-                        location.getY(), // y is absolute
+                        location.getY(),
                         location.getZ() - bottom.getZ(),
                         location.getYaw(),
                         location.getPitch()
@@ -72,5 +69,4 @@ public class SetHome extends SetCommand {
             }
         }
     }
-
 }

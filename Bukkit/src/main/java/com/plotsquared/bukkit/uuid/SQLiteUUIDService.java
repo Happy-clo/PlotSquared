@@ -17,14 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.uuid;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.database.SQLite;
 import com.plotsquared.core.util.FileUtils;
 import com.plotsquared.core.uuid.UUIDMapping;
 import com.plotsquared.core.uuid.UUIDService;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,14 +32,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
-
 /**
  * UUID service that uses the (legacy) SQL UUID cache
  */
 public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping>> {
-
     private final SQLite sqlite;
-
     public SQLiteUUIDService(final String fileName) {
         this.sqlite =
                 new SQLite(FileUtils.getFile(PlotSquared.platform().getDirectory(), fileName));
@@ -50,7 +45,6 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
-
         try (PreparedStatement stmt = getConnection().prepareStatement(
                 "CREATE TABLE IF NOT EXISTS `usercache` (uuid VARCHAR(32) NOT NULL, username VARCHAR(32) NOT NULL, PRIMARY KEY (uuid))")) {
             stmt.execute();
@@ -58,13 +52,11 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
             e.printStackTrace();
         }
     }
-
     private Connection getConnection() {
         synchronized (this.sqlite) {
             return this.sqlite.getConnection();
         }
     }
-
     @Override
     public @NonNull List<UUIDMapping> getNames(final @NonNull List<UUID> uuids) {
         final List<UUIDMapping> mappings = new ArrayList<>(uuids.size());
@@ -83,7 +75,6 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         }
         return mappings;
     }
-
     @Override
     public @NonNull List<UUIDMapping> getUUIDs(@NonNull List<String> usernames) {
         final List<UUIDMapping> mappings = new ArrayList<>(usernames.size());
@@ -105,7 +96,6 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         }
         return mappings;
     }
-
     @Override
     public void accept(final List<UUIDMapping> uuidWrappers) {
         try (final PreparedStatement statement = getConnection()
@@ -119,7 +109,6 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
             e.printStackTrace();
         }
     }
-
     /**
      * Read the entire cache at once
      *
@@ -138,6 +127,4 @@ public class SQLiteUUIDService implements UUIDService, Consumer<List<UUIDMapping
         }
         return mappings;
     }
-
-
 }

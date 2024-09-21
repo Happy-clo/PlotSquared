@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
@@ -28,16 +27,13 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import java.util.concurrent.CompletableFuture;
-
 @CommandDeclaration(usage = "/plot swap <X;Z>",
         command = "swap",
         aliases = {"switch"},
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.PLAYER)
 public class Swap extends SubCommand {
-
     @Override
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
@@ -74,11 +70,8 @@ public class Swap extends SubCommand {
             player.sendMessage(TranslatableCaption.of("swap.swap_merged"));
             return CompletableFuture.completedFuture(false);
         }
-
-        // Set strings here as the plot objects are mutable (the PlotID changes after being moved).
         String p1 = plot1.toString();
         String p2 = plot2.toString();
-
         return plot1.getPlotModificationManager().move(plot2, player, () -> {
         }, true).thenApply(result -> {
             if (result) {
@@ -96,10 +89,8 @@ public class Swap extends SubCommand {
             }
         });
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         return true;
     }
-
 }

@@ -17,25 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.player;
-
 import com.plotsquared.core.synchronization.LockRepository;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Optional;
-
 /**
  * Access to player meta data
  *
  * @param <T> Meta data type
  */
 public abstract class MetaDataAccess<T> implements AutoCloseable {
-
     private final PlotPlayer<?> player;
     private final MetaDataKey<T> metaDataKey;
     private final LockRepository.LockAccess lockAccess;
     private boolean closed = false;
-
     MetaDataAccess(
             final @NonNull PlotPlayer<?> player,
             final @NonNull MetaDataKey<T> metaDataKey,
@@ -45,12 +40,10 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
         this.metaDataKey = metaDataKey;
         this.lockAccess = lockAccess;
     }
-
     @SuppressWarnings("unchecked")
     private static <E extends Throwable> void sneakyThrow(final Throwable e) throws E {
         throw (E) e;
     }
-
     /**
      * Check if the player has meta data stored with the given key
      *
@@ -58,7 +51,6 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
      *         {@code false}
      */
     public abstract boolean isPresent();
-
     /**
      * Remove the stored value meta data
      *
@@ -66,14 +58,12 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
      */
     public @Nullable
     abstract T remove();
-
     /**
      * Set the meta data value
      *
      * @param value New value
      */
     public abstract void set(final @NonNull T value);
-
     /**
      * Get the stored meta data value
      *
@@ -81,13 +71,11 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
      */
     public @NonNull
     abstract Optional<T> get();
-
     @Override
     public final void close() {
         this.lockAccess.close();
         this.closed = true;
     }
-
     /**
      * Get the owner of the meta data
      *
@@ -96,7 +84,6 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
     public @NonNull PlotPlayer<?> getPlayer() {
         return this.player;
     }
-
     /**
      * Get the meta data key
      *
@@ -105,7 +92,6 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
     public @NonNull MetaDataKey<T> getMetaDataKey() {
         return this.metaDataKey;
     }
-
     /**
      * Check whether or not the meta data access has been closed.
      * After being closed, all attempts to access the meta data
@@ -117,12 +103,9 @@ public abstract class MetaDataAccess<T> implements AutoCloseable {
     public boolean isClosed() {
         return this.closed;
     }
-
     protected void checkClosed() {
         if (this.closed) {
             sneakyThrow(new IllegalAccessException("The meta data access instance has been closed"));
         }
     }
-
-
 }

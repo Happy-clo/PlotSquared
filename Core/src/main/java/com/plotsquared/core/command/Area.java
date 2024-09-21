@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -72,7 +71,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -88,7 +86,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 @CommandDeclaration(command = "area",
         permission = "plots.area",
         category = CommandCategory.ADMINISTRATION,
@@ -97,7 +94,6 @@ import java.util.stream.Collectors;
         usage = "/plot area <create | info | list | tp | regen>",
         confirmation = true)
 public class Area extends SubCommand {
-
     private final PlotAreaManager plotAreaManager;
     private final YamlConfiguration worldConfiguration;
     private final File worldFile;
@@ -105,9 +101,7 @@ public class Area extends SubCommand {
     private final SetupUtils setupUtils;
     private final WorldUtil worldUtil;
     private final GlobalBlockQueue blockQueue;
-
     private final Map<UUID, Map<String, Object>> metaData = new HashMap<>();
-
     @Inject
     public Area(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -126,7 +120,6 @@ public class Area extends SubCommand {
         this.worldUtil = worldUtil;
         this.blockQueue = blockQueue;
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -186,10 +179,8 @@ public class Area extends SubCommand {
                     player.sendMessage(TranslatableCaption.of("single.single_area_overlapping"));
                     return false;
                 }
-                // Alter the region
                 final BlockVector3 playerSelectionMin = playerSelectedRegion.getMinimumPoint();
                 final BlockVector3 playerSelectionMax = playerSelectedRegion.getMaximumPoint();
-                // Create a new selection that spans the entire vertical range of the world
                 World world = playerSelectedRegion.getWorld();
                 final CuboidRegion selectedRegion =
                         new CuboidRegion(
@@ -197,7 +188,6 @@ public class Area extends SubCommand {
                                 BlockVector3.at(playerSelectionMin.getX(), world.getMinY(), playerSelectionMin.getZ()),
                                 BlockVector3.at(playerSelectionMax.getX(), world.getMaxY(), playerSelectionMax.getZ())
                         );
-                // There's only one plot in the area...
                 final PlotId plotId = PlotId.of(1, 1);
                 final HybridPlotWorld hybridPlotWorld = this.hybridPlotWorldFactory
                         .create(
@@ -207,19 +197,12 @@ public class Area extends SubCommand {
                                 plotId,
                                 plotId
                         );
-                // Plot size is the same as the region width
                 hybridPlotWorld.PLOT_WIDTH = hybridPlotWorld.SIZE = (short) selectedRegion.getWidth();
-                // We use a schematic generator
                 hybridPlotWorld.setTerrain(PlotAreaTerrainType.NONE);
-                // It is always a partial plot world
                 hybridPlotWorld.setType(PlotAreaType.PARTIAL);
-                // We save the schematic :D
                 hybridPlotWorld.PLOT_SCHEMATIC = true;
-                // Set the road width to 0
                 hybridPlotWorld.ROAD_WIDTH = hybridPlotWorld.ROAD_OFFSET_X = hybridPlotWorld.ROAD_OFFSET_Z = 0;
-                // Set the plot height to the selection height
                 hybridPlotWorld.PLOT_HEIGHT = hybridPlotWorld.ROAD_HEIGHT = hybridPlotWorld.WALL_HEIGHT = playerSelectionMin.getBlockY();
-                // No sign plz
                 hybridPlotWorld.setAllowSigns(false);
                 final File parentFile = FileUtils.getFile(
                         PlotSquared.platform().getDirectory(),
@@ -248,18 +231,12 @@ public class Area extends SubCommand {
                     e.printStackTrace();
                     return false;
                 }
-
-                // Setup schematic
                 try {
                     hybridPlotWorld.setupSchematics();
                 } catch (final SchematicHandler.UnsupportedFormatException e) {
                     e.printStackTrace();
                 }
-
-                // Calculate the offset
                 final BlockVector3 singlePos1 = selectedRegion.getMinimumPoint();
-
-                // Now the schematic is saved, which is wonderful!
                 PlotAreaBuilder singleBuilder = PlotAreaBuilder.ofPlotArea(hybridPlotWorld).plotManager(PlotSquared
                                 .platform()
                                 .pluginName())
@@ -314,7 +291,7 @@ public class Area extends SubCommand {
                         return false;
                     case 2:
                         switch (args[1].toLowerCase()) {
-                            case "pos1" -> { // Set position 1
+                            case "pos1" -> {
                                 HybridPlotWorld area = (HybridPlotWorld) metaData.computeIfAbsent(
                                                 player.getUUID(),
                                                 missingUUID -> new HashMap<>()
@@ -353,7 +330,7 @@ public class Area extends SubCommand {
                                 );
                                 return true;
                             }
-                            case "pos2" -> {  // Set position 2 and finish creation for type=2 (partial)
+                            case "pos2" -> {
                                 final HybridPlotWorld area =
                                         (HybridPlotWorld) metaData.computeIfAbsent(
                                                         player.getUUID(),
@@ -388,7 +365,6 @@ public class Area extends SubCommand {
                                 int lower = (area.ROAD_WIDTH & 1) == 0 ? area.ROAD_WIDTH / 2 - 1 : area.ROAD_WIDTH / 2;
                                 final int offsetX = bx - (area.ROAD_WIDTH == 0 ? 0 : lower);
                                 final int offsetZ = bz - (area.ROAD_WIDTH == 0 ? 0 : lower);
-                                // Height doesn't matter for this region
                                 final CuboidRegion region = RegionUtil.createRegion(bx, tx, 0, 0, bz, tz);
                                 final Set<PlotArea> areas = this.plotAreaManager.getPlotAreasSet(area.getWorldName(), region);
                                 if (!areas.isEmpty()) {
@@ -447,7 +423,7 @@ public class Area extends SubCommand {
                                 return true;
                             }
                         }
-                    default: // Start creation
+                    default:
                         String[] split = args[1].split(":");
                         String id;
                         if (split.length == 2) {
@@ -861,7 +837,6 @@ public class Area extends SubCommand {
         sendUsage(player);
         return false;
     }
-
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -900,5 +875,4 @@ public class Area extends SubCommand {
         }
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
-
 }

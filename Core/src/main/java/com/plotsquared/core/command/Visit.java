@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -40,7 +39,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +46,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
-
 @CommandDeclaration(command = "visit",
         permission = "plots.visit",
         usage = "/plot visit <player> | <alias> | <plot> [area]|[#] [#]",
@@ -56,50 +53,36 @@ import java.util.concurrent.TimeoutException;
         requiredType = RequiredType.PLAYER,
         category = CommandCategory.TELEPORT)
 public class Visit extends Command {
-
     private final PlotAreaManager plotAreaManager;
-
     @Inject
     public Visit(final @NonNull PlotAreaManager plotAreaManager) {
         super(MainCommand.getInstance(), true);
         this.plotAreaManager = plotAreaManager;
     }
-
     private void visit(
             final @NonNull PlotPlayer<?> player, final @NonNull PlotQuery query, final PlotArea sortByArea,
             final RunnableVal3<Command, Runnable, Runnable> confirm, final RunnableVal2<Command, CommandResult> whenDone, int page
     ) {
-        // We get the query once,
-        // then we get it another time further on
         final List<Plot> unsorted = query.asList();
-
         if (unsorted.size() > 1) {
             query.whereBasePlot();
         }
-
-        // without specified argument
         if (page == Integer.MIN_VALUE) {
             page = 1;
         }
-
         PlotArea relativeArea = sortByArea;
         if (Settings.Teleport.PER_WORLD_VISIT && sortByArea == null) {
             relativeArea = player.getApplicablePlotArea();
         }
-
         if (relativeArea != null) {
             query.relativeToArea(relativeArea).withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
         } else {
             query.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
         }
-
         final List<Plot> plots = query.asList();
-
-        // Conversion of reversed page argument
         if (page < 0) {
             page = (plots.size() + 1) + page;
         }
-
         if (plots.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("invalid.found_no_plots"));
             return;
@@ -113,7 +96,6 @@ public class Visit extends Command {
             );
             return;
         }
-
         final Plot plot = plots.get(page - 1);
         if (!plot.hasOwner()) {
             if (!player.hasPermission(Permission.PERMISSION_VISIT_UNOWNED)) {
@@ -140,8 +122,6 @@ public class Visit extends Command {
                 return;
             }
         } else {
-            // allow visit, if UntrustedVisit flag is set, or if the player has either the plot.visit.other or
-            // plot.admin.visit.untrusted permission
             if (!plot.getFlag(UntrustedVisitFlag.class) && !player.hasPermission(Permission.PERMISSION_VISIT_OTHER)
                     && !player.hasPermission(Permission.PERMISSION_ADMIN_VISIT_UNTRUSTED)) {
                 player.sendMessage(
@@ -163,7 +143,6 @@ public class Visit extends Command {
                 }
             }
         }
-
         confirm.run(this, () -> plot.teleportPlayer(player, TeleportCause.COMMAND_VISIT, result -> {
             if (result) {
                 whenDone.run(Visit.this, CommandResult.SUCCESS);
@@ -172,7 +151,6 @@ public class Visit extends Command {
             }
         }), () -> whenDone.run(Visit.this, CommandResult.FAILURE));
     }
-
     @Override
     public CompletableFuture<Boolean> execute(
             final PlotPlayer<?> player,
@@ -184,35 +162,25 @@ public class Visit extends Command {
             sendUsage(player);
             return CompletableFuture.completedFuture(false);
         }
-
         if (args.length == 1 && args[0].contains(":")) {
             args = args[0].split(":");
         }
-
         PlotArea sortByArea;
-
         int page = Integer.MIN_VALUE;
-
         switch (args.length) {
-            // /p v <player> <area> <page>
             case 3:
                 if (isInvalidPageNr(args[2])) {
                     sendInvalidPageNrMsg(player);
                     return CompletableFuture.completedFuture(false);
                 }
                 page = getPageNr(args[2]);
-                // /p v <player> <area> [page]
-                // /p v <player> [page]
             case 2:
-                // If "case 3" is already through or the argument is not a page number:
-                // -> /p v <player> <area> [page]
                 if (page != Integer.MIN_VALUE || isInvalidPageNr(args[1])) {
                     sortByArea = this.plotAreaManager.getPlotAreaByString(args[1]);
                     if (sortByArea == null) {
                         sendInvalidPageNrMsg(player);
                         return CompletableFuture.completedFuture(false);
                     }
-
                     final PlotArea finalSortByArea = sortByArea;
                     int finalPage1 = page;
                     PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
@@ -243,31 +211,23 @@ public class Visit extends Command {
                     });
                     break;
                 }
-                // -> /p v <player> <page>
                 if (isInvalidPageNr(args[1])) {
                     sendInvalidPageNrMsg(player);
                     return CompletableFuture.completedFuture(false);
                 }
                 page = getPageNr(args[1]);
-                // /p v <player> [page]
-                // /p v <uuid> [page]
-                // /p v <plot> [page]
-                // /p v <alias>
             case 1:
                 final String[] finalArgs = args;
                 int finalPage = page;
                 if (args[0].length() >= 2 && !args[0].contains(";") && !args[0].contains(",")) {
                     PlotSquared.get().getImpromptuUUIDPipeline().getSingle(args[0], (uuid, throwable) -> {
                         if (throwable instanceof TimeoutException) {
-                            // The request timed out
                             player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
                         } else if (uuid != null && (Settings.Teleport.VISIT_MERGED_OWNERS
                                 ? !PlotQuery.newQuery().ownersInclude(uuid).anyMatch()
                                 : !PlotQuery.newQuery().ownedBy(uuid).anyMatch())) {
-                            // It was a valid UUID but the player has no plots
                             player.sendMessage(TranslatableCaption.of("errors.player_no_plots"));
                         } else if (uuid == null) {
-                            // player not found, so we assume it's an alias if no page was provided
                             if (finalPage == Integer.MIN_VALUE) {
                                 this.visit(
                                         player,
@@ -297,7 +257,6 @@ public class Visit extends Command {
                         }
                     });
                 } else {
-                    // Try to parse a plot
                     final Plot plot = Plot.getPlotFromString(player, finalArgs[0], true);
                     if (plot != null) {
                         this.visit(player, PlotQuery.newQuery().withPlot(plot), null, confirm, whenDone, 1);
@@ -305,7 +264,6 @@ public class Visit extends Command {
                 }
                 break;
             case 0:
-                // /p v is invalid
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
                         TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
@@ -313,10 +271,8 @@ public class Visit extends Command {
                 return CompletableFuture.completedFuture(false);
             default:
         }
-
         return CompletableFuture.completedFuture(true);
     }
-
     private boolean isInvalidPageNr(String arg) {
         if (MathMan.isInteger(arg)) {
             return false;
@@ -325,7 +281,6 @@ public class Visit extends Command {
         }
         return true;
     }
-
     private int getPageNr(String arg) {
         if (MathMan.isInteger(arg)) {
             return Integer.parseInt(arg);
@@ -334,7 +289,6 @@ public class Visit extends Command {
         }
         return Integer.MIN_VALUE;
     }
-
     private void sendInvalidPageNrMsg(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("invalid.not_valid_number"),
@@ -345,7 +299,6 @@ public class Visit extends Command {
                 TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
         );
     }
-
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> completions = new ArrayList<>();
@@ -356,7 +309,6 @@ public class Visit extends Command {
                         TabCompletions.completeAreas(args[1]));
                 completions.addAll(TabCompletions.asCompletions("last"));
                 if (args[1].isEmpty()) {
-                    // if no input is given, only suggest 1 - 3
                     completions.addAll(
                             TabCompletions.asCompletions("1", "2", "3"));
                     break;
@@ -367,7 +319,6 @@ public class Visit extends Command {
             case 2 -> {
                 completions.addAll(TabCompletions.asCompletions("last"));
                 if (args[2].isEmpty()) {
-                    // if no input is given, only suggest 1 - 3
                     completions.addAll(
                             TabCompletions.asCompletions("1", "2", "3"));
                     break;
@@ -376,8 +327,6 @@ public class Visit extends Command {
                         TabCompletions.completeNumbers(args[2], 10, 999));
             }
         }
-
         return completions;
     }
-
 }

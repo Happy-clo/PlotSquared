@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.listener;
-
 import com.google.inject.Inject;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.bukkit.util.BukkitUtil;
@@ -39,15 +38,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockReceiveGameEvent;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-
 @SuppressWarnings("unused")
 public class BlockEventListener117 implements Listener {
-
     private static final Set<Material> COPPER_OXIDIZING = Set.of(
             Material.COPPER_BLOCK,
             Material.EXPOSED_COPPER,
@@ -66,24 +62,19 @@ public class BlockEventListener117 implements Listener {
             Material.WEATHERED_CUT_COPPER_SLAB,
             Material.OXIDIZED_CUT_COPPER_SLAB
     );
-
     @Inject
     public BlockEventListener117() {
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockReceiveGame(BlockReceiveGameEvent event) {
         Block block = event.getBlock();
         Location location = BukkitUtil.adapt(block.getLocation());
         Entity entity = event.getEntity();
-
         PlotArea area = location.getPlotArea();
         if (area == null) {
             return;
         }
-
         BukkitPlayer plotPlayer = null;
-
         if (entity instanceof Player player) {
             plotPlayer = BukkitUtil.adapt(player);
             if (area.notifyIfOutsideBuildArea(plotPlayer, location.getY())) {
@@ -91,7 +82,6 @@ public class BlockEventListener117 implements Listener {
                 return;
             }
         }
-
         Plot plot = location.getOwnedPlot();
         if (plot == null && !PlotFlagUtil.isAreaRoadFlagsAndFlagEquals(
                 area,
@@ -129,13 +119,11 @@ public class BlockEventListener117 implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockFertilize(BlockFertilizeEvent event) {
         Block block = event.getBlock();
         List<org.bukkit.block.BlockState> blocks = event.getBlocks();
         Location location = BukkitUtil.adapt(blocks.get(0).getLocation());
-
         PlotArea area = location.getPlotArea();
         if (area == null) {
             for (int i = blocks.size() - 1; i >= 0; i--) {
@@ -167,7 +155,6 @@ public class BlockEventListener117 implements Listener {
             }
         }
     }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
         Block block = event.getBlock();
@@ -191,5 +178,4 @@ public class BlockEventListener117 implements Listener {
             }
         }
     }
-
 }

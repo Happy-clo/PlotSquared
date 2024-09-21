@@ -17,18 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
-
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
-
 import java.util.UUID;
-
 public class PlayerPlotDeniedEvent extends PlotEvent {
-
     private final PlotPlayer<?> initiator;
     private final boolean added;
     private final UUID player;
-
     /**
      * PlayerPlotDeniedEvent: Called when the denied UUID list is modified for a plot.
      *
@@ -43,7 +38,6 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
         this.added = added;
         this.player = player;
     }
-
     /**
      * If a user was added.
      *
@@ -52,7 +46,6 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
     public boolean wasAdded() {
         return this.added;
     }
-
     /**
      * The player added/removed.
      *
@@ -61,7 +54,6 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
     public UUID getPlayer() {
         return this.player;
     }
-
     /**
      * The player initiating the action.
      *
@@ -70,5 +62,4 @@ public class PlayerPlotDeniedEvent extends PlotEvent {
     public PlotPlayer<?> getInitiator() {
         return this.initiator;
     }
-
 }

@@ -17,17 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag;
-
 import com.plotsquared.core.configuration.caption.Caption;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 public class FlagParseException extends Exception {
-
     private final PlotFlag<?, ?> flag;
     private final String value;
     private final Caption errorMessage;
     private final TagResolver[] tagResolvers;
-
     /**
      * Construct a new flag parse exception to indicate that an attempt to parse a plot
      * flag was unsuccessful.
@@ -49,7 +45,6 @@ public class FlagParseException extends Exception {
         this.errorMessage = errorMessage;
         this.tagResolvers = args;
     }
-
     /**
      * Returns the value that caused the parse exception
      *
@@ -58,7 +53,6 @@ public class FlagParseException extends Exception {
     public String getValue() {
         return this.value;
     }
-
     /**
      * Returns the class that threw the exception
      *
@@ -67,7 +61,6 @@ public class FlagParseException extends Exception {
     public PlotFlag<?, ?> getFlag() {
         return this.flag;
     }
-
     /**
      * Get the error message that was supplied by the flag instance.
      *
@@ -76,7 +69,6 @@ public class FlagParseException extends Exception {
     public Caption getErrorMessage() {
         return errorMessage;
     }
-
     /**
      * Get the templates that were supplied by the flag instance.
      *
@@ -85,5 +77,4 @@ public class FlagParseException extends Exception {
     public TagResolver[] getTagResolvers() {
         return tagResolvers;
     }
-
 }

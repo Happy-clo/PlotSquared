@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.location.Location;
@@ -30,16 +29,12 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.flag.implementations.NoWorldeditFlag;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-
 public class WEManager {
-
     private static final BlockVector3 MIN = BlockVector3.at(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
     private static final BlockVector3 MAX = BlockVector3.at(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
-
     public static boolean maskContains(Set<CuboidRegion> mask, int x, int y, int z) {
         for (CuboidRegion region : mask) {
             if (RegionUtil.contains(region, x, y, z)) {
@@ -48,7 +43,6 @@ public class WEManager {
         }
         return false;
     }
-
     public static boolean maskContains(Set<CuboidRegion> mask, int x, int z) {
         for (CuboidRegion region : mask) {
             if (RegionUtil.contains(region, x, z)) {
@@ -57,7 +51,6 @@ public class WEManager {
         }
         return false;
     }
-
     public static HashSet<CuboidRegion> getMask(PlotPlayer<?> player) {
         HashSet<CuboidRegion> regions = new HashSet<>();
         UUID uuid = player.getUUID();
@@ -92,5 +85,4 @@ public class WEManager {
         }
         return regions;
     }
-
 }

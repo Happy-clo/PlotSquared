@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.queue.QueueCoordinator;
@@ -25,16 +24,12 @@ import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.util.task.RunnableVal;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
-
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-
 public abstract class ChunkManager {
-
     private static final Map<BlockVector2, RunnableVal<ZeroedDelegateScopedQueueCoordinator>> forceChunks = new ConcurrentHashMap<>();
     private static final Map<BlockVector2, RunnableVal<ZeroedDelegateScopedQueueCoordinator>> addChunks = new ConcurrentHashMap<>();
-
     /**
      * @since 7.0.0
      */
@@ -74,7 +69,6 @@ public abstract class ChunkManager {
             addChunks.remove(loc);
         }
     }
-
     /**
      * @since 7.0.0
      */
@@ -87,7 +81,6 @@ public abstract class ChunkManager {
         }
         return false;
     }
-
     /**
      * @since 7.0.0
      */
@@ -100,8 +93,6 @@ public abstract class ChunkManager {
         }
         return false;
     }
-
     @Deprecated
     public abstract CompletableFuture<?> loadChunk(String world, BlockVector2 loc, boolean force);
-
 }

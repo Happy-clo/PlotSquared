@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.generator;
-
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.generator.AugmentedUtils;
 import com.plotsquared.core.queue.QueueCoordinator;
@@ -27,13 +26,9 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Random;
-
 public class BukkitAugmentedGenerator extends BlockPopulator {
-
     private static BukkitAugmentedGenerator generator;
-
     public static BukkitAugmentedGenerator get(World world) {
         for (BlockPopulator populator : world.getPopulators()) {
             if (populator instanceof BukkitAugmentedGenerator) {
@@ -46,11 +41,9 @@ public class BukkitAugmentedGenerator extends BlockPopulator {
         world.getPopulators().add(generator);
         return generator;
     }
-
     @Override
     public void populate(@NonNull World world, @NonNull Random random, @NonNull Chunk source) {
         QueueCoordinator queue = PlotSquared.platform().globalBlockQueue().getNewQueue(BukkitAdapter.adapt(world));
-        // The chunk is already loaded and we do not want to load the chunk in "fully" by using any PaperLib methods.
         queue.setForceSync(true);
         queue.setSideEffectSet(SideEffectSet.none());
         queue.setBiomesEnabled(false);
@@ -58,5 +51,4 @@ public class BukkitAugmentedGenerator extends BlockPopulator {
         AugmentedUtils.generateChunk(world.getName(), source.getX(), source.getZ(), queue);
         queue.enqueue();
     }
-
 }

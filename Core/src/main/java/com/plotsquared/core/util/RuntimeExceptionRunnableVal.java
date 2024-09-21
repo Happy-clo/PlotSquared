@@ -17,21 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.plotsquared.core.util.task.RunnableVal;
-
 import java.util.concurrent.atomic.AtomicBoolean;
-
 public class RuntimeExceptionRunnableVal<T> extends RunnableVal<RuntimeException> {
-
     private final RunnableVal<T> function;
     private final AtomicBoolean running;
-
     public RuntimeExceptionRunnableVal(final RunnableVal<T> function, final AtomicBoolean running) {
         this.function = function;
         this.running = running;
     }
-
     @Override
     public void run(RuntimeException value) {
         try {
@@ -47,5 +41,4 @@ public class RuntimeExceptionRunnableVal<T> extends RunnableVal<RuntimeException
             function.notifyAll();
         }
     }
-
 }

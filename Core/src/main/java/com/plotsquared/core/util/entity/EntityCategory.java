@@ -17,35 +17,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.entity;
-
 import com.plotsquared.core.util.WorldUtil;
 import com.sk89q.worldedit.registry.Category;
 import com.sk89q.worldedit.registry.Keyed;
 import com.sk89q.worldedit.registry.NamespacedRegistry;
 import com.sk89q.worldedit.world.entity.EntityType;
-
 import java.util.Set;
-
 /**
  * Categories to which an {@link com.sk89q.worldedit.entity.Entity} may belong
  */
 public class EntityCategory extends Category<EntityType> implements Keyed {
-
     public static final NamespacedRegistry<EntityCategory> REGISTRY =
             new NamespacedRegistry<>("entity type");
-
     private final WorldUtil worldUtil;
     private final String key;
-
     protected EntityCategory(final WorldUtil worldUtil, final String id) {
         super("plotsquared:" + id);
         this.key = id;
         this.worldUtil = worldUtil;
     }
-
     @Override
     protected Set<EntityType> load() {
         return this.worldUtil.getTypesInCategory(this.key);
     }
-
 }

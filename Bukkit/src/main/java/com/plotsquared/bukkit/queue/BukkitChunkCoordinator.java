@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.queue;
-
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.bukkit.BukkitPlatform;
@@ -35,7 +34,6 @@ import org.bukkit.Chunk;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,7 +41,6 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-
 /**
  * Utility that allows for the loading and coordination of chunk actions
  * <p>
@@ -54,9 +51,7 @@ import java.util.function.Consumer;
  * </p>
  **/
 public final class BukkitChunkCoordinator extends ChunkCoordinator {
-
     private final List<ProgressSubscriber> progressSubscribers = new LinkedList<>();
-
     private final Queue<BlockVector2> requestedChunks;
     private final Queue<Chunk> availableChunks;
     private final long maxIterationTime;
@@ -70,12 +65,10 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
     private final AtomicInteger expectedSize;
     private final AtomicInteger loadingChunks = new AtomicInteger();
     private final boolean forceSync;
-
     private int batchSize;
     private PlotSquaredTask task;
     private volatile boolean shouldCancel;
     private boolean finished;
-
     @Inject
     private BukkitChunkCoordinator(
             @Assisted final long maxIterationTime,
@@ -104,13 +97,10 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         this.progressSubscribers.addAll(progressSubscribers);
         this.forceSync = forceSync;
     }
-
     @Override
     public void start() {
         if (!forceSync) {
-            // Request initial batch
             this.requestBatch();
-            // Wait until next tick to give the chunks a chance to be loaded
             TaskManager.runTaskLater(() -> task = TaskManager.runTaskRepeat(this, TaskTime.ticks(1)), TaskTime.ticks(1));
         } else {
             try {
@@ -124,12 +114,10 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             }
         }
     }
-
     @Override
     public void cancel() {
         shouldCancel = true;
     }
-
     private void finish() {
         try {
             this.whenDone.run();
@@ -145,7 +133,6 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             finished = true;
         }
     }
-
     @Override
     public void run() {
         if (shouldCancel) {
@@ -158,7 +145,6 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             finish();
             return;
         }
-
         Chunk chunk = this.availableChunks.poll();
         if (chunk == null) {
             if (this.availableChunks.isEmpty()) {
@@ -184,17 +170,13 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             }
             processedChunks++;
             final long end = System.currentTimeMillis();
-            // Update iteration time
             iterationTime[0] = iterationTime[1];
             iterationTime[1] = end - start;
         } while (iterationTime[0] + iterationTime[1] < this.maxIterationTime * 2 && (chunk = availableChunks.poll()) != null);
         if (processedChunks < this.batchSize) {
-            // Adjust batch size based on the amount of processed chunks per tick
             this.batchSize = processedChunks;
         }
-
         final int expected = this.expectedSize.addAndGet(-processedChunks);
-
         if (expected <= 0) {
             finish();
         } else {
@@ -207,14 +189,12 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
             }
         }
     }
-
     /**
      * Requests a batch of chunks to be loaded
      */
     private void requestBatch() {
         BlockVector2 chunk;
         for (int i = 0; i < this.batchSize && (chunk = this.requestedChunks.poll()) != null; i++) {
-            // This required PaperLib to be bumped to version 1.0.4 to mark the request as urgent
             loadingChunks.incrementAndGet();
             PaperLib
                     .getChunkAtAsync(this.bukkitWorld, chunk.getX(), chunk.getZ(), true, true)
@@ -222,7 +202,6 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
                         loadingChunks.decrementAndGet();
                         if (throwable != null) {
                             throwable.printStackTrace();
-                            // We want one less because this couldn't be processed
                             this.expectedSize.decrementAndGet();
                         } else if (PlotSquared.get().isMainThread(Thread.currentThread())) {
                             this.processChunk(chunkObject);
@@ -232,7 +211,6 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
                     });
         }
     }
-
     /**
      * Once a chunk has been loaded, process it (add a plugin ticket and add to
      * available chunks list). It is important that this gets executed on the
@@ -250,7 +228,6 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         chunk.addPluginChunkTicket(this.plugin);
         this.availableChunks.add(chunk);
     }
-
     /**
      * Once a chunk has been used, free it up for unload by removing the plugin ticket
      */
@@ -260,17 +237,14 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
         }
         chunk.removePluginChunkTicket(this.plugin);
     }
-
     @Override
     public int getRemainingChunks() {
         return this.expectedSize.get();
     }
-
     @Override
     public int getTotalChunks() {
         return this.totalSize;
     }
-
     /**
      * Subscribe to coordinator progress updates
      *
@@ -279,5 +253,4 @@ public final class BukkitChunkCoordinator extends ChunkCoordinator {
     public void subscribeToProgress(final @NonNull ProgressSubscriber subscriber) {
         this.progressSubscribers.add(subscriber);
     }
-
 }

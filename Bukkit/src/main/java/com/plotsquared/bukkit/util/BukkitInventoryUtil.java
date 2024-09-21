@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.util;
-
 import com.google.inject.Singleton;
 import com.plotsquared.bukkit.player.BukkitPlayer;
 import com.plotsquared.core.player.PlotPlayer;
@@ -36,15 +35,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
-
 @Singleton
 public class BukkitInventoryUtil extends InventoryUtil {
-
-    @SuppressWarnings("deprecation") // Paper deprecation
+    @SuppressWarnings("deprecation")
     private static @Nullable ItemStack getItem(PlotItemStack item) {
         if (item == null) {
             return null;
@@ -75,8 +71,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         }
         return stack;
     }
-
-    @SuppressWarnings("deprecation") // Paper deprecation
+    @SuppressWarnings("deprecation")
     @Override
     public void open(PlotInventory inv) {
         BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
@@ -92,7 +87,6 @@ public class BukkitInventoryUtil extends InventoryUtil {
         }
         bp.player.openInventory(inventory);
     }
-
     @Override
     public void close(PlotInventory inv) {
         if (!inv.isOpen()) {
@@ -101,7 +95,6 @@ public class BukkitInventoryUtil extends InventoryUtil {
         BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
         bp.player.closeInventory();
     }
-
     @Override
     public boolean setItemChecked(PlotInventory inv, int index, PlotItemStack item) {
         BukkitPlayer bp = (BukkitPlayer) inv.getPlayer();
@@ -117,13 +110,11 @@ public class BukkitInventoryUtil extends InventoryUtil {
         bp.player.updateInventory();
         return true;
     }
-
-    @SuppressWarnings("deprecation") // Paper deprecation
+    @SuppressWarnings("deprecation")
     public PlotItemStack getItem(ItemStack item) {
         if (item == null) {
             return null;
         }
-        // int id = item.getTypeId();
         Material id = item.getType();
         ItemMeta meta = item.getItemMeta();
         int amount = item.getAmount();
@@ -142,7 +133,6 @@ public class BukkitInventoryUtil extends InventoryUtil {
         }
         return new PlotItemStack(id.name(), amount, name, lore);
     }
-
     @Override
     public PlotItemStack[] getItems(PlotPlayer<?> player) {
         BukkitPlayer bp = (BukkitPlayer) player;
@@ -150,8 +140,7 @@ public class BukkitInventoryUtil extends InventoryUtil {
         return IntStream.range(0, 36).mapToObj(i -> getItem(inv.getItem(i)))
                 .toArray(PlotItemStack[]::new);
     }
-
-    @SuppressWarnings("deprecation") // #getTitle is needed for Spigot compatibility
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isOpen(PlotInventory plotInventory) {
         if (!plotInventory.isOpen()) {
@@ -166,5 +155,4 @@ public class BukkitInventoryUtil extends InventoryUtil {
         }
         return false;
     }
-
 }

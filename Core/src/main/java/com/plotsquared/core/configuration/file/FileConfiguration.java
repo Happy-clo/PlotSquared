@@ -17,11 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.file;
-
 import com.plotsquared.core.configuration.Configuration;
 import com.plotsquared.core.configuration.InvalidConfigurationException;
 import com.plotsquared.core.configuration.MemoryConfiguration;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,19 +32,16 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
-
 /**
  * This is a base class for all File based implementations of {@link
  * Configuration}.
  */
 public abstract class FileConfiguration extends MemoryConfiguration {
-
     /**
      * Creates an empty FileConfiguration with no default values.
      */
     FileConfiguration() {
     }
-
     /**
      * Creates an empty FileConfiguration using the specified {@link
      * Configuration} as a source for all default values.
@@ -56,7 +51,6 @@ public abstract class FileConfiguration extends MemoryConfiguration {
     public FileConfiguration(Configuration defaults) {
         super(defaults);
     }
-
     /**
      * Saves this FileConfiguration to the specified location.
      *
@@ -76,9 +70,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
         if (parent != null) {
             parent.mkdirs();
         }
-
         String data = saveToString();
-
         try (Writer writer = new OutputStreamWriter(
                 new FileOutputStream(file),
                 StandardCharsets.UTF_8
@@ -86,14 +78,12 @@ public abstract class FileConfiguration extends MemoryConfiguration {
             writer.write(data);
         }
     }
-
     /**
      * Saves this FileConfiguration to a string, and returns it.
      *
      * @return String containing this configuration.
      */
     public abstract String saveToString();
-
     /**
      * Loads this FileConfiguration from the specified location.
      *
@@ -113,12 +103,10 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * @throws IllegalArgumentException      Thrown when file is null.
      */
     public void load(File file) throws IOException, InvalidConfigurationException {
-
         try (FileInputStream stream = new FileInputStream(file)) {
             load(new InputStreamReader(stream, StandardCharsets.UTF_8));
         }
     }
-
     /**
      * Loads this FileConfiguration from the specified reader.
      *
@@ -132,19 +120,14 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *                                       represent a valid Configuration
      */
     public void load(Reader reader) throws IOException, InvalidConfigurationException {
-
         String builder;
-
         try (BufferedReader input = reader instanceof BufferedReader ?
                 (BufferedReader) reader :
                 new BufferedReader(reader)) {
-
             builder = input.lines().map(line -> line + '\n').collect(Collectors.joining());
         }
-
         loadFromString(builder);
     }
-
     /**
      * Loads this FileConfiguration from the specified string, as
      * opposed to from file.
@@ -160,7 +143,6 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      *                                       invalid.
      */
     public abstract void loadFromString(String contents) throws InvalidConfigurationException;
-
     /**
      * Compiles the header for this FileConfiguration and returns the
      * result.
@@ -172,14 +154,11 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * @return Compiled header
      */
     protected abstract String buildHeader();
-
     @Override
     public FileConfigurationOptions options() {
         if (this.options == null) {
             this.options = new FileConfigurationOptions(this);
         }
-
         return (FileConfigurationOptions) this.options;
     }
-
 }

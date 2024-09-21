@@ -17,15 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.player;
-
 import com.plotsquared.core.synchronization.LockRepository;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Optional;
-
 final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
-
     PersistentMetaDataAccess(
             final @NonNull PlotPlayer<?> player,
             final @NonNull MetaDataKey<T> metaDataKey,
@@ -33,13 +29,11 @@ final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
     ) {
         super(player, metaDataKey, lockAccess);
     }
-
     @Override
     public boolean isPresent() {
         this.checkClosed();
         return this.getPlayer().hasPersistentMeta(getMetaDataKey().toString());
     }
-
     @SuppressWarnings("unchecked")
     @Override
     public @Nullable T remove() {
@@ -50,18 +44,15 @@ final class PersistentMetaDataAccess<T> extends MetaDataAccess<T> {
         }
         return (T) old;
     }
-
     @Override
     public void set(@NonNull T value) {
         this.checkClosed();
         this.getPlayer().setPersistentMeta(this.getMetaDataKey(), value);
     }
-
     @NonNull
     @Override
     public Optional<T> get() {
         this.checkClosed();
         return Optional.ofNullable(this.getPlayer().getPersistentMeta(this.getMetaDataKey()));
     }
-
 }

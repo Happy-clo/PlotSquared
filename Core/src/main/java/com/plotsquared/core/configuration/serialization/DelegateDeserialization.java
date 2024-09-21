@@ -17,12 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.serialization;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
 /**
  * Applies to a {@link ConfigurationSerializable} that will delegate all
  * deserialization to another {@link ConfigurationSerializable}.
@@ -30,7 +28,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface DelegateDeserialization {
-
     /**
      * Which class should be used as a delegate for this classes
      * deserialization
@@ -38,5 +35,4 @@ public @interface DelegateDeserialization {
      * @return Delegate class
      */
     Class<? extends ConfigurationSerializable> value();
-
 }

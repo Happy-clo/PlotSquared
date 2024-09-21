@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -40,7 +39,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -48,18 +46,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 @CommandDeclaration(command = "debugexec",
         permission = "plots.admin",
         aliases = {"exec", "$"},
         category = CommandCategory.DEBUG)
 public class DebugExec extends SubCommand {
-
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final HybridUtils hybridUtils;
-
-
     @Inject
     public DebugExec(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -69,9 +63,7 @@ public class DebugExec extends SubCommand {
         this.plotAreaManager = plotAreaManager;
         this.eventDispatcher = eventDispatcher;
         this.hybridUtils = hybridUtils;
-
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         List<String> allowedParams = Arrays
@@ -230,7 +222,6 @@ public class DebugExec extends SubCommand {
                 + StringMan.join(allowedParams, " | ") + "></gray>"));
         return false;
     }
-
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
         return Stream.of("analyze", "calibrate-analysis", "start-expire", "stop-expire", "remove-flag", "start-rgar", "stop-rgar")
@@ -238,5 +229,4 @@ public class DebugExec extends SubCommand {
                 .map(value -> new Command(null, false, value, "plots.admin", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());
     }
-
 }

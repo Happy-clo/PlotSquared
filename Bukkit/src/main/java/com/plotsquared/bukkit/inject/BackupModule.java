@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.bukkit.inject;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.plotsquared.core.backup.BackupManager;
@@ -28,11 +27,8 @@ import com.plotsquared.core.backup.SimpleBackupManager;
 import com.plotsquared.core.inject.factory.PlayerBackupProfileFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 public class BackupModule extends AbstractModule {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BackupModule.class.getSimpleName());
-
     @Override
     protected void configure() {
         try {
@@ -45,5 +41,4 @@ public class BackupModule extends AbstractModule {
             bind(BackupManager.class).to(NullBackupManager.class);
         }
     }
-
 }

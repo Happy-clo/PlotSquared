@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.inject.Inject;
@@ -35,14 +34,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
-
 @CommandDeclaration(command = "debugpaste",
         aliases = "dp",
         usage = "/plot debugpaste",
@@ -51,10 +48,8 @@ import java.util.concurrent.TimeUnit;
         confirmation = true,
         requiredType = RequiredType.NONE)
 public class DebugPaste extends SubCommand {
-
     private final File configFile;
     private final File worldfile;
-
     @Inject
     public DebugPaste(
             @ConfigFile final @NonNull File configFile,
@@ -63,7 +58,6 @@ public class DebugPaste extends SubCommand {
         this.configFile = configFile;
         this.worldfile = worldFile;
     }
-
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         TaskManager.runTaskAsync(() -> {
@@ -117,10 +111,8 @@ public class DebugPaste extends SubCommand {
                 b.append(
                         "\n# You can do so at https://github.com/IntellectualSites/PlotSquared/issues");
                 b.append("\n# or via our Discord at https://discord.gg/intellectualsites");
-
                 final IncendoPaster incendoPaster = new IncendoPaster("plotsquared");
                 incendoPaster.addFile(new IncendoPaster.PasteFile("information", b.toString()));
-
                 try {
                     final File logFile =
                             new File("logs/latest.log");
@@ -139,7 +131,6 @@ public class DebugPaste extends SubCommand {
                                     .build()
                     );
                 }
-
                 try {
                     incendoPaster.addFile(this.configFile);
                 } catch (final IllegalArgumentException ignored) {
@@ -156,7 +147,6 @@ public class DebugPaste extends SubCommand {
                             TagResolver.resolver("file", Tag.inserting(Component.text("worlds.yml")))
                     );
                 }
-
                 try {
                     final File MultiverseWorlds = new File(
                             PlotSquared.platform().getDirectory(),
@@ -169,12 +159,10 @@ public class DebugPaste extends SubCommand {
                             TagResolver.resolver("file", Tag.inserting(Component.text("worlds.yml")))
                     );
                 }
-
                 try {
                     final String rawResponse = incendoPaster.upload();
                     final JsonObject jsonObject =
                             new JsonParser().parse(rawResponse).getAsJsonObject();
-
                     if (jsonObject.has("created")) {
                         final String pasteId = jsonObject.get("paste_id").getAsString();
                         final String link =
@@ -203,5 +191,4 @@ public class DebugPaste extends SubCommand {
         });
         return true;
     }
-
 }

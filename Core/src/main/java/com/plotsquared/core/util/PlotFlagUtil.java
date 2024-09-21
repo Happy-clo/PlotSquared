@@ -17,23 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.flag.PlotFlag;
-
 import java.util.Objects;
-
 /**
  * Util class for generic methods relating to plot flags.
  *
  * @since 6.10.4
  */
 public final class PlotFlagUtil {
-
     private PlotFlagUtil() {
-        //No-op
     }
-
     /**
      * Check if the value of a {@link PlotFlag} matches the given value. If
      * road flags are disabled for the given plot area, returns false.
@@ -49,5 +43,4 @@ public final class PlotFlagUtil {
     ) {
         return area.isRoadFlags() && Objects.equals(area.getRoadFlag(flagClass), value);
     }
-
 }

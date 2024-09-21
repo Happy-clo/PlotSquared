@@ -17,10 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.task;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +29,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * Task manager that handles scheduling of tasks.
  * Synchronous methods make no guarantee of being scheduled on the
@@ -42,13 +39,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * they're scheduled from.
  */
 public abstract class TaskManager {
-
     private static final Set<String> teleportQueue = new HashSet<>();
     private static final Map<Integer, PlotSquaredTask> tasks = new HashMap<>();
     public static AtomicInteger index = new AtomicInteger(0);
-
     private static TaskManager platformImplementation;
-
     /**
      * Add a string to the teleport queue
      *
@@ -57,7 +51,6 @@ public abstract class TaskManager {
     public static void addToTeleportQueue(final @NonNull String string) {
         teleportQueue.add(string);
     }
-
     /**
      * Remove a string from the teleport queue
      *
@@ -68,7 +61,6 @@ public abstract class TaskManager {
     public static boolean removeFromTeleportQueue(final @NonNull String string) {
         return teleportQueue.remove(string);
     }
-
     /**
      * Add a task to the task map
      *
@@ -78,7 +70,6 @@ public abstract class TaskManager {
     public static void addTask(final @NonNull PlotSquaredTask task, final int id) {
         tasks.put(id, task);
     }
-
     /**
      * Remove a task from the task map and return the stored value
      *
@@ -88,7 +79,6 @@ public abstract class TaskManager {
     public static @Nullable PlotSquaredTask removeTask(final int id) {
         return tasks.remove(id);
     }
-
     /**
      * Run a repeating synchronous task. If using a platform scheduler,
      * this is guaranteed to run on the server thread
@@ -109,7 +99,6 @@ public abstract class TaskManager {
         }
         return PlotSquaredTask.nullTask();
     }
-
     /**
      * Run an asynchronous task. This will never run on the server thread
      *
@@ -124,7 +113,6 @@ public abstract class TaskManager {
             getPlatformImplementation().taskAsync(runnable);
         }
     }
-
     /**
      * Run a synchronous task. If using a platform scheduler, this is guaranteed
      * to run on the server thread
@@ -140,7 +128,6 @@ public abstract class TaskManager {
             getPlatformImplementation().task(runnable);
         }
     }
-
     /**
      * Run a synchronous task after a given delay.
      * If using a platform scheduler, this is guaranteed to run on the server thread
@@ -160,7 +147,6 @@ public abstract class TaskManager {
             getPlatformImplementation().taskLater(runnable, taskTime);
         }
     }
-
     /**
      * Run an asynchronous task after a given delay. This will never
      * run on the server thread
@@ -180,15 +166,12 @@ public abstract class TaskManager {
             getPlatformImplementation().taskLaterAsync(runnable, taskTime);
         }
     }
-
     public static @Nullable TaskManager getPlatformImplementation() {
         return platformImplementation;
     }
-
     public static void setPlatformImplementation(final @NonNull TaskManager implementation) {
         platformImplementation = implementation;
     }
-
     /**
      * Break up a series of tasks so that they can run without lagging the server
      *
@@ -206,7 +189,6 @@ public abstract class TaskManager {
         TaskManager.runTask(taskRunnable);
         return taskRunnable.getCompletionFuture();
     }
-
     /**
      * Make a synchronous method call and return the result
      *
@@ -218,7 +200,6 @@ public abstract class TaskManager {
     public <T> T sync(final @NonNull Callable<T> function) throws Exception {
         return sync(function, Integer.MAX_VALUE);
     }
-
     /**
      * Make a synchronous method call and return the result
      *
@@ -230,7 +211,6 @@ public abstract class TaskManager {
      */
     public abstract <T> T sync(final @NonNull Callable<T> function, final int timeout)
             throws Exception;
-
     /**
      * Call a method synchronously and return a future with
      * the result of the result
@@ -240,7 +220,6 @@ public abstract class TaskManager {
      * @return Future completing with the result
      */
     public abstract <T> Future<T> callMethodSync(final @NonNull Callable<T> method);
-
     /**
      * Run a repeating synchronous task. If using a platform scheduler,
      * this is guaranteed to run on the server thread
@@ -253,7 +232,6 @@ public abstract class TaskManager {
             @NonNull Runnable runnable,
             @NonNull TaskTime taskTime
     );
-
     /**
      * Run a repeating asynchronous task. This will never run on the
      * server thread
@@ -266,14 +244,12 @@ public abstract class TaskManager {
             @NonNull Runnable runnable,
             @NonNull TaskTime taskTime
     );
-
     /**
      * Run an asynchronous task. This will never run on the server thread
      *
      * @param runnable Task to run
      */
     public abstract void taskAsync(@NonNull Runnable runnable);
-
     /**
      * Run a synchronous task. If using a platform scheduler, this is guaranteed
      * to run on the server thread
@@ -281,7 +257,6 @@ public abstract class TaskManager {
      * @param runnable Task to run
      */
     public abstract void task(@NonNull Runnable runnable);
-
     /**
      * Run a synchronous task after a given delay.
      * If using a platform scheduler, this is guaranteed to run on the server thread
@@ -290,7 +265,6 @@ public abstract class TaskManager {
      * @param taskTime Task delay
      */
     public abstract void taskLater(@NonNull Runnable runnable, @NonNull TaskTime taskTime);
-
     /**
      * Run an asynchronous task after a given delay. This will never
      * run on the server thread
@@ -299,5 +273,4 @@ public abstract class TaskManager {
      * @param taskTime Task delay
      */
     public abstract void taskLaterAsync(@NonNull Runnable runnable, @NonNull TaskTime taskTime);
-
 }

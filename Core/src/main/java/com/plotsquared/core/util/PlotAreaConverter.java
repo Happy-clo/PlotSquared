@@ -17,22 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
-
 import com.plotsquared.core.plot.PlotArea;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import org.khelekore.prtree.MBRConverter;
-
 public class PlotAreaConverter implements MBRConverter<PlotArea> {
-
     public static final int AXIS_X = 0;
     public static final int AXIS_Y = 1;
     public static final int AXIS_Z = 2;
-
     @Override
     public int getDimensions() {
         return 3;
     }
-
     @Override
     public double getMin(final int axis, final PlotArea area) {
         final CuboidRegion region = area.getRegion();
@@ -46,7 +41,6 @@ public class PlotAreaConverter implements MBRConverter<PlotArea> {
             throw new IllegalArgumentException("Unknown axis: " + axis);
         }
     }
-
     @Override
     public double getMax(final int axis, final PlotArea area) {
         final CuboidRegion region = area.getRegion();
@@ -60,5 +54,4 @@ public class PlotAreaConverter implements MBRConverter<PlotArea> {
             throw new IllegalArgumentException("Unknown axis: " + axis);
         }
     }
-
 }

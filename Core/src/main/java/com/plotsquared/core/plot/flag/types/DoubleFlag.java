@@ -17,40 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
-
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
 public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends NumberFlag<Double, F> {
-
     protected DoubleFlag(
             @NonNull Double value, Double minimum, Double maximum,
             @NonNull Caption flagDescription
     ) {
         super(value, minimum, maximum, TranslatableCaption.of("flags.flag_category_doubles"), flagDescription);
     }
-
     protected DoubleFlag(@NonNull Double value, @NonNull Caption flagDescription) {
         this(value, Double.MIN_VALUE, Double.MAX_VALUE, flagDescription);
     }
-
     @Override
     public F merge(@NonNull Double newValue) {
         return flagOf(getValue() + newValue);
     }
-
     @Override
     public String getExample() {
         return "12.175";
     }
-
     @Override
     public String toString() {
         return getValue().toString();
     }
-
     @NonNull
     @Override
     protected Double parseNumber(String input) throws FlagParseException {
@@ -60,10 +52,8 @@ public abstract class DoubleFlag<F extends NumberFlag<Double, F>> extends Number
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_double"));
         }
     }
-
     @Override
     public boolean isValuedPermission() {
         return false;
     }
-
 }

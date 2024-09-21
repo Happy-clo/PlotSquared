@@ -17,13 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
-
 import com.plotsquared.core.configuration.Settings.Enabled_Components;
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.util.StringMan;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.io.File;
 import java.io.PrintWriter;
 import java.lang.annotation.ElementType;
@@ -37,11 +35,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 public class Config {
-
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Config.class.getSimpleName());
-
     /**
      * Set the value of a specific node<br>
      * Probably throws some error if you supply non existing keys or invalid values
@@ -73,7 +68,6 @@ public class Config {
         }
         LOGGER.error("Failed to set config option '{}: {}' | {}", key, value, instance);
     }
-
     public static boolean load(File file, Class<? extends Config> root) {
         if (!file.exists()) {
             return false;
@@ -88,7 +82,6 @@ public class Config {
         }
         return true;
     }
-
     /**
      * Set all values in the file (load first to avoid overwriting)
      *
@@ -109,7 +102,6 @@ public class Config {
             e.printStackTrace();
         }
     }
-
     /**
      * Get the static fields in a section.
      *
@@ -129,7 +121,6 @@ public class Config {
         }
         return map;
     }
-
     private static String toYamlString(Object value, String spacing) {
         if (value instanceof List) {
             Collection<?> listValue = (Collection<?>) value;
@@ -150,7 +141,6 @@ public class Config {
         }
         return value != null ? value.toString() : "null";
     }
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static void save(PrintWriter writer, Class<?> clazz, Object instance, int indent) {
         try {
@@ -211,7 +201,6 @@ public class Config {
                             value.put(blockName, current.getDeclaredConstructor().newInstance());
                         }
                     }
-                    // Save each instance
                     for (Map.Entry<String, Object> entry : ((Map<String, Object>) value.getRaw())
                             .entrySet()) {
                         String key = entry.getKey();
@@ -226,7 +215,6 @@ public class Config {
             e.printStackTrace();
         }
     }
-
     /**
      * Get the field for a specific config node and instance<br>
      * Note: As expiry can have multiple blocks there will be multiple instances
@@ -250,7 +238,6 @@ public class Config {
             return null;
         }
     }
-
     /**
      * Get the instance for a specific config node.
      *
@@ -317,7 +304,6 @@ public class Config {
         }
         return null;
     }
-
     /**
      * Translate a node to a java field name.
      *
@@ -327,7 +313,6 @@ public class Config {
     private static String toFieldName(String node) {
         return node.toUpperCase().replaceAll("-", "_");
     }
-
     /**
      * Translate a field to a config node.
      *
@@ -337,7 +322,6 @@ public class Config {
     private static String toNodeName(String field) {
         return field.toLowerCase().replace("_", "-");
     }
-
     /**
      * Set some field to be accessible.
      *
@@ -346,82 +330,57 @@ public class Config {
     private static void setAccessible(Field field) {
         field.setAccessible(true);
     }
-
     /**
      * Indicates that a field should be instantiated / created.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     public @interface Create {
-
     }
-
-
     /**
      * Indicates that a field cannot be modified.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD})
     public @interface Final {
-
     }
-
-
     /**
      * Creates a comment.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface Comment {
-
         String[] value();
-
     }
-
-
     /**
      * The names of any default blocks.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface BlockName {
-
         String[] value();
-
     }
-
-
     /**
      * Any field or class with is not part of the config.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
     public @interface Ignore {
-
     }
-
-
-    @Ignore // This is not part of the config
+    @Ignore
     public static class ConfigBlock<T> {
-
         private final HashMap<String, T> INSTANCES = new HashMap<>();
-
         public T get(String key) {
             return INSTANCES.get(key);
         }
-
         public void put(String key, T value) {
             INSTANCES.put(key, value);
         }
-
         public Collection<T> getInstances() {
             return INSTANCES.values();
         }
-
         private Map<String, T> getRaw() {
             return INSTANCES;
         }
-
     }
-
 }

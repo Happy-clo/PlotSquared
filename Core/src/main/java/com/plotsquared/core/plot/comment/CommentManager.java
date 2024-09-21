@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.comment;
-
 import com.google.inject.TypeLiteral;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -32,16 +31,12 @@ import com.plotsquared.core.util.task.TaskTime;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 public class CommentManager {
-
     public static final HashMap<String, CommentInbox> inboxes = new HashMap<>();
-
     public static void sendTitle(final PlotPlayer<?> player, final Plot plot) {
         if (!Settings.Enabled_Components.COMMENT_NOTIFIER || !plot.isOwner(player.getUUID())) {
             return;
@@ -81,7 +76,6 @@ public class CommentManager {
             }
         }, TaskTime.seconds(1L));
     }
-
     /**
      * @param player The player the inbox belongs to
      * @param inbox  the inbox
@@ -94,18 +88,15 @@ public class CommentManager {
             return inboxAccess.get().orElse(player.getLastPlayed());
         }
     }
-
     /**
      * @param inbox the inbox to add
      */
     public static void addInbox(CommentInbox inbox) {
         inboxes.put(inbox.toString().toLowerCase(), inbox);
     }
-
     public static void registerDefaultInboxes() {
         addInbox(new InboxReport());
         addInbox(new InboxPublic());
         addInbox(new InboxOwner());
     }
-
 }
