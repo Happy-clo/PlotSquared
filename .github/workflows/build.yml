@@ -33,6 +33,11 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-gradle-
 
+            - name: Set timezone to Shanghai
+              run: |
+                  sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+                  sudo dpkg-reconfigure -f noninteractive tzdata
+
             - name: Build with Gradle
               run: |
                   ./gradlew :plotsquared-bukkit:spotlessApply
