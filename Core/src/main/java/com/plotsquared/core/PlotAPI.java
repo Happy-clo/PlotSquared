@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core;
+
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.location.Location;
@@ -32,9 +33,11 @@ import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
+
 /**
  * PlotSquared API.
  *
@@ -51,8 +54,10 @@ import java.util.UUID;
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class PlotAPI {
+
     public PlotAPI() {
     }
+
     /**
      * Gets all plots.
      *
@@ -61,6 +66,7 @@ public class PlotAPI {
     public @NonNull Set<@NonNull Plot> getAllPlots() {
         return PlotQuery.newQuery().allPlots().asSet();
     }
+
     /**
      * Gets all plots for a player.
      *
@@ -70,6 +76,7 @@ public class PlotAPI {
     public @NonNull Set<@NonNull Plot> getPlayerPlots(final @NonNull PlotPlayer<?> player) {
         return PlotQuery.newQuery().ownedBy(player).asSet();
     }
+
     /**
      * Adds a plot world.
      *
@@ -79,6 +86,7 @@ public class PlotAPI {
     public void addPlotArea(final @NonNull PlotArea plotArea) {
         PlotSquared.get().addPlotArea(plotArea);
     }
+
     /**
      * ChunkManager class contains several useful methods.
      * <ul>
@@ -95,6 +103,7 @@ public class PlotAPI {
     public @NonNull ChunkManager getChunkManager() {
         return PlotSquared.platform().injector().getInstance(ChunkManager.class);
     }
+
     /**
      * Gets the block/biome set queue
      *
@@ -103,6 +112,7 @@ public class PlotAPI {
     public @NonNull GlobalBlockQueue getBlockQueue() {
         return PlotSquared.platform().globalBlockQueue();
     }
+
     /**
      * SchematicHandler class contains methods related to pasting, reading
      * and writing schematics.
@@ -113,6 +123,7 @@ public class PlotAPI {
     public @NonNull SchematicHandler getSchematicHandler() {
         return PlotSquared.platform().injector().getInstance(SchematicHandler.class);
     }
+
     /**
      * Gets a list of PlotAreas in the world.
      *
@@ -125,6 +136,7 @@ public class PlotAPI {
         }
         return PlotSquared.get().getPlotAreaManager().getPlotAreasSet(world);
     }
+
     /**
      * Send a message to the console. The message supports color codes.
      *
@@ -137,6 +149,7 @@ public class PlotAPI {
     ) {
         ConsolePlayer.getConsole().sendMessage(StaticCaption.of(message), replacements);
     }
+
     /**
      * Sends a message to the console.
      *
@@ -149,6 +162,7 @@ public class PlotAPI {
     ) {
         ConsolePlayer.getConsole().sendMessage(caption, replacements);
     }
+
     /**
      * Gets the PlotSquared class.
      *
@@ -158,6 +172,7 @@ public class PlotAPI {
     public @NonNull PlotSquared getPlotSquared() {
         return PlotSquared.get();
     }
+
     /**
      * Gets the PlotPlayer for a UUID.
      *
@@ -170,6 +185,7 @@ public class PlotAPI {
     public @Nullable PlotPlayer<?> wrapPlayer(final @NonNull UUID uuid) {
         return PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
     }
+
     /**
      * Gets the PlotPlayer for a username.
      *
@@ -179,6 +195,7 @@ public class PlotAPI {
     public @Nullable PlotPlayer<?> wrapPlayer(final @NonNull String player) {
         return PlotSquared.platform().playerManager().getPlayerIfExists(player);
     }
+
     /**
      * Registers a listener for PlotSquared Events
      *
@@ -188,4 +205,5 @@ public class PlotAPI {
     public void registerListener(final @NonNull Object listener) {
         PlotSquared.get().getEventDispatcher().registerListener(listener);
     }
+
 }

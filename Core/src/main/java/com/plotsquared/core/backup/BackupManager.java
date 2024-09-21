@@ -17,14 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
+
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.nio.file.Path;
 import java.util.Objects;
+
 public interface BackupManager {
+
     /**
      * This will perform an automatic backup of the plot iff the plot has an owner,
      * automatic backups are enabled.
@@ -37,6 +41,7 @@ public interface BackupManager {
     static void backup(@Nullable PlotPlayer<?> player, final @NonNull Plot plot, @NonNull Runnable whenDone) {
         Objects.requireNonNull(PlotSquared.platform()).backupManager().automaticBackup(player, plot, whenDone);
     }
+
     /**
      * Get the backup profile for a plot based on its
      * current owner (if there is one)
@@ -45,6 +50,7 @@ public interface BackupManager {
      * @return Backup profile
      */
     @NonNull BackupProfile getProfile(final @NonNull Plot plot);
+
     /**
      * This will perform an automatic backup of the plot iff the plot has an owner,
      * automatic backups are enabled.
@@ -55,12 +61,14 @@ public interface BackupManager {
      * @param whenDone Action that runs when the automatic backup has been completed
      */
     void automaticBackup(@Nullable PlotPlayer<?> player, final @NonNull Plot plot, @NonNull Runnable whenDone);
+
     /**
      * Get the directory in which backups are stored
      *
      * @return Backup directory path
      */
     @NonNull Path getBackupPath();
+
     /**
      * Get the maximum amount of backups that may be stored for
      * a plot-owner combo
@@ -68,6 +76,7 @@ public interface BackupManager {
      * @return Backup limit
      */
     int getBackupLimit();
+
     /**
      * Returns true if (potentially) destructive actions should cause
      * PlotSquared to create automatic plot backups
@@ -75,4 +84,5 @@ public interface BackupManager {
      * @return {@code true} if automatic backups are enabled
      */
     boolean shouldAutomaticallyBackup();
+
 }

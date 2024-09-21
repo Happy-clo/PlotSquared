@@ -17,23 +17,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
+
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
 public interface BackupProfile {
+
     /**
      * Asynchronously populate a list of available backups under this profile
      *
      * @return Future that will be completed with available backups
      */
     @NonNull CompletableFuture<List<Backup>> listBackups();
+
     /**
      * Remove all backups stored for this profile
      */
     void destroy();
+
     /**
      * Get the directory containing the backups for this profile.
      * This directory may not actually exist.
@@ -41,6 +47,7 @@ public interface BackupProfile {
      * @return Folder that contains the backups for this profile
      */
     @NonNull Path getBackupDirectory();
+
     /**
      * Create a backup of the plot. If the profile is at the
      * maximum backup capacity, the oldest backup will be deleted.
@@ -48,6 +55,7 @@ public interface BackupProfile {
      * @return Future that completes with the created backup.
      */
     @NonNull CompletableFuture<Backup> createBackup();
+
     /**
      * Restore a backup
      *
@@ -56,4 +64,5 @@ public interface BackupProfile {
      * @return Future that completes when the backup has finished
      */
     @NonNull CompletableFuture<Void> restoreBackup(final @NonNull Backup backup, @Nullable PlotPlayer<?> player);
+
 }

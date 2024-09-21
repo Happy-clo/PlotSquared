@@ -17,23 +17,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
+
 import com.google.inject.Singleton;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.nio.file.Path;
 import java.util.Objects;
+
 /**
  * {@inheritDoc}
  */
 @Singleton
 public class NullBackupManager implements BackupManager {
+
     @Override
     public @NonNull BackupProfile getProfile(@NonNull Plot plot) {
         return new NullBackupProfile();
     }
+
     @Override
     public void automaticBackup(
             @Nullable PlotPlayer<?> plotPlayer,
@@ -41,16 +46,20 @@ public class NullBackupManager implements BackupManager {
     ) {
         whenDone.run();
     }
+
     @Override
     public @NonNull Path getBackupPath() {
         return Objects.requireNonNull(PlotSquared.platform()).getDirectory().toPath();
     }
+
     @Override
     public int getBackupLimit() {
         return 0;
     }
+
     @Override
     public boolean shouldAutomaticallyBackup() {
         return false;
     }
+
 }

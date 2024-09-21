@@ -17,24 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.backup;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 /**
  * Object representing a plot backup. This does not actually contain the
  * backup itself, it is just a pointer to an available backup
  */
 public class Backup {
+
     private final BackupProfile owner;
     private final long creationTime;
     @Nullable
     private final Path file;
+
     Backup(final BackupProfile owner, final long creationTime, final Path file) {
         this.owner = owner;
         this.creationTime = creationTime;
         this.file = file;
     }
+
     /**
      * Delete the backup
      */
@@ -47,13 +53,17 @@ public class Backup {
             }
         }
     }
+
     public BackupProfile getOwner() {
         return this.owner;
     }
+
     public long getCreationTime() {
         return this.creationTime;
     }
+
     public @Nullable Path getFile() {
         return this.file;
     }
+
 }
