@@ -861,7 +861,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                             
                             // 执行命令
                             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-                            getLogger().info("Command executed: " + command);
                             // 更新最后执行的命令
                             lastCommand = command; 
                             
