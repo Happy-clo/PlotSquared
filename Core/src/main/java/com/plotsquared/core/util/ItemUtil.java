@@ -17,13 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import com.sk89q.worldedit.world.registry.LegacyMapper;
+
 import java.util.Locale;
+
 public final class ItemUtil {
+
     private ItemUtil() {
     }
+
     public static ItemType get(String input) {
         if (input == null || input.isEmpty()) {
             return ItemTypes.AIR;
@@ -50,6 +55,7 @@ public final class ItemUtil {
         }
         return ItemTypes.get(input);
     }
+
     public static final ItemType[] parse(String commaDelimited) {
         String[] split = commaDelimited.split(",(?![^\\(\\[]*[\\]\\)])");
         ItemType[] result = new ItemType[split.length];
@@ -58,4 +64,5 @@ public final class ItemUtil {
         }
         return result;
     }
+
 }

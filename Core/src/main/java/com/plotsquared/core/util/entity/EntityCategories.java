@@ -17,17 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.entity;
+
 import com.plotsquared.core.PlotSquared;
+
 /**
  * A collection of {@link EntityCategory entity categories}
  */
 public class EntityCategories {
+
     public static final int CAP_ENTITY = 0;
     public static final int CAP_ANIMAL = 1;
     public static final int CAP_MONSTER = 2;
     public static final int CAP_MOB = 3;
     public static final int CAP_VEHICLE = 4;
     public static final int CAP_MISC = 5;
+
     public static final EntityCategory ANIMAL = register("animal");
     public static final EntityCategory TAMEABLE = register("tameable");
     public static final EntityCategory VEHICLE = register("vehicle");
@@ -37,11 +41,14 @@ public class EntityCategories {
     public static final EntityCategory PROJECTILE = register("projectile");
     public static final EntityCategory OTHER = register("other");
     public static final EntityCategory PLAYER = register("player");
+
     public static EntityCategory register(final String id) {
         final EntityCategory entityCategory = new EntityCategory(PlotSquared.platform().worldUtil(), id);
         EntityCategory.REGISTRY.register(entityCategory.getId(), entityCategory);
         return entityCategory;
     }
+
     public static void init() {
     }
+
 }

@@ -17,15 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events.post;
+
 import com.plotsquared.core.events.PlotPlayerEvent;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+
 /**
  * Called after a {@link Plot} was cleared.
  *
  * @since 7.3.2
  */
 public class PostPlotClearEvent extends PlotPlayerEvent {
+
+
     /**
      * Instantiate a new PostPlotClearEvent.
      *
@@ -35,4 +39,5 @@ public class PostPlotClearEvent extends PlotPlayerEvent {
     public PostPlotClearEvent(final PlotPlayer<?> plotPlayer, final Plot plot) {
         super(plotPlayer, plot);
     }
+
 }

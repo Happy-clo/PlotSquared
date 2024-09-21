@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class SculkSensorInteractFlag extends BooleanFlag<SculkSensorInteractFlag> {
+
     public static final SculkSensorInteractFlag SCULK_SENSOR_INTERACT_TRUE = new SculkSensorInteractFlag(true);
     public static final SculkSensorInteractFlag SCULK_SENSOR_INTERACT_FALSE = new SculkSensorInteractFlag(false);
+
     private SculkSensorInteractFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_sculk_sensor_interact"));
     }
+
     @Override
     protected SculkSensorInteractFlag flagOf(@NonNull Boolean value) {
         return value ? SCULK_SENSOR_INTERACT_TRUE : SCULK_SENSOR_INTERACT_FALSE;
     }
+
 }

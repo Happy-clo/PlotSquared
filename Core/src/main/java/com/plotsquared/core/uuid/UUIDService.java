@@ -17,16 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.uuid;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
 /**
  * Service used to provide usernames from player UUIDs
  */
 public interface UUIDService {
+
     /**
      * Attempt to complete the given requests. Returns the mappings
      * that could be created by this server
@@ -35,6 +39,7 @@ public interface UUIDService {
      * @return Completed requests
      */
     @NonNull List<@NonNull UUIDMapping> getNames(final @NonNull List<@NonNull UUID> uuids);
+
     /**
      * Attempt to complete the given requests. Returns the mappings
      * that could be created by this server
@@ -43,6 +48,7 @@ public interface UUIDService {
      * @return Completed requests
      */
     @NonNull List<@NonNull UUIDMapping> getUUIDs(final @NonNull List<@NonNull String> usernames);
+
     /**
      * Get as many UUID mappings as possible under the condition
      * that the operation cannot be blocking (for an extended amount of time)
@@ -52,6 +58,7 @@ public interface UUIDService {
     default @NonNull Collection<@NonNull UUIDMapping> getImmediately() {
         return Collections.emptyList();
     }
+
     /**
      * Check whether or not this service can be safely used synchronously
      * without blocking the server for an extended amount of time.
@@ -61,6 +68,7 @@ public interface UUIDService {
     default boolean canBeSynchronous() {
         return false;
     }
+
     /**
      * Get a single UUID mapping immediately, if possible
      *
@@ -70,4 +78,5 @@ public interface UUIDService {
     default @Nullable UUIDMapping getImmediately(final @NonNull Object object) {
         return null;
     }
+
 }

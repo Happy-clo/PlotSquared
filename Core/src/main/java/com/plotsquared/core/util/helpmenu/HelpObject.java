@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.helpmenu;
+
 import com.plotsquared.core.command.Argument;
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -28,9 +29,13 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.NotNull;
+
 public class HelpObject implements ComponentLike {
+
     static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+
     private final Component rendered;
+
     public HelpObject(final Command command, final String label, final PlotPlayer<?> audience) {
         rendered = MINI_MESSAGE.deserialize(
                 TranslatableCaption.of("help.help_item").getComponent(audience),
@@ -45,6 +50,7 @@ public class HelpObject implements ComponentLike {
                         .build()
         );
     }
+
     private String buildArgumentList(final Argument<?>[] arguments) {
         if (arguments == null) {
             return "";
@@ -56,8 +62,10 @@ public class HelpObject implements ComponentLike {
         }
         return arguments.length > 0 ? builder.substring(0, builder.length() - 1) : "";
     }
+
     @Override
     public @NotNull Component asComponent() {
         return this.rendered;
     }
+
 }

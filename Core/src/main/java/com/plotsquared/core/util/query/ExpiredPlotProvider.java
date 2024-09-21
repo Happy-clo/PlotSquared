@@ -17,12 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
+
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.Plot;
+
 import java.util.Collection;
+
 class ExpiredPlotProvider implements PlotProvider {
+
     @Override
     public Collection<Plot> getPlots() {
         return PlotSquared.platform().expireManager().getPendingExpired();
     }
+
 }

@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class PvpFlag extends BooleanFlag<PvpFlag> {
+
     public static final PvpFlag PVP_TRUE = new PvpFlag(true);
     public static final PvpFlag PVP_FALSE = new PvpFlag(false);
+
     private PvpFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_pvp"));
     }
+
     @Override
     protected PvpFlag flagOf(@NonNull Boolean value) {
         return value ? PVP_TRUE : PVP_FALSE;
     }
+
 }

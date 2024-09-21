@@ -17,17 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
+
 /**
  * Exception thrown when attempting to load an invalid {@link Configuration}.
  */
 @SuppressWarnings("serial")
 public class InvalidConfigurationException extends Exception {
+
     /**
      * Creates a new instance of InvalidConfigurationException without a
      * message or cause.
      */
     public InvalidConfigurationException() {
     }
+
     /**
      * Constructs an instance of InvalidConfigurationException with the
      * specified message.
@@ -37,6 +40,7 @@ public class InvalidConfigurationException extends Exception {
     public InvalidConfigurationException(String msg) {
         super(msg);
     }
+
     /**
      * Constructs an instance of InvalidConfigurationException with the
      * specified cause.
@@ -46,6 +50,7 @@ public class InvalidConfigurationException extends Exception {
     public InvalidConfigurationException(Throwable cause) {
         super(cause);
     }
+
     /**
      * Constructs an instance of InvalidConfigurationException with the
      * specified message and cause.
@@ -56,4 +61,5 @@ public class InvalidConfigurationException extends Exception {
     public InvalidConfigurationException(String msg, Throwable cause) {
         super(msg, cause);
     }
+
 }

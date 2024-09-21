@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class EntityChangeBlockFlag extends BooleanFlag<EntityChangeBlockFlag> {
+
     public static final EntityChangeBlockFlag ENTITY_CHANGE_BLOCK_TRUE = new EntityChangeBlockFlag(true);
     public static final EntityChangeBlockFlag ENTITY_CHANGE_BLOCK_FALSE = new EntityChangeBlockFlag(false);
+
     private EntityChangeBlockFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_entity_change_block"));
     }
+
     @Override
     protected EntityChangeBlockFlag flagOf(@NonNull Boolean value) {
         return value ? ENTITY_CHANGE_BLOCK_TRUE : ENTITY_CHANGE_BLOCK_FALSE;
     }
+
 }

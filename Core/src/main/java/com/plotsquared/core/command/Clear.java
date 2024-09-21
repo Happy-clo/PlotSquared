@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.configuration.Settings;
@@ -38,7 +39,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.concurrent.CompletableFuture;
+
 @CommandDeclaration(command = "clear",
         requiredType = RequiredType.NONE,
         permission = "plots.clear",
@@ -47,9 +50,11 @@ import java.util.concurrent.CompletableFuture;
         aliases = "reset",
         confirmation = true)
 public class Clear extends Command {
+
     private final EventDispatcher eventDispatcher;
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final GlobalBlockQueue blockQueue;
+
     @Inject
     public Clear(
             final @NonNull EventDispatcher eventDispatcher,
@@ -59,6 +64,7 @@ public class Clear extends Command {
         this.eventDispatcher = eventDispatcher;
         this.blockQueue = blockQueue;
     }
+
     @Override
     public CompletableFuture<Boolean> execute(
             final PlotPlayer<?> player, String[] args,
@@ -103,6 +109,7 @@ public class Clear extends Command {
                 final long start = System.currentTimeMillis();
                 boolean result = plot.getPlotModificationManager().clear(true, false, player, () -> TaskManager.runTask(() -> {
                     plot.removeRunning();
+                    // If the state changes, then mark it as no longer done
                     if (DoneFlag.isDone(plot)) {
                         PlotFlag<?, ?> plotFlag =
                                 plot.getFlagContainer().getFlag(DoneFlag.class);
@@ -139,4 +146,5 @@ public class Clear extends Command {
         }, null);
         return CompletableFuture.completedFuture(true);
     }
+
 }

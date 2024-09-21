@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
@@ -25,6 +26,7 @@ import com.plotsquared.core.plot.Plot;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 @CommandDeclaration(command = "copy",
         permission = "plots.copy",
         aliases = {"copypaste"},
@@ -32,6 +34,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
         usage = "/plot copy <X;Z>",
         requiredType = RequiredType.NONE)
 public class Copy extends SubCommand {
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -63,6 +66,7 @@ public class Copy extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.plotworld_incompatible"));
             return false;
         }
+
         plot1.getPlotModificationManager().copy(plot2, player).thenAccept(result -> {
             if (result) {
                 player.sendMessage(
@@ -76,6 +80,8 @@ public class Copy extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("move.requires_unowned"));
             }
         });
+
         return true;
     }
+
 }

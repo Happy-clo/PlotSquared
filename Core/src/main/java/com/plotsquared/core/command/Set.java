@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.backup.BackupManager;
@@ -42,6 +43,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +53,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+
 @CommandDeclaration(command = "set",
         aliases = {"s"},
         usage = "/plot set <biome | alias | home | flag> <value...>",
@@ -58,16 +61,21 @@ import java.util.stream.Collectors;
         category = CommandCategory.APPEARANCE,
         requiredType = RequiredType.NONE)
 public class Set extends SubCommand {
+
     public static final String[] values = new String[]{"biome", "alias", "home"};
     public static final String[] aliases = new String[]{"b", "w", "wf", "a", "h"};
+
     private final SetCommand component;
+
     @Inject
     public Set(final @NonNull WorldUtil worldUtil) {
         this.component = new SetCommand() {
+
             @Override
             public String getId() {
                 return "set.component";
             }
+
             @Override
             public boolean set(PlotPlayer<?> player, final Plot plot, String value) {
                 final PlotArea plotArea = player.getLocation().getPlotArea();
@@ -75,15 +83,20 @@ public class Set extends SubCommand {
                     return false;
                 }
                 final PlotManager manager = plotArea.getPlotManager();
+
                 String[] components = manager.getPlotComponents(plot.getId());
+
                 String[] args = value.split(" ");
                 String material =
                         StringMan.join(Arrays.copyOfRange(args, 1, args.length), ",").trim();
+
                 final List<String> forbiddenTypes = new ArrayList<>(Settings.General.INVALID_BLOCKS);
+
                 if (Settings.Enabled_Components.CHUNK_PROCESSOR) {
                     forbiddenTypes.addAll(worldUtil.getTileEntityTypes().stream().map(
                             BlockType::getName).toList());
                 }
+
                 if (!player.hasPermission(Permission.PERMISSION_ADMIN_ALLOW_UNSAFE) &&
                         !forbiddenTypes.isEmpty()) {
                     for (String forbiddenType : forbiddenTypes) {
@@ -96,6 +109,7 @@ public class Set extends SubCommand {
                             if (blockType.startsWith("minecraft:")) {
                                 blockType = blockType.substring(10);
                             }
+
                             if (blockType.startsWith("##")) {
                                 try {
                                     final BlockCategory category = BlockCategory.REGISTRY.get(blockType.substring(2)
@@ -116,6 +130,7 @@ public class Set extends SubCommand {
                         }
                     }
                 }
+
                 for (String component : components) {
                     if (component.equalsIgnoreCase(args[0])) {
                         if (!player.hasPermission(Permission.PERMISSION_SET_COMPONENT.format(component))) {
@@ -132,11 +147,14 @@ public class Set extends SubCommand {
                             player.sendMessage(TranslatableCaption.of("need.need_block"));
                             return true;
                         }
+
                         Pattern pattern = PatternUtil.parse(player, material, false);
+
                         if (plot.getRunning() > 0) {
                             player.sendMessage(TranslatableCaption.of("errors.wait_for_timer"));
                             return false;
                         }
+
                         BackupManager.backup(player, plot, () -> {
                             plot.addRunning();
                             QueueCoordinator queue = plotArea.getQueue();
@@ -166,6 +184,7 @@ public class Set extends SubCommand {
                 }
                 return false;
             }
+
             @Override
             public Collection<Command> tab(
                     final PlotPlayer<?> player, final String[] args,
@@ -175,6 +194,7 @@ public class Set extends SubCommand {
             }
         };
     }
+
     public boolean noArgs(PlotPlayer<?> player) {
         ArrayList<String> newValues = new ArrayList<>(Arrays.asList("biome", "alias", "home"));
         Plot plot = player.getCurrentPlot();
@@ -187,6 +207,7 @@ public class Set extends SubCommand {
                 .join(newValues, TranslatableCaption.of("blocklist.block_list_separator").getComponent(player))));
         return false;
     }
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
@@ -200,6 +221,7 @@ public class Set extends SubCommand {
             cmd.execute(player, Arrays.copyOfRange(args, 1, args.length), null, null);
             return true;
         }
+        // Additional checks
         Plot plot = player.getCurrentPlot();
         if (plot == null) {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
@@ -209,6 +231,7 @@ public class Set extends SubCommand {
             player.sendMessage(TranslatableCaption.of("schematics.schematic_too_large"));
             return false;
         }
+        // components
         HashSet<String> components =
                 new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
         if (components.contains(args[0].toLowerCase())) {
@@ -216,10 +239,12 @@ public class Set extends SubCommand {
         }
         return noArgs(player);
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
         if (args.length == 1) {
             final List<String> completions = new LinkedList<>();
+
             if (player.hasPermission(Permission.PERMISSION_SET_BIOME)) {
                 completions.add("biome");
             }
@@ -258,17 +283,21 @@ public class Set extends SubCommand {
                             .startsWith(args[0].toLowerCase()))
                     .map(completion -> new Command(null, true, completion, "", RequiredType.NONE, CommandCategory.APPEARANCE) {
                     }).collect(Collectors.toCollection(LinkedList::new));
+
             if (player.hasPermission(Permission.PERMISSION_SET) && args[0].length() > 0) {
                 commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
             }
             return commands;
         } else if (args.length > 1) {
+            // Additional checks
             Plot plot = player.getCurrentPlot();
             if (plot == null) {
                 return new ArrayList<>();
             }
+
             final String[] newArgs = new String[args.length - 1];
             System.arraycopy(args, 1, newArgs, 0, newArgs.length);
+
             final Command cmd = MainCommand.getInstance().getCommand("set" + args[0]);
             if (cmd != null) {
                 if (!player.hasPermission(cmd.getPermission(), true)) {
@@ -276,6 +305,8 @@ public class Set extends SubCommand {
                 }
                 return cmd.tab(player, newArgs, space);
             }
+
+            // components
             HashSet<String> components =
                     new HashSet<>(Arrays.asList(plot.getManager().getPlotComponents(plot.getId())));
             if (components.contains(args[0].toLowerCase())) {
@@ -284,4 +315,5 @@ public class Set extends SubCommand {
         }
         return tabOf(player, args, space);
     }
+
 }

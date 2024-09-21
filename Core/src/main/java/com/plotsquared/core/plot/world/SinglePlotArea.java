@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.world;
+
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -42,15 +43,19 @@ import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.task.TaskManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+
 public class SinglePlotArea extends GridPlotWorld {
+
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final EventDispatcher eventDispatcher;
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final PlotListener plotListener;
     public boolean VOID = false;
+
     public SinglePlotArea(
             final @NonNull PlotAreaManager plotAreaManager,
             final @NonNull EventDispatcher eventDispatcher,
@@ -66,6 +71,7 @@ public class SinglePlotArea extends GridPlotWorld {
         this.setAllowSigns(false);
         this.setDefaultHome(new BlockLoc(Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE));
     }
+
     /**
      * Returns true if the given string matches the naming system used to identify single plot worlds
      * e.g. -1_5 represents plot id *;-1;5. "*" being the plot area name given to single plot world
@@ -99,19 +105,23 @@ public class SinglePlotArea extends GridPlotWorld {
         }
         return separator == 1;
     }
+
     @NonNull
     @Override
     protected PlotManager createManager() {
         return new SinglePlotManager(this);
     }
+
     @Override
     public void loadConfiguration(ConfigurationSection config) {
         VOID = config.getBoolean("void", false);
     }
+
     @Override
     public void saveConfiguration(ConfigurationSection config) {
         super.saveConfiguration(config);
     }
+
     public void loadWorld(final PlotId id) {
         String worldName = id.toUnderscoreSeparatedString();
         if (PlotSquared.platform().worldUtil().isWorld(worldName)) {
@@ -124,9 +134,11 @@ public class SinglePlotArea extends GridPlotWorld {
                 .terrainType(getTerrain())
                 .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
                 .worldName(worldName);
+
         File container = PlotSquared.platform().worldContainer();
         File destination = new File(container, worldName);
-        {
+
+        {// convert old
             File oldFile = new File(container, id.toCommaSeparatedString());
             if (oldFile.exists()) {
                 oldFile.renameTo(destination);
@@ -137,6 +149,7 @@ public class SinglePlotArea extends GridPlotWorld {
                 }
             }
         }
+        // Duplicate 0;0
         if (builder.plotAreaType() != PlotAreaType.NORMAL) {
             if (!destination.exists()) {
                 File src = new File(container, "0_0");
@@ -169,6 +182,7 @@ public class SinglePlotArea extends GridPlotWorld {
                 }
             }
         }
+
         try {
             TaskManager.getPlatformImplementation().sync(() -> {
                 final String name = id.toUnderscoreSeparatedString();
@@ -180,7 +194,20 @@ public class SinglePlotArea extends GridPlotWorld {
         } catch (final Exception e) {
             e.printStackTrace();
         }
+
+        //        String worldName = plot.getWorldName();
+        //        World world = Bukkit.getWorld(worldName);
+        //        if (world != null) {
+        //            return world;
+        //        }
+        //        WorldCreator wc = new WorldCreator(worldName);
+        //        wc.generator("PlotSquared:single");
+        //        wc.environment(World.Environment.NORMAL);
+        //        wc.type(WorldType.FLAT);
+        //        return AsyncWorld.create(wc);
     }
+
+
     @Override
     public ConfigurationNode[] getSettingNodes() {
         return new ConfigurationNode[]{
@@ -191,6 +218,7 @@ public class SinglePlotArea extends GridPlotWorld {
                         ConfigurationUtil.BOOLEAN
                 )};
     }
+
     @Nullable
     @Override
     public Plot getOwnedPlot(final @NonNull Location location) {
@@ -198,56 +226,67 @@ public class SinglePlotArea extends GridPlotWorld {
         Plot plot = pid == null ? null : this.plots.get(pid);
         return plot == null ? null : plot.getBasePlot(false);
     }
+
     @Nullable
     @Override
     public Plot getOwnedPlotAbs(@NonNull Location location) {
         PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         return pid == null ? null : plots.get(pid);
     }
+
     @Nullable
     @Override
     public Plot getPlot(final @NonNull Location location) {
         PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         return pid == null ? null : getPlot(pid);
     }
+
     @Nullable
     @Override
     public Plot getPlotAbs(final @NonNull Location location) {
         final PlotId pid = PlotId.fromStringOrNull(location.getWorldName());
         return pid == null ? null : getPlotAbs(pid);
     }
+
     public boolean addPlot(@NonNull Plot plot) {
         plot = adapt(plot);
         return super.addPlot(plot);
     }
+
     @Override
     public boolean addPlotAbs(@NonNull Plot plot) {
         plot = adapt(plot);
         return super.addPlotAbs(plot);
     }
+
     @Override
     public boolean addPlotIfAbsent(@NonNull Plot plot) {
         plot = adapt(plot);
         return super.addPlotIfAbsent(plot);
     }
+
     @Override
     public boolean allowSigns() {
-        return false;
+        return false; // do not create signs for single plots
     }
+
     @SuppressWarnings("deprecation")
     protected Plot adapt(Plot p) {
         if (p instanceof SinglePlot) {
             return p;
         }
         PlotSettings s = p.getSettings();
+
         final FlagContainer oldContainer = p.getFlagContainer();
         p = new SinglePlot(p.getId(), p.getOwnerAbs(), p.getTrusted(), p.getMembers(),
                 p.getDenied(), s.getAlias(), s.getPosition(), null, this, s.getMerged(),
                 p.getTimestamp(), p.temp
         );
         p.getFlagContainer().addAll(oldContainer);
+
         return p;
     }
+
     public @Nullable Plot getPlotAbs(final @NonNull PlotId id) {
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
@@ -255,11 +294,14 @@ public class SinglePlotArea extends GridPlotWorld {
         }
         return plot;
     }
+
     public @Nullable Plot getPlot(@NonNull PlotId id) {
+        // TODO
         Plot plot = getOwnedPlotAbs(id);
         if (plot == null) {
             return new SinglePlot(this, id);
         }
         return plot.getBasePlot(false);
     }
+
 }

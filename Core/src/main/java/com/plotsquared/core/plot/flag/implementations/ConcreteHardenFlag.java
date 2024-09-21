@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class ConcreteHardenFlag extends BooleanFlag<ConcreteHardenFlag> {
+
     public static final ConcreteHardenFlag CONCRETE_HARDEN_TRUE = new ConcreteHardenFlag(true);
     public static final ConcreteHardenFlag CONCRETE_HARDEN_FALSE = new ConcreteHardenFlag(false);
+
     private ConcreteHardenFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_concrete_harden"));
     }
+
     @Override
     protected ConcreteHardenFlag flagOf(@NonNull Boolean value) {
         return value ? CONCRETE_HARDEN_TRUE : CONCRETE_HARDEN_FALSE;
     }
+
 }

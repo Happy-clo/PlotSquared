@@ -17,13 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.inject.factory;
+
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.generator.HybridPlotWorld;
 import com.plotsquared.core.generator.IndependentPlotGenerator;
 import com.plotsquared.core.plot.PlotId;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import javax.annotation.Nullable;
+
 public interface HybridPlotWorldFactory {
+
     @NonNull HybridPlotWorld create(
             @NonNull @Assisted("world") String worldName,
             @Nullable @Assisted("id") String id,
@@ -31,4 +35,5 @@ public interface HybridPlotWorldFactory {
             @Nullable @Assisted("min") PlotId min,
             @Nullable @Assisted("max") PlotId max
     );
+
 }

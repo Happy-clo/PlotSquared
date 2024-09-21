@@ -17,25 +17,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
+
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+
 @FunctionalInterface
 public interface ChatFormatter {
+
     Collection<ChatFormatter> formatters = new ArrayList<>(Collections.singletonList(new PlotSquaredChatFormatter()));
+
     /**
      * Format a message using all registered formatters
      *
      * @param context Message to format
      */
     void format(@NonNull ChatContext context);
+
     final class ChatContext {
+
         private final PlotPlayer<?> recipient;
         private final boolean rawOutput;
         private String message;
+
         /**
          * Create a new chat context
          *
@@ -52,6 +60,7 @@ public interface ChatFormatter {
             this.message = message;
             this.rawOutput = rawOutput;
         }
+
         /**
          * Get the message recipient
          *
@@ -60,6 +69,7 @@ public interface ChatFormatter {
         public @Nullable PlotPlayer<?> getRecipient() {
             return this.recipient;
         }
+
         /**
          * Get the message stored in the context
          *
@@ -68,6 +78,7 @@ public interface ChatFormatter {
         public @NonNull String getMessage() {
             return this.message;
         }
+
         /**
          * Set the new message
          *
@@ -76,6 +87,7 @@ public interface ChatFormatter {
         public void setMessage(final @NonNull String message) {
             this.message = message;
         }
+
         /**
          * Whether or not the output should escape
          * any formatting keys
@@ -85,5 +97,7 @@ public interface ChatFormatter {
         public boolean isRawOutput() {
             return this.rawOutput;
         }
+
     }
+
 }

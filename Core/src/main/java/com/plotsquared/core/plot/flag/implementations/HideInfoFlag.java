@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class HideInfoFlag extends BooleanFlag<HideInfoFlag> {
+
     public static final HideInfoFlag HIDE_INFO_TRUE = new HideInfoFlag(true);
     public static final HideInfoFlag HIDE_INFO_FALSE = new HideInfoFlag(false);
+
     private HideInfoFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_hide_info"));
     }
+
     @Override
     protected HideInfoFlag flagOf(@NonNull Boolean value) {
         return value ? HIDE_INFO_TRUE : HIDE_INFO_FALSE;
     }
+
 }

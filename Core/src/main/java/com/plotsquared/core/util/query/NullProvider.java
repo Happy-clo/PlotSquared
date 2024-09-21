@@ -17,12 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
+
 import com.plotsquared.core.plot.Plot;
+
 import java.util.Collection;
 import java.util.Collections;
+
 class NullProvider implements PlotProvider {
+
     @Override
     public Collection<Plot> getPlots() {
         return Collections.emptyList();
     }
+
 }

@@ -17,14 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.permissions;
+
 import com.plotsquared.core.configuration.Settings;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Any object which can hold permissions
  */
 public interface PermissionHolder {
+
     /**
      * Check if the owner of the profile has a given (global) permission
      *
@@ -34,6 +37,7 @@ public interface PermissionHolder {
     default boolean hasPermission(final @NonNull String permission) {
         return hasPermission(null, permission);
     }
+
     /**
      * Check if the owner of the profile has a given (global) permission
      *
@@ -43,6 +47,7 @@ public interface PermissionHolder {
     default boolean hasPermission(final @NonNull Permission permission) {
         return hasPermission(permission.toString());
     }
+
     /**
      * Check if the owner of the profile has a given (global) keyed permission. Checks both {@code permission.key}
      * and {@code permission.*}
@@ -58,6 +63,7 @@ public interface PermissionHolder {
     ) {
         return hasKeyedPermission(null, permission, key);
     }
+
     /**
      * Check the highest permission a PlotPlayer has within a specified range.<br>
      * - Excessively high values will lag<br>
@@ -74,6 +80,7 @@ public interface PermissionHolder {
     ) {
         return hasPermissionRange(stub.toString(), range);
     }
+
     /**
      * Check the highest permission a PlotPlayer has within a specified range.<br>
      * - Excessively high values will lag<br>
@@ -93,6 +100,7 @@ public interface PermissionHolder {
         }
         String[] nodes = stub.split("\\.");
         StringBuilder builder = new StringBuilder();
+        // Wildcard check from less specific permission to more specific permission
         for (int i = 0; i < (nodes.length - 1); i++) {
             builder.append(nodes[i]).append(".");
             if (!stub.equals(builder + Permission.PERMISSION_STAR.toString())) {
@@ -101,6 +109,7 @@ public interface PermissionHolder {
                 }
             }
         }
+        // Wildcard check for the full permission
         if (hasPermission(stub + ".*")) {
             return Integer.MAX_VALUE;
         }
@@ -111,6 +120,7 @@ public interface PermissionHolder {
         }
         return 0;
     }
+
     /**
      * Checks if the owner of the profile has a permission, and optionally send the no permission message if applicable.
      *
@@ -121,6 +131,7 @@ public interface PermissionHolder {
     default boolean hasPermission(@NonNull Permission permission, boolean notify) {
         return hasPermission(permission.toString(), notify);
     }
+
     /**
      * Checks if the owner of the profile has a permission, and optionally send the no permission message if applicable.
      *
@@ -129,6 +140,7 @@ public interface PermissionHolder {
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
     boolean hasPermission(@NonNull String permission, boolean notify);
+
     /**
      * Check if the owner of the profile has a given permission
      *
@@ -137,6 +149,7 @@ public interface PermissionHolder {
      * @return {@code true} if the owner has the given permission, else {@code false}
      */
     boolean hasPermission(@Nullable String world, @NonNull String permission);
+
     /**
      * Check if the owner of the profile has a given keyed permission. Checks both {@code permission.key}
      * and {@code permission.*}
@@ -148,4 +161,5 @@ public interface PermissionHolder {
      * @since 6.0.10
      */
     boolean hasKeyedPermission(@Nullable String world, @NonNull String permission, @NonNull String key);
+
 }

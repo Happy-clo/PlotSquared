@@ -17,9 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
+
 import java.util.Set;
 import java.util.UUID;
+
 public class PlotHandler {
+
     public static boolean sameOwners(final Plot plot1, final Plot plot2) {
         if (plot1.getOwnerAbs() == null || plot2.getOwnerAbs() == null) {
             return false;
@@ -32,4 +35,5 @@ public class PlotHandler {
         }
         return false;
     }
+
 }

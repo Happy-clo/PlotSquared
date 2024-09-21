@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
@@ -30,16 +31,20 @@ import com.plotsquared.core.util.WorldUtil;
 import com.plotsquared.core.util.task.RunnableVal2;
 import com.plotsquared.core.util.task.RunnableVal3;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+
 @CommandDeclaration(command = "debugimportworlds",
         permission = "plots.admin",
         requiredType = RequiredType.CONSOLE,
         category = CommandCategory.TELEPORT)
 public class DebugImportWorlds extends Command {
+
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
+
     @Inject
     public DebugImportWorlds(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -49,12 +54,14 @@ public class DebugImportWorlds extends Command {
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;
     }
+
     @Override
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) throws CommandException {
+        // UUID.nameUUIDFromBytes(("OfflinePlayer:" + player.getName()).getBytes(Charsets.UTF_8))
         if (!(this.plotAreaManager instanceof SinglePlotAreaManager)) {
             player.sendMessage(TranslatableCaption.of("debugimportworlds.single_plot_area"));
             return CompletableFuture.completedFuture(false);
@@ -92,4 +99,5 @@ public class DebugImportWorlds extends Command {
         player.sendMessage(TranslatableCaption.of("players.done"));
         return CompletableFuture.completedFuture(true);
     }
+
 }

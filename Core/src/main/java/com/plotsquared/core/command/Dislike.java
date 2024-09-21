@@ -17,31 +17,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.permissions.Permission;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.TabCompletions;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @CommandDeclaration(command = "dislike",
         permission = "plots.dislike",
         usage = "/plot dislike [next|purge]",
         category = CommandCategory.INFO,
         requiredType = RequiredType.PLAYER)
 public class Dislike extends SubCommand {
+
     private final Like like;
+
     @Inject
     public Dislike(final @NonNull Like like) {
         this.like = like;
     }
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         return this.like.handleLike(player, args, false);
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -61,4 +68,5 @@ public class Dislike extends SubCommand {
         }
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
+
 }

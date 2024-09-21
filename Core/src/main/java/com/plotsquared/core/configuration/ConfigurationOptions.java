@@ -17,16 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
+
 /**
  * Various settings for controlling the input and output of a {@link
  * Configuration}.
  */
 class ConfigurationOptions {
+
     private final Configuration configuration;
     private boolean copyDefaults = false;
+
     protected ConfigurationOptions(Configuration configuration) {
         this.configuration = configuration;
     }
+
     /**
      * Returns the {@link Configuration} that this object is responsible for.
      *
@@ -35,6 +39,7 @@ class ConfigurationOptions {
     public Configuration configuration() {
         return configuration;
     }
+
     /**
      * Gets the char that will be used to separate {@link
      * ConfigurationSection}s.
@@ -46,6 +51,7 @@ class ConfigurationOptions {
     char pathSeparator() {
         return '.';
     }
+
     /**
      * Checks if the {@link Configuration} should copy values from its default
      * {@link Configuration} directly.
@@ -63,6 +69,7 @@ class ConfigurationOptions {
     public boolean copyDefaults() {
         return copyDefaults;
     }
+
     /**
      * Sets if the {@link Configuration} should copy values from its default
      * {@link Configuration} directly.
@@ -82,4 +89,5 @@ class ConfigurationOptions {
         copyDefaults = value;
         return this;
     }
+
 }

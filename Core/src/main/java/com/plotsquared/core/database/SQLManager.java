@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
+
 import com.google.common.base.Charsets;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
@@ -46,6 +47,7 @@ import com.plotsquared.core.util.task.TaskManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -71,9 +73,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+
+
 @SuppressWarnings("SqlDialectInspection")
 public class SQLManager implements AbstractDB {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + SQLManager.class.getSimpleName());
+
+    // Public final
     public final String SET_OWNER;
     public final String GET_ALL_PLOTS;
     public final String CREATE_PLOTS;
@@ -82,6 +89,8 @@ public class SQLManager implements AbstractDB {
     public final String CREATE_PLOT;
     public final String CREATE_PLOT_SAFE;
     public final String CREATE_CLUSTER;
+
+    // Private Final
     private final String prefix;
     private final Database database;
     private final boolean mySQL;
@@ -119,9 +128,11 @@ public class SQLManager implements AbstractDB {
      * cluster_settings
      */
     public volatile ConcurrentHashMap<PlotCluster, Queue<UniqueStatement>> clusterTasks;
+    // Private
     private Connection connection;
     private boolean supportsGetGeneratedKeys;
     private boolean closed = false;
+
     /**
      * Constructor
      *
@@ -138,6 +149,7 @@ public class SQLManager implements AbstractDB {
             @WorldConfig final @NonNull YamlConfiguration worldConfiguration
     )
             throws SQLException, ClassNotFoundException {
+        // Private final
         this.eventDispatcher = eventDispatcher;
         this.plotListener = plotListener;
         this.worldConfiguration = worldConfiguration;
@@ -152,12 +164,14 @@ public class SQLManager implements AbstractDB {
         this.playerTasks = new ConcurrentHashMap<>();
         this.clusterTasks = new ConcurrentHashMap<>();
         this.prefix = prefix;
+
         if (mySQL && !supportsGetGeneratedKeys) {
             String driver = databaseMetaData.getDriverName();
             String driverVersion = databaseMetaData.getDriverVersion();
             throw new SQLException("Database Driver for MySQL does not support Statement#getGeneratedKeys - which breaks " +
                     "PlotSquared functionality (Using " + driver + ":" + driverVersion + ")");
         }
+
         this.SET_OWNER = "UPDATE `" + this.prefix
                 + "plot` SET `owner` = ? WHERE `plot_id_x` = ? AND `plot_id_z` = ? AND `world` = ?";
         this.GET_ALL_PLOTS =
@@ -193,6 +207,7 @@ public class SQLManager implements AbstractDB {
             tempCreateCluster += " RETURNING `id`";
         }
         this.CREATE_CLUSTER = tempCreateCluster;
+
         try {
             createTables();
         } catch (SQLException e) {
@@ -233,6 +248,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     public boolean isValid() {
         try {
             if (connection.isClosed()) {
@@ -248,6 +264,7 @@ public class SQLManager implements AbstractDB {
             return false;
         }
     }
+
     public void reconnect() {
         try {
             close();
@@ -257,12 +274,15 @@ public class SQLManager implements AbstractDB {
             e.printStackTrace();
         }
     }
+
     public synchronized Queue<Runnable> getGlobalTasks() {
         return this.globalTasks;
     }
+
     public synchronized Queue<Runnable> getNotifyTasks() {
         return this.notifyTasks;
     }
+
     public synchronized void addPlotTask(@NonNull Plot plot, UniqueStatement task) {
         Queue<UniqueStatement> tasks = this.plotTasks.get(plot);
         if (tasks == null) {
@@ -271,23 +291,29 @@ public class SQLManager implements AbstractDB {
         }
         if (task == null) {
             task = new UniqueStatement(String.valueOf(plot.hashCode())) {
+
                 @Override
                 public PreparedStatement get() {
                     return null;
                 }
+
                 @Override
                 public void set(PreparedStatement statement) {
                 }
+
                 @Override
                 public void addBatch(PreparedStatement statement) {
                 }
+
                 @Override
                 public void execute(PreparedStatement statement) {
                 }
+
             };
         }
         tasks.add(task);
     }
+
     public synchronized void addPlayerTask(UUID uuid, UniqueStatement task) {
         if (uuid == null) {
             return;
@@ -299,23 +325,29 @@ public class SQLManager implements AbstractDB {
         }
         if (task == null) {
             task = new UniqueStatement(String.valueOf(uuid.hashCode())) {
+
                 @Override
                 public PreparedStatement get() {
                     return null;
                 }
+
                 @Override
                 public void set(PreparedStatement statement) {
                 }
+
                 @Override
                 public void addBatch(PreparedStatement statement) {
                 }
+
                 @Override
                 public void execute(PreparedStatement statement) {
                 }
+
             };
         }
         tasks.add(task);
     }
+
     public synchronized void addClusterTask(PlotCluster cluster, UniqueStatement task) {
         Queue<UniqueStatement> tasks = this.clusterTasks.get(cluster);
         if (tasks == null) {
@@ -324,31 +356,39 @@ public class SQLManager implements AbstractDB {
         }
         if (task == null) {
             task = new UniqueStatement(String.valueOf(cluster.hashCode())) {
+
                 @Override
                 public PreparedStatement get() {
                     return null;
                 }
+
                 @Override
                 public void set(PreparedStatement statement) {
                 }
+
                 @Override
                 public void addBatch(PreparedStatement statement) {
                 }
+
                 @Override
                 public void execute(PreparedStatement statement) {
                 }
+
             };
         }
         tasks.add(task);
     }
+
     public synchronized void addGlobalTask(Runnable task) {
         getGlobalTasks().add(task);
     }
+
     public synchronized void addNotifyTask(Runnable task) {
         if (task != null) {
             getNotifyTasks().add(task);
         }
     }
+
     public boolean sendBatch() {
         try {
             if (!getGlobalTasks().isEmpty()) {
@@ -543,9 +583,11 @@ public class SQLManager implements AbstractDB {
         }
         return false;
     }
+
     public Connection getConnection() {
         return this.connection;
     }
+
     /**
      * Set Plot owner
      *
@@ -562,19 +604,24 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(3, plot.getId().getY());
                 statement.setString(4, plot.getArea().toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(SQLManager.this.SET_OWNER);
             }
         });
     }
+
     @Override
     public void createPlotsAndData(final List<Plot> myList, final Runnable whenDone) {
         addGlobalTask(() -> {
             try {
+                // Create the plots
                 createPlots(myList, () -> {
                     final Map<PlotId, Integer> idMap = new HashMap<>();
+
                     try {
+                        // Creating datastructures
                         HashMap<PlotId, Plot> plotMap = new HashMap<>();
                         for (Plot plot : myList) {
                             plotMap.put(plot.getId(), plot);
@@ -583,6 +630,8 @@ public class SQLManager implements AbstractDB {
                         final ArrayList<UUIDPair> helpers = new ArrayList<>();
                         final ArrayList<UUIDPair> trusted = new ArrayList<>();
                         final ArrayList<UUIDPair> denied = new ArrayList<>();
+
+                        // Populating structures
                         try (PreparedStatement stmt = SQLManager.this.connection
                                 .prepareStatement(SQLManager.this.GET_ALL_PLOTS);
                              ResultSet result = stmt.executeQuery()) {
@@ -607,6 +656,7 @@ public class SQLManager implements AbstractDB {
                                 }
                             }
                         }
+
                         createFlags(idMap, myList, () -> createSettings(
                                 settings,
                                 () -> createTiers(helpers, "helpers",
@@ -643,6 +693,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     /**
      * Create a plot
      *
@@ -656,6 +707,7 @@ public class SQLManager implements AbstractDB {
                         2
                 );
             }
+
             @Override
             public String getCreateSQLite(int size) {
                 return getCreateSQLite(size,
@@ -663,23 +715,27 @@ public class SQLManager implements AbstractDB {
                                 + "` SELECT ? AS `plot_plot_id`, ? AS `user_uuid`", 2
                 );
             }
+
             @Override
             public String getCreateSQL() {
                 return "INSERT INTO `" + SQLManager.this.prefix + "plot_" + tier
                         + "` (`plot_plot_id`, `user_uuid`) VALUES(?,?)";
             }
+
             @Override
             public void setMySQL(PreparedStatement stmt, int i, UUIDPair pair)
                     throws SQLException {
                 stmt.setInt(i * 2 + 1, pair.id);
                 stmt.setString(i * 2 + 2, pair.uuid.toString());
             }
+
             @Override
             public void setSQLite(PreparedStatement stmt, int i, UUIDPair pair)
                     throws SQLException {
                 stmt.setInt(i * 2 + 1, pair.id);
                 stmt.setString(i * 2 + 2, pair.uuid.toString());
             }
+
             @Override
             public void setSQL(PreparedStatement stmt, UUIDPair pair)
                     throws SQLException {
@@ -689,6 +745,7 @@ public class SQLManager implements AbstractDB {
         };
         setBulk(myList, mod, whenDone);
     }
+
     public void createFlags(Map<PlotId, Integer> ids, List<Plot> plots, Runnable whenDone) {
         try (final PreparedStatement preparedStatement = this.connection.prepareStatement(
                 "INSERT INTO `" + SQLManager.this.prefix
@@ -719,6 +776,7 @@ public class SQLManager implements AbstractDB {
         LOGGER.info("Finished converting flags ({} plots processed)", plots.size());
         whenDone.run();
     }
+
     /**
      * Create a plot
      *
@@ -730,6 +788,7 @@ public class SQLManager implements AbstractDB {
             public String getCreateMySQL(int size) {
                 return getCreateMySQL(size, SQLManager.this.CREATE_PLOTS, 5);
             }
+
             @Override
             public String getCreateSQLite(int size) {
                 return getCreateSQLite(size, "INSERT INTO `" + SQLManager.this.prefix
@@ -737,10 +796,12 @@ public class SQLManager implements AbstractDB {
                         6
                 );
             }
+
             @Override
             public String getCreateSQL() {
                 return SQLManager.this.CREATE_PLOT;
             }
+
             @Override
             public void setMySQL(PreparedStatement stmt, int i, Plot plot)
                     throws SQLException {
@@ -754,6 +815,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setString(i * 5 + 4, plot.getArea().toString());
                 stmt.setTimestamp(i * 5 + 5, new Timestamp(plot.getTimestamp()));
             }
+
             @Override
             public void setSQLite(PreparedStatement stmt, int i, Plot plot)
                     throws SQLException {
@@ -768,6 +830,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setString(i * 6 + 5, plot.getArea().toString());
                 stmt.setTimestamp(i * 6 + 6, new Timestamp(plot.getTimestamp()));
             }
+
             @Override
             public void setSQL(PreparedStatement stmt, Plot plot) throws SQLException {
                 stmt.setInt(1, plot.getId().getX());
@@ -775,10 +838,12 @@ public class SQLManager implements AbstractDB {
                 stmt.setString(3, plot.getOwnerAbs().toString());
                 stmt.setString(4, plot.getArea().toString());
                 stmt.setTimestamp(5, new Timestamp(plot.getTimestamp()));
+
             }
         };
         setBulk(myList, mod, whenDone);
     }
+
     public <T> void setBulk(List<T> objList, StmtMod<T> mod, Runnable whenDone) {
         int size = objList.size();
         if (size == 0) {
@@ -888,18 +953,22 @@ public class SQLManager implements AbstractDB {
             whenDone.run();
         }
     }
+
     public void createSettings(final ArrayList<LegacySettings> myList, final Runnable whenDone) {
         try (final PreparedStatement preparedStatement = this.connection.prepareStatement(
                 "INSERT INTO `" + SQLManager.this.prefix + "plot_settings`"
                         + "(`plot_plot_id`,`biome`,`rain`,`custom_time`,`time`,`deny_entry`,`alias`,`merged`,`position`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+
             int packet;
             if (this.mySQL) {
                 packet = Math.min(myList.size(), 5000);
             } else {
                 packet = Math.min(myList.size(), 50);
             }
+
             int totalUpdated = 0;
             int updated = 0;
+
             for (final LegacySettings legacySettings : myList) {
                 preparedStatement.setInt(1, legacySettings.id);
                 preparedStatement.setNull(2, 4);
@@ -935,6 +1004,7 @@ public class SQLManager implements AbstractDB {
                 }
                 totalUpdated += 1;
             }
+
             if (totalUpdated < myList.size()) {
                 try {
                     preparedStatement.executeBatch();
@@ -948,28 +1018,33 @@ public class SQLManager implements AbstractDB {
         LOGGER.info("Finished converting settings ({} plots processed)", myList.size());
         whenDone.run();
     }
+
     public void createEmptySettings(final ArrayList<Integer> myList, final Runnable whenDone) {
         final StmtMod<Integer> mod = new StmtMod<>() {
             @Override
             public String getCreateMySQL(int size) {
                 return getCreateMySQL(size, SQLManager.this.CREATE_SETTINGS, 1);
             }
+
             @Override
             public String getCreateSQLite(int size) {
                 return getCreateSQLite(size, "INSERT INTO `" + SQLManager.this.prefix
                         + "plot_settings` SELECT ? AS `plot_plot_id`, ? AS `biome`, ? AS `rain`, ? AS `custom_time`, ? AS `time`, ? AS "
                         + "`deny_entry`, ? AS `alias`, ? AS `merged`, ? AS `position` ", 10);
             }
+
             @Override
             public String getCreateSQL() {
                 return "INSERT INTO `" + SQLManager.this.prefix
                         + "plot_settings`(`plot_plot_id`) VALUES(?)";
             }
+
             @Override
             public void setMySQL(PreparedStatement stmt, int i, Integer id)
                     throws SQLException {
                 stmt.setInt(i + 1, id);
             }
+
             @Override
             public void setSQLite(PreparedStatement stmt, int i, Integer id)
                     throws SQLException {
@@ -983,6 +1058,7 @@ public class SQLManager implements AbstractDB {
                 stmt.setNull(i * 10 + 8, 4);
                 stmt.setString(i * 10 + 9, "DEFAULT");
             }
+
             @Override
             public void setSQL(PreparedStatement stmt, Integer id) throws SQLException {
                 stmt.setInt(1, id);
@@ -990,6 +1066,7 @@ public class SQLManager implements AbstractDB {
         };
         addGlobalTask(() -> setBulk(myList, mod, whenDone));
     }
+
     public void createPlotSafe(final Plot plot, final Runnable success, final Runnable failure) {
         addPlotTask(plot, new UniqueStatement("createPlotSafe_" + plot.hashCode()) {
             @Override
@@ -1003,6 +1080,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(7, plot.getId().getX());
                 statement.setInt(8, plot.getId().getY());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -1010,9 +1088,12 @@ public class SQLManager implements AbstractDB {
                         Statement.RETURN_GENERATED_KEYS
                 );
             }
+
             @Override
             public void execute(PreparedStatement statement) {
+
             }
+
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
                 if (statement.execute() || statement.getUpdateCount() > 0) {
@@ -1026,6 +1107,7 @@ public class SQLManager implements AbstractDB {
                                         throws SQLException {
                                     statement.setInt(1, getId(plot));
                                 }
+
                                 @Override
                                 public PreparedStatement get() throws SQLException {
                                     return SQLManager.this.connection.prepareStatement(
@@ -1046,6 +1128,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     public void commit() {
         if (this.closed) {
             return;
@@ -1059,6 +1142,7 @@ public class SQLManager implements AbstractDB {
             e.printStackTrace();
         }
     }
+
     @Override
     public void createPlotAndSettings(final Plot plot, Runnable whenDone) {
         addPlotTask(plot, new UniqueStatement("createPlotAndSettings_" + plot.hashCode()) {
@@ -1070,14 +1154,17 @@ public class SQLManager implements AbstractDB {
                 statement.setString(4, plot.getArea().toString());
                 statement.setTimestamp(5, new Timestamp(plot.getTimestamp()));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection
                         .prepareStatement(SQLManager.this.CREATE_PLOT, Statement.RETURN_GENERATED_KEYS);
             }
+
             @Override
             public void execute(PreparedStatement statement) {
             }
+
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
                 statement.execute();
@@ -1093,6 +1180,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, getId(plot));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -1102,6 +1190,7 @@ public class SQLManager implements AbstractDB {
         });
         addNotifyTask(whenDone);
     }
+
     /**
      * Create tables.
      *
@@ -1116,6 +1205,7 @@ public class SQLManager implements AbstractDB {
         int create = 0;
         for (String s : tables) {
             ResultSet set = meta.getTables(null, null, this.prefix + s, new String[]{"TABLE"});
+            //            ResultSet set = meta.getTables(null, null, prefix + s, null);
             if (!set.next()) {
                 create++;
             }
@@ -1260,6 +1350,7 @@ public class SQLManager implements AbstractDB {
             stmt.clearBatch();
         }
     }
+
     @Override
     public void deleteSettings(final Plot plot) {
         addPlotTask(plot, new UniqueStatement("delete_plot_settings") {
@@ -1267,6 +1358,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, getId(plot));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -1275,6 +1367,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void deleteHelpers(final Plot plot) {
         if (plot.getTrusted().isEmpty()) {
@@ -1285,6 +1378,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, getId(plot));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -1293,6 +1387,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void deleteTrusted(final Plot plot) {
         if (plot.getMembers().isEmpty()) {
@@ -1303,6 +1398,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, getId(plot));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -1311,6 +1407,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void deleteDenied(final Plot plot) {
         if (plot.getDenied().isEmpty()) {
@@ -1321,6 +1418,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, getId(plot));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -1329,6 +1427,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void deleteComments(final Plot plot) {
         addPlotTask(plot, new UniqueStatement("delete_plot_comments") {
@@ -1337,6 +1436,7 @@ public class SQLManager implements AbstractDB {
                 statement.setString(1, plot.getArea().toString());
                 statement.setInt(2, plot.hashCode());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -1345,6 +1445,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void deleteRatings(final Plot plot) {
         if (Settings.Enabled_Components.RATING_CACHE && plot.getSettings().getRatings().isEmpty()) {
@@ -1355,6 +1456,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, getId(plot));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -1363,6 +1465,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     /**
      * Delete a plot.
      *
@@ -1381,6 +1484,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, getId(plot));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -1388,6 +1492,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     /**
      * Creates plot settings
      *
@@ -1401,6 +1506,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, id);
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -1409,6 +1515,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public int getClusterId(PlotCluster cluster) {
         if (cluster.temp > 0) {
@@ -1448,6 +1555,7 @@ public class SQLManager implements AbstractDB {
         }
         return Integer.MAX_VALUE;
     }
+
     @Override
     public int getId(Plot plot) {
         if (plot.temp > 0) {
@@ -1485,6 +1593,7 @@ public class SQLManager implements AbstractDB {
         }
         return Integer.MAX_VALUE;
     }
+
     @Override
     public void updateTables(int[] oldVersion) {
         try {
@@ -1545,6 +1654,7 @@ public class SQLManager implements AbstractDB {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+
                 rs.close();
                 try (Statement statement = this.connection.createStatement()) {
                     for (String table : new String[]{"plot_denied", "plot_helpers",
@@ -1571,41 +1681,50 @@ public class SQLManager implements AbstractDB {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
+
     public void deleteRows(ArrayList<Integer> rowIds, final String table, final String column) {
         setBulk(rowIds, new StmtMod<>() {
+
             @Override
             public String getCreateMySQL(int size) {
                 return getCreateMySQL(1, "DELETE FROM `" + table + "` WHERE `" + column + "` IN ",
                         size
                 );
             }
+
             @Override
             public String getCreateSQLite(int size) {
                 return getCreateMySQL(1, "DELETE FROM `" + table + "` WHERE `" + column + "` IN ",
                         size
                 );
             }
+
             @Override
             public String getCreateSQL() {
                 return "DELETE FROM `" + table + "` WHERE `" + column + "` = ?";
             }
+
             @Override
             public void setMySQL(PreparedStatement stmt, int i, Integer obj)
                     throws SQLException {
                 stmt.setInt(i + 1, obj);
             }
+
             @Override
             public void setSQLite(PreparedStatement stmt, int i, Integer obj)
                     throws SQLException {
                 stmt.setInt(i + 1, obj);
             }
+
             @Override
             public void setSQL(PreparedStatement stmt, Integer obj) throws SQLException {
                 stmt.setInt(1, obj);
             }
         }, null);
     }
+
     @Override
     public boolean convertFlags() {
         final Map<Integer, Map<String, String>> flagMap = new HashMap<>();
@@ -1621,7 +1740,7 @@ public class SQLManager implements AbstractDB {
                     flagMap.put(id, new HashMap<>());
                     for (String element : plotFlags.split(",")) {
                         if (element.contains(":")) {
-                            String[] split = element.split(":");
+                            String[] split = element.split(":"); // splits flag:value
                             try {
                                 String flag_str =
                                         split[1].replaceAll("¯", ":").replaceAll("\u00B4", ",");
@@ -1642,13 +1761,16 @@ public class SQLManager implements AbstractDB {
         try (final PreparedStatement preparedStatement = this.connection.prepareStatement(
                 "INSERT INTO `" + SQLManager.this.prefix
                         + "plot_flags`(`plot_id`, `flag`, `value`) VALUES(?, ?, ?)")) {
+
             long timeStarted = System.currentTimeMillis();
             int flagsProcessed = 0;
             int plotsProcessed = 0;
+
             int totalFlags = 0;
             for (final Map<String, String> flags : flagMap.values()) {
                 totalFlags += flags.size();
             }
+
             for (final Map.Entry<Integer, Map<String, String>> plotFlagEntry : flagMap.entrySet()) {
                 for (final Map.Entry<String, String> flagEntry : plotFlagEntry.getValue()
                         .entrySet()) {
@@ -1659,6 +1781,7 @@ public class SQLManager implements AbstractDB {
                     flagsProcessed += 1;
                 }
                 plotsProcessed += 1;
+
                 try {
                     preparedStatement.executeBatch();
                 } catch (final Exception e) {
@@ -1666,6 +1789,7 @@ public class SQLManager implements AbstractDB {
                     e.printStackTrace();
                     continue;
                 }
+
                 if (System.currentTimeMillis() - timeStarted >= 1000L || plotsProcessed >= flagMap
                         .size()) {
                     timeStarted = System.currentTimeMillis();
@@ -1685,6 +1809,7 @@ public class SQLManager implements AbstractDB {
         }
         return true;
     }
+
     /**
      * Load all plots, helpers, denied, trusted, and every setting from DB into a {@link HashMap}.
      */
@@ -1714,6 +1839,7 @@ public class SQLManager implements AbstractDB {
             }
             HashMap<String, UUID> uuids = new HashMap<>();
             HashMap<String, AtomicInteger> noExist = new HashMap<>();
+
             /*
              * Getting plots
              */
@@ -1833,6 +1959,7 @@ public class SQLManager implements AbstractDB {
                         deleteRows(toDelete, this.prefix + "plot_rating", "plot_plot_id");
                     }
                 }
+
                 /*
                  * Getting helpers
                  */
@@ -1859,6 +1986,7 @@ public class SQLManager implements AbstractDB {
                     }
                     deleteRows(toDelete, this.prefix + "plot_helpers", "plot_plot_id");
                 }
+
                 /*
                  * Getting trusted
                  */
@@ -1885,6 +2013,7 @@ public class SQLManager implements AbstractDB {
                     }
                     deleteRows(toDelete, this.prefix + "plot_trusted", "plot_plot_id");
                 }
+
                 /*
                  * Getting denied
                  */
@@ -1911,10 +2040,11 @@ public class SQLManager implements AbstractDB {
                     }
                     deleteRows(toDelete, this.prefix + "plot_denied", "plot_plot_id");
                 }
+
                 try (final ResultSet resultSet = statement
                         .executeQuery("SELECT * FROM `" + this.prefix + "plot_flags`")) {
                     BlockTypeListFlag.skipCategoryVerification =
-                            true;
+                            true; // allow invalid tags, as initialized lazily
                     final ArrayList<Integer> toDelete = new ArrayList<>();
                     final Map<Plot, Collection<PlotFlag<?, ?>>> invalidFlags = new HashMap<>();
                     while (resultSet.next()) {
@@ -1951,7 +2081,7 @@ public class SQLManager implements AbstractDB {
                         }
                     }
                     BlockTypeListFlag.skipCategoryVerification =
-                            false;
+                            false; // don't allow invalid tags anymore
                     if (Settings.Enabled_Components.DATABASE_PURGER) {
                         for (final Map.Entry<Plot, Collection<PlotFlag<?, ?>>> plotFlagEntry : invalidFlags
                                 .entrySet()) {
@@ -1966,6 +2096,7 @@ public class SQLManager implements AbstractDB {
                     }
                     deleteRows(toDelete, this.prefix + "plot_flags", "plot_id");
                 }
+
                 try (ResultSet resultSet = statement
                         .executeQuery("SELECT * FROM `" + this.prefix + "plot_settings`")) {
                     ArrayList<Integer> toDelete = new ArrayList<>();
@@ -2032,6 +2163,7 @@ public class SQLManager implements AbstractDB {
         }
         return newPlots;
     }
+
     @Override
     public void setMerged(final Plot plot, final boolean[] merged) {
         plot.getSettings().setMerged(merged);
@@ -2042,6 +2174,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, hash);
                 statement.setInt(2, getId(plot));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2050,6 +2183,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public CompletableFuture<Boolean> swapPlots(Plot plot1, Plot plot2) {
         final CompletableFuture<Boolean> future = new CompletableFuture<>();
@@ -2079,6 +2213,7 @@ public class SQLManager implements AbstractDB {
         });
         return future;
     }
+
     @Override
     public void movePlot(final Plot original, final Plot newPlot) {
         addPlotTask(original, new UniqueStatement("movePlot") {
@@ -2089,6 +2224,7 @@ public class SQLManager implements AbstractDB {
                 statement.setString(3, newPlot.getArea().toString());
                 statement.setInt(4, getId(original));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2098,6 +2234,7 @@ public class SQLManager implements AbstractDB {
         });
         addPlotTask(newPlot, null);
     }
+
     @Override
     public void setFlag(final Plot plot, final PlotFlag<?, ?> flag) {
         addPlotTask(plot, new UniqueStatement("setFlag") {
@@ -2108,6 +2245,7 @@ public class SQLManager implements AbstractDB {
                 statement.setString(3, flag.toString());
                 statement.setString(4, flag.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 final String statement;
@@ -2124,6 +2262,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void removeFlag(final Plot plot, final PlotFlag<?, ?> flag) {
         addPlotTask(plot, new UniqueStatement("removeFlag") {
@@ -2132,6 +2271,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getId(plot));
                 statement.setString(2, flag.getName());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2140,6 +2280,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void setAlias(final Plot plot, final String alias) {
         addPlotTask(plot, new UniqueStatement("setAlias") {
@@ -2148,6 +2289,7 @@ public class SQLManager implements AbstractDB {
                 statement.setString(1, alias);
                 statement.setInt(2, getId(plot));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2156,6 +2298,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     /**
      * Purge all plots with the following database IDs
      */
@@ -2221,6 +2364,7 @@ public class SQLManager implements AbstractDB {
             LOGGER.info("Successfully purged {} plots", uniqueIds.size());
         });
     }
+
     @Override
     public void purge(final PlotArea area, final Set<PlotId> plots) {
         addGlobalTask(() -> {
@@ -2251,14 +2395,17 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void setPosition(final Plot plot, final String position) {
         addPlotTask(plot, new UniqueStatement("setPosition") {
             @Override
             public void set(PreparedStatement statement) throws SQLException {
+                // Please see the table creation statement. There is the default value of "default"
                 statement.setString(1, position == null ? "DEFAULT" : position);
                 statement.setInt(2, getId(plot));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2267,6 +2414,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void removeComment(final Plot plot, final PlotComment comment) {
         addPlotTask(plot, new UniqueStatement("removeComment") {
@@ -2284,6 +2432,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(3, comment.senderName());
                 }
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 if (plot != null) {
@@ -2297,6 +2446,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void clearInbox(final Plot plot, final String inbox) {
         addPlotTask(plot, new UniqueStatement("clearInbox") {
@@ -2310,6 +2460,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(1, inbox);
                 }
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 if (plot != null) {
@@ -2322,6 +2473,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void getComments(
             @NonNull Plot plot, final String inbox,
@@ -2338,6 +2490,7 @@ public class SQLManager implements AbstractDB {
                     statement.setString(1, inbox);
                 }
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 if (plot != null) {
@@ -2349,9 +2502,11 @@ public class SQLManager implements AbstractDB {
                         "SELECT * FROM `" + SQLManager.this.prefix
                                 + "plot_comments` WHERE `inbox` = ?");
             }
+
             @Override
             public void execute(PreparedStatement statement) {
             }
+
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
                 ArrayList<PlotComment> comments = new ArrayList<>();
@@ -2378,6 +2533,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void setComment(final Plot plot, final PlotComment comment) {
         addPlotTask(plot, new UniqueStatement("setComment") {
@@ -2390,6 +2546,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(5, (int) (comment.timestamp() / 1000));
                 statement.setString(6, comment.senderName());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2398,6 +2555,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void removeTrusted(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("removeTrusted") {
@@ -2406,6 +2564,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getId(plot));
                 statement.setString(2, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2414,6 +2573,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void removeMember(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("removeMember") {
@@ -2422,6 +2582,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getId(plot));
                 statement.setString(2, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2430,6 +2591,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void setTrusted(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("setTrusted") {
@@ -2438,6 +2600,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getId(plot));
                 statement.setString(2, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2446,6 +2609,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void setMember(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("setMember") {
@@ -2454,6 +2618,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getId(plot));
                 statement.setString(2, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2462,6 +2627,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void removeDenied(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("removeDenied") {
@@ -2470,6 +2636,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getId(plot));
                 statement.setString(2, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2478,6 +2645,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void setDenied(final Plot plot, final UUID uuid) {
         addPlotTask(plot, new UniqueStatement("setDenied") {
@@ -2486,6 +2654,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getId(plot));
                 statement.setString(2, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2494,6 +2663,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public HashMap<UUID, Integer> getRatings(Plot plot) {
         HashMap<UUID, Integer> map = new HashMap<>();
@@ -2514,6 +2684,7 @@ public class SQLManager implements AbstractDB {
         }
         return map;
     }
+
     @Override
     public void setRating(final Plot plot, final UUID rater, final int value) {
         addPlotTask(plot, new UniqueStatement("setRating") {
@@ -2523,6 +2694,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(2, value);
                 statement.setString(3, rater.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2531,6 +2703,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void delete(PlotCluster cluster) {
         final int id = getClusterId(cluster);
@@ -2539,6 +2712,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, id);
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2551,6 +2725,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, id);
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2563,6 +2738,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, id);
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2575,6 +2751,7 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setInt(1, id);
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2582,6 +2759,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void addPersistentMeta(
             final UUID uuid, final String key, final byte[] meta,
@@ -2600,6 +2778,7 @@ public class SQLManager implements AbstractDB {
                     statement.setBytes(3, meta);
                 }
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 if (replace) {
@@ -2614,6 +2793,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void removePersistentMeta(final UUID uuid, final String key) {
         addPlayerTask(uuid, new UniqueStatement("removePersistentMeta") {
@@ -2622,6 +2802,7 @@ public class SQLManager implements AbstractDB {
                 statement.setString(1, uuid.toString());
                 statement.setString(2, key);
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2630,6 +2811,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void getPersistentMeta(final UUID uuid, final RunnableVal<Map<String, byte[]>> result) {
         addPlayerTask(uuid, new UniqueStatement("getPersistentMeta") {
@@ -2637,29 +2819,37 @@ public class SQLManager implements AbstractDB {
             public void set(PreparedStatement statement) throws SQLException {
                 statement.setString(1, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
                         "SELECT * FROM `" + SQLManager.this.prefix
                                 + "player_meta` WHERE `uuid` = ? ORDER BY `meta_id` ASC");
             }
+
             @Override
             public void execute(PreparedStatement statement) {
             }
+
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
                 ResultSet resultSet = statement.executeQuery();
+
                 final Map<String, byte[]> metaMap = new HashMap<>();
+
                 while (resultSet.next()) {
                     String key = resultSet.getString("key");
                     byte[] bytes = resultSet.getBytes("value");
                     metaMap.put(key, bytes);
                 }
+
                 resultSet.close();
                 TaskManager.runTaskAsync(() -> result.run(metaMap));
             }
+
         });
     }
+
     @Override
     public HashMap<String, Set<PlotCluster>> getClusters() {
         LinkedHashMap<String, Set<PlotCluster>> newClusters = new LinkedHashMap<>();
@@ -2718,6 +2908,7 @@ public class SQLManager implements AbstractDB {
                             newClusters.computeIfAbsent(areaid, k -> new HashSet<>());
                     set.add(cluster);
                 }
+                //Getting helpers
                 resultSet = stmt.executeQuery(
                         "SELECT `user_uuid`, `cluster_id` FROM `" + this.prefix + "cluster_helpers`");
                 while (resultSet.next()) {
@@ -2736,6 +2927,7 @@ public class SQLManager implements AbstractDB {
                                 + " Please create the cluster or remove this entry", id, cluster);
                     }
                 }
+                // Getting invited
                 resultSet = stmt.executeQuery(
                         "SELECT `user_uuid`, `cluster_id` FROM `" + this.prefix + "cluster_invited`");
                 while (resultSet.next()) {
@@ -2806,6 +2998,7 @@ public class SQLManager implements AbstractDB {
         }
         return newClusters;
     }
+
     @Override
     public void setClusterName(final PlotCluster cluster, final String name) {
         addClusterTask(cluster, new UniqueStatement("setClusterName") {
@@ -2814,6 +3007,7 @@ public class SQLManager implements AbstractDB {
                 statement.setString(1, name);
                 statement.setInt(2, getClusterId(cluster));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2823,6 +3017,7 @@ public class SQLManager implements AbstractDB {
         });
         cluster.settings.setAlias(name);
     }
+
     @Override
     public void removeHelper(final PlotCluster cluster, final UUID uuid) {
         addClusterTask(cluster, new UniqueStatement("removeHelper") {
@@ -2831,6 +3026,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getClusterId(cluster));
                 statement.setString(2, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2839,6 +3035,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void setHelper(final PlotCluster cluster, final UUID uuid) {
         addClusterTask(cluster, new UniqueStatement("setHelper") {
@@ -2847,6 +3044,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getClusterId(cluster));
                 statement.setString(2, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2855,6 +3053,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void createCluster(final PlotCluster cluster) {
         addClusterTask(cluster, new UniqueStatement("createCluster_" + cluster.hashCode()) {
@@ -2867,6 +3066,7 @@ public class SQLManager implements AbstractDB {
                 statement.setString(5, cluster.owner.toString());
                 statement.setString(6, cluster.area.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2874,9 +3074,11 @@ public class SQLManager implements AbstractDB {
                         Statement.RETURN_GENERATED_KEYS
                 );
             }
+
             @Override
             public void execute(PreparedStatement statement) {
             }
+
             @Override
             public void addBatch(PreparedStatement statement) throws SQLException {
                 statement.execute();
@@ -2895,6 +3097,7 @@ public class SQLManager implements AbstractDB {
                         statement.setInt(1, getClusterId(cluster));
                         statement.setString(2, cluster.settings.getAlias());
                     }
+
                     @Override
                     public PreparedStatement get() throws SQLException {
                         return SQLManager.this.connection.prepareStatement(
@@ -2904,12 +3107,14 @@ public class SQLManager implements AbstractDB {
                 }
         );
     }
+
     @Override
     public void resizeCluster(final PlotCluster current, PlotId min, PlotId max) {
         final PlotId pos1 = PlotId.of(current.getP1().getX(), current.getP1().getY());
         final PlotId pos2 = PlotId.of(current.getP2().getX(), current.getP2().getY());
         current.setP1(min);
         current.setP2(max);
+
         addClusterTask(current, new UniqueStatement("resizeCluster") {
             @Override
             public void set(PreparedStatement statement) throws SQLException {
@@ -2919,6 +3124,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(4, pos2.getY());
                 statement.setInt(5, getClusterId(current));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2927,6 +3133,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void setPosition(final PlotCluster cluster, final String position) {
         addClusterTask(cluster, new UniqueStatement("setPosition") {
@@ -2935,6 +3142,7 @@ public class SQLManager implements AbstractDB {
                 statement.setString(1, position);
                 statement.setInt(2, getClusterId(cluster));
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2943,6 +3151,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void removeInvited(final PlotCluster cluster, final UUID uuid) {
         addClusterTask(cluster, new UniqueStatement("removeInvited") {
@@ -2951,6 +3160,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getClusterId(cluster));
                 statement.setString(2, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2959,6 +3169,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void setInvited(final PlotCluster cluster, final UUID uuid) {
         addClusterTask(cluster, new UniqueStatement("setInvited") {
@@ -2967,6 +3178,7 @@ public class SQLManager implements AbstractDB {
                 statement.setInt(1, getClusterId(cluster));
                 statement.setString(2, uuid.toString());
             }
+
             @Override
             public PreparedStatement get() throws SQLException {
                 return SQLManager.this.connection.prepareStatement(
@@ -2975,6 +3187,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public boolean deleteTables() {
         try (Statement stmt = this.connection.createStatement();
@@ -2997,9 +3210,11 @@ public class SQLManager implements AbstractDB {
             statement.executeUpdate();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+
         }
         return true;
     }
+
     @SuppressWarnings({"unchecked", "unused"})
     @Override
     public void validateAllPlots(Set<Plot> toValidate) {
@@ -3048,9 +3263,11 @@ public class SQLManager implements AbstractDB {
                 toCreate.add(plot);
                 continue;
             }
+            // owner
             if (!plot.getOwnerAbs().equals(dataPlot.getOwnerAbs())) {
                 setOwner(plot, plot.getOwnerAbs());
             }
+            // trusted
             if (!plot.getTrusted().equals(dataPlot.getTrusted())) {
                 HashSet<UUID> toAdd = (HashSet<UUID>) plot.getTrusted().clone();
                 HashSet<UUID> toRemove = (HashSet<UUID>) dataPlot.getTrusted().clone();
@@ -3109,18 +3326,23 @@ public class SQLManager implements AbstractDB {
             if (!pf.isEmpty() && !df.isEmpty()) {
                 if (pf.size() != df.size() || !StringMan
                         .isEqual(StringMan.joinOrdered(pf, ","), StringMan.joinOrdered(df, ","))) {
+                    // setFlags(plot, pf);
+                    // TODO: Re-implement
                 }
             }
         }
+
         for (Entry<String, HashMap<PlotId, Plot>> entry : database.entrySet()) {
             HashMap<PlotId, Plot> map = entry.getValue();
             if (!map.isEmpty()) {
                 for (Entry<PlotId, Plot> entry2 : map.entrySet()) {
+                    // TODO implement this when sure safe"
                 }
             }
         }
         commit();
     }
+
     @Override
     public void replaceWorld(
             final String oldWorld, final String newWorld, final PlotId min,
@@ -3176,6 +3398,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void replaceUUID(final UUID old, final UUID now) {
         addGlobalTask(() -> {
@@ -3203,6 +3426,7 @@ public class SQLManager implements AbstractDB {
             }
         });
     }
+
     @Override
     public void close() {
         try {
@@ -3212,25 +3436,38 @@ public class SQLManager implements AbstractDB {
             e.printStackTrace();
         }
     }
+
     private record LegacySettings(
             int id,
             PlotSettings settings
     ) {
+
     }
+
     public abstract static class UniqueStatement {
+
         public final String method;
+
         public UniqueStatement(String method) {
             this.method = method;
         }
+
         public void addBatch(PreparedStatement statement) throws SQLException {
             statement.addBatch();
         }
+
         public void execute(PreparedStatement statement) throws SQLException {
             statement.executeBatch();
         }
+
         public abstract PreparedStatement get() throws SQLException;
+
         public abstract void set(PreparedStatement statement) throws SQLException;
+
     }
+
     private record UUIDPair(int id, UUID uuid) {
+
     }
+
 }

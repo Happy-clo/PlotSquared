@@ -17,16 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events.post;
+
 import com.plotsquared.core.events.PlotEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
 import com.plotsquared.core.plot.Plot;
+
 /**
  * Called when several plots were unlinked.
  *
  * @since 6.2.0
  */
 public class PostPlotUnlinkEvent extends PlotEvent {
+
     private final PlotUnlinkEvent.REASON reason;
+
     /**
      * Instantiate a new PlotUnlinkedEvent.
      *
@@ -37,6 +41,7 @@ public class PostPlotUnlinkEvent extends PlotEvent {
         super(plot);
         this.reason = reason;
     }
+
     /**
      * The original reason provided by {@link PlotUnlinkEvent}.
      *
@@ -45,4 +50,5 @@ public class PostPlotUnlinkEvent extends PlotEvent {
     public PlotUnlinkEvent.REASON getReason() {
         return reason;
     }
+
 }

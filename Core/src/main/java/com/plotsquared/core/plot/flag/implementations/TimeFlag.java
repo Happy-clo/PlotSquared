@@ -17,16 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.LongFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class TimeFlag extends LongFlag<TimeFlag> {
+
     public static final TimeFlag TIME_DISABLED = new TimeFlag(Long.MIN_VALUE);
+
     protected TimeFlag(@NonNull Long value) {
         super(value, TranslatableCaption.of("flags.flag_description_time"));
     }
+
     @Override
     protected TimeFlag flagOf(@NonNull Long value) {
         return new TimeFlag(value);
     }
+
 }

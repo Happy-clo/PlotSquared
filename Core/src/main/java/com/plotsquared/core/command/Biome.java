@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
@@ -28,9 +29,11 @@ import com.sk89q.worldedit.world.biome.BiomeTypes;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import java.util.Collection;
 import java.util.Locale;
 import java.util.stream.Collectors;
+
 @CommandDeclaration(command = "setbiome",
         permission = "plots.set.biome",
         usage = "/plot biome [biome]",
@@ -38,6 +41,7 @@ import java.util.stream.Collectors;
         category = CommandCategory.APPEARANCE,
         requiredType = RequiredType.NONE)
 public class Biome extends SetCommand {
+
     @Override
     public boolean set(final PlotPlayer<?> player, final Plot plot, final String value) {
         BiomeType biome = null;
@@ -74,6 +78,7 @@ public class Biome extends SetCommand {
         });
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return SuggestionHelper.getNamespacedRegistrySuggestions(BiomeType.REGISTRY, args[0])
@@ -82,4 +87,5 @@ public class Biome extends SetCommand {
                 .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());
     }
+
 }

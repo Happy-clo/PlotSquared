@@ -17,10 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
+
 /**
  * The different types of weather that can be set for a Plot.
  */
 public enum PlotWeather {
+
     /**
      * Rainy weather conditions
      */

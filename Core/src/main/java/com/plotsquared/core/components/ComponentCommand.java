@@ -17,12 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.components;
+
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.command.CommandDeclaration;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.command.SubCommand;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotInventory;
+
 @CommandDeclaration(command = "components",
         permission = "plots.components",
         description = "Open the component preset GUI",
@@ -30,10 +32,13 @@ import com.plotsquared.core.plot.PlotInventory;
         category = CommandCategory.APPEARANCE,
         requiredType = RequiredType.PLAYER)
 public class ComponentCommand extends SubCommand {
+
     private final ComponentPresetManager componentPresetManager;
+
     public ComponentCommand(final ComponentPresetManager componentPresetManager) {
         this.componentPresetManager = componentPresetManager;
     }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, final String[] args) {
         final PlotInventory inventory = componentPresetManager.buildInventory(player);
@@ -42,4 +47,5 @@ public class ComponentCommand extends SubCommand {
         }
         return true;
     }
+
 }

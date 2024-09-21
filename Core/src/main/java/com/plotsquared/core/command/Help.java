@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
@@ -29,24 +30,29 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
+
 @CommandDeclaration(command = "help",
         aliases = "?",
         category = CommandCategory.INFO,
         usage = "help [category | #]",
         permission = "plots.use")
 public class Help extends Command {
+
     public Help(Command parent) {
         super(parent, true);
     }
+
     @Override
     public boolean canExecute(PlotPlayer<?> player, boolean message) {
         return true;
     }
+
     @Override
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
@@ -82,12 +88,14 @@ public class Help extends Command {
         }
         return CompletableFuture.completedFuture(true);
     }
+
     public CompletableFuture<Boolean> displayHelp(
             final PlotPlayer<?> player, final String catRaw,
             final int page
     ) {
         return CompletableFuture.supplyAsync(() -> {
             String cat = catRaw;
+
             CommandCategory catEnum = null;
             if (cat != null) {
                 if (!"all".equalsIgnoreCase(cat)) {
@@ -149,10 +157,12 @@ public class Help extends Command {
             return true;
         });
     }
+
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final String argument = args[0].toLowerCase(Locale.ENGLISH);
         List<Command> result = new ArrayList<>();
+
         for (final CommandCategory category : CommandCategory.values()) {
             if (!category.canAccess(player)) {
                 continue;
@@ -164,10 +174,12 @@ public class Help extends Command {
             result.add(new Command(null, false, name, "", RequiredType.NONE, null) {
             });
         }
+        // add the category "all"
         if ("all".startsWith(argument)) {
             result.add(new Command(null, false, "all", "", RequiredType.NONE, null) {
             });
         }
         return result;
     }
+
 }

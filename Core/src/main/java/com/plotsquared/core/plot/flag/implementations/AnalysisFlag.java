@@ -17,17 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.types.ListFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
+
 public class AnalysisFlag extends ListFlag<Integer, AnalysisFlag> implements InternalFlag {
+
     public AnalysisFlag(final List<Integer> valueList) {
         super(valueList, TranslatableCaption.of("info.none"), TranslatableCaption.of("info.none"));
     }
+
     @Override
     public AnalysisFlag parse(@NonNull String input) throws FlagParseException {
         final String[] split = input.split(",");
@@ -37,12 +42,15 @@ public class AnalysisFlag extends ListFlag<Integer, AnalysisFlag> implements Int
         }
         return flagOf(numbers);
     }
+
     @Override
     public String getExample() {
         return "";
     }
+
     @Override
     protected AnalysisFlag flagOf(@NonNull List<Integer> value) {
         return new AnalysisFlag(value);
     }
+
 }

@@ -17,17 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.location;
+
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.StringMan;
+
 public record ChunkWrapper(
         String world,
         int x,
         int z
 ) {
+
     @Override
     public int hashCode() {
         return MathMan.pair((short) x, (short) z);
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -46,8 +50,10 @@ public record ChunkWrapper(
         return (this.x == other.x) && (this.z == other.z) && StringMan
                 .isEqual(this.world, other.world);
     }
+
     @Override
     public String toString() {
         return this.world + ":" + this.x + "," + this.z;
     }
+
 }

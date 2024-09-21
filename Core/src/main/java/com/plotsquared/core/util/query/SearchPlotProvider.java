@@ -17,23 +17,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
+
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 class SearchPlotProvider implements PlotProvider {
+
     private final String searchTerm;
+
     SearchPlotProvider(final @NonNull String searchTerm) {
         this.searchTerm = searchTerm;
     }
+
     /**
      * Fuzzy plot search with spaces separating terms.
      * - Terms: type, alias, world, owner, trusted, member
@@ -45,8 +51,10 @@ class SearchPlotProvider implements PlotProvider {
     private static List<Plot> getPlotsBySearch(final @NonNull String search) {
         String[] split = search.split(" ");
         int size = split.length * 2;
+
         List<UUID> uuids = new ArrayList<>();
         PlotId id = null;
+
         for (String term : split) {
             try {
                 UUID uuid = PlotSquared.get().getImpromptuUUIDPipeline()
@@ -59,9 +67,11 @@ class SearchPlotProvider implements PlotProvider {
                 id = PlotId.fromString(term);
             }
         }
+
         ArrayList<ArrayList<Plot>> plotList =
                 IntStream.range(0, size).mapToObj(i -> new ArrayList<Plot>())
                         .collect(Collectors.toCollection(() -> new ArrayList<>(size)));
+
         PlotArea area = null;
         String alias = null;
         for (Plot plot : PlotQuery.newQuery().allPlots()) {
@@ -90,6 +100,7 @@ class SearchPlotProvider implements PlotProvider {
                 plotList.get(count - 1).add(plot);
             }
         }
+
         List<Plot> plots = new ArrayList<>();
         for (int i = plotList.size() - 1; i >= 0; i--) {
             if (!plotList.get(i).isEmpty()) {
@@ -98,8 +109,10 @@ class SearchPlotProvider implements PlotProvider {
         }
         return plots;
     }
+
     @Override
     public Collection<Plot> getPlots() {
         return getPlotsBySearch(this.searchTerm);
     }
+
 }

@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class LeafDecayFlag extends BooleanFlag<LeafDecayFlag> {
+
     public static final LeafDecayFlag LEAF_DECAY_TRUE = new LeafDecayFlag(true);
     public static final LeafDecayFlag LEAF_DECAY_FALSE = new LeafDecayFlag(false);
+
     private LeafDecayFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_leaf_decay"));
     }
+
     @Override
     protected LeafDecayFlag flagOf(@NonNull Boolean value) {
         return value ? LEAF_DECAY_TRUE : LEAF_DECAY_FALSE;
     }
+
 }

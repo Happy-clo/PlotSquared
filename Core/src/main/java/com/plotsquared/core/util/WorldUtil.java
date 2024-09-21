@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.location.Location;
@@ -39,6 +40,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +59,9 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 public abstract class WorldUtil {
+
     /**
      * {@return whether the given location is valid in the world}
      * @param location the location to check
@@ -66,6 +70,7 @@ public abstract class WorldUtil {
     public static boolean isValidLocation(Location location) {
         return Math.abs(location.getX()) < 30000000 && Math.abs(location.getZ()) < 30000000;
     }
+
     /**
      * Set the biome in a region
      *
@@ -77,6 +82,7 @@ public abstract class WorldUtil {
     public static void setBiome(String world, final CuboidRegion region, BiomeType biome) {
         PlotSquared.platform().worldUtil().setBiomes(world, region, biome);
     }
+
     /**
      * Check if a given world name corresponds to a real world
      *
@@ -85,6 +91,7 @@ public abstract class WorldUtil {
      *         {@code false} if not
      */
     public abstract boolean isWorld(@NonNull String worldName);
+
     /**
      * @param location Sign location
      * @return Sign content (or an empty string array if the block is not a sign)
@@ -93,6 +100,7 @@ public abstract class WorldUtil {
     @Deprecated
     public @NonNull
     abstract String[] getSignSynchronous(@NonNull Location location);
+
     /**
      * Get the world spawn location
      *
@@ -101,18 +109,21 @@ public abstract class WorldUtil {
      */
     public @NonNull
     abstract Location getSpawn(@NonNull String world);
+
     /**
      * Set the world spawn location
      *
      * @param location New spawn
      */
     public abstract void setSpawn(@NonNull Location location);
+
     /**
      * Save a world
      *
      * @param world World name
      */
     public abstract void saveWorld(@NonNull String world);
+
     /**
      * Get a string comparison with the closets block state matching a given string
      *
@@ -121,6 +132,7 @@ public abstract class WorldUtil {
      */
     public @NonNull
     abstract StringComparison<BlockState>.ComparisonResult getClosestBlock(@NonNull String name);
+
     /**
      * Set the block at the specified location to a sign, with given text
      *
@@ -133,6 +145,7 @@ public abstract class WorldUtil {
             @NonNull Caption[] lines,
             @NonNull TagResolver... replacements
     );
+
     /**
      * Get the biome in a given chunk, asynchronously
      *
@@ -142,6 +155,7 @@ public abstract class WorldUtil {
      * @param result Result consumer
      */
     public abstract void getBiome(@NonNull String world, int x, int z, @NonNull Consumer<BiomeType> result);
+
     /**
      * Get the biome in a given chunk, asynchronously
      *
@@ -154,6 +168,7 @@ public abstract class WorldUtil {
     @Deprecated
     public @NonNull
     abstract BiomeType getBiomeSynchronous(@NonNull String world, int x, int z);
+
     /**
      * Get the block at a given location (asynchronously)
      *
@@ -161,6 +176,7 @@ public abstract class WorldUtil {
      * @param result   Result consumer
      */
     public abstract void getBlock(@NonNull Location location, @NonNull Consumer<BlockState> result);
+
     /**
      * Get the block at a given location (synchronously)
      *
@@ -171,6 +187,7 @@ public abstract class WorldUtil {
     @Deprecated
     public @NonNull
     abstract BlockState getBlockSynchronous(@NonNull Location location);
+
     /**
      * Get the Y coordinate of the highest non-air block in the world, asynchronously
      *
@@ -180,6 +197,7 @@ public abstract class WorldUtil {
      * @param result Result consumer
      */
     public abstract void getHighestBlock(@NonNull String world, int x, int z, @NonNull IntConsumer result);
+
     /**
      * Get the Y coordinate of the highest non-air block in the world, synchronously
      *
@@ -192,6 +210,7 @@ public abstract class WorldUtil {
     @Deprecated
     @NonNegative
     public abstract int getHighestBlockSynchronous(@NonNull String world, int x, int z);
+
     /**
      * Set the biome in a region
      *
@@ -203,6 +222,7 @@ public abstract class WorldUtil {
         final World world = getWeWorld(worldName);
         region.forEach(bv -> world.setBiome(bv, biome));
     }
+
     /**
      * Get the WorldEdit {@link com.sk89q.worldedit.world.World} corresponding to a world name
      *
@@ -210,6 +230,7 @@ public abstract class WorldUtil {
      * @return World object
      */
     public abstract com.sk89q.worldedit.world.@NonNull World getWeWorld(@NonNull String world);
+
     /**
      * Refresh (resend) chunk to player. Usually after setting the biome
      *
@@ -218,6 +239,7 @@ public abstract class WorldUtil {
      * @param world World of the chunk
      */
     public abstract void refreshChunk(int x, int z, String world);
+
     /**
      * The legacy web interface is deprecated for removal in favor of Arkitektonika.
      */
@@ -253,6 +275,7 @@ public abstract class WorldUtil {
                             }
                             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                                 try (NBTOutputStream out = new NBTOutputStream(new GZIPOutputStream(baos, true))) {
+                                    //TODO Find what this should be called
                                     out.writeNamedTag("Schematic????", new CompoundTag(newMap));
                                 }
                                 zos.write(baos.toByteArray());
@@ -275,6 +298,7 @@ public abstract class WorldUtil {
                                     mca)) {
                                 final File file = getMcr(plot.getWorldName(), mca.getX(), mca.getZ());
                                 if (file != null) {
+                                    //final String name = "r." + (x - cx) + "." + (z - cz) + ".mca";
                                     String name = file.getName();
                                     final ZipEntry ze = new ZipEntry("world" + File.separator + "region" + File.separator + name);
                                     zos.putNextEntry(ze);
@@ -299,6 +323,7 @@ public abstract class WorldUtil {
             }
         }, whenDone));
     }
+
     final @Nullable File getDat(final @NonNull String world) {
         File file = new File(PlotSquared.platform().worldContainer() + File.separator + world + File.separator + "level.dat");
         if (file.exists()) {
@@ -306,6 +331,7 @@ public abstract class WorldUtil {
         }
         return null;
     }
+
     @Nullable
     private File getMcr(final @NonNull String world, final int x, final int z) {
         final File file =
@@ -318,6 +344,8 @@ public abstract class WorldUtil {
         }
         return null;
     }
+
+
     public Set<BlockVector2> getChunkChunks(String world) {
         File folder = new File(PlotSquared.platform().worldContainer(), world + File.separator + "region");
         File[] regionFiles = folder.listFiles();
@@ -340,6 +368,7 @@ public abstract class WorldUtil {
         }
         return chunks;
     }
+
     /**
      * Check if two blocks are the same type)
      *
@@ -348,6 +377,7 @@ public abstract class WorldUtil {
      * @return {@code true} if the blocks have the same type, {@code false} if not
      */
     public abstract boolean isBlockSame(@NonNull BlockState block1, @NonNull BlockState block2);
+
     /**
      * Get the player health
      *
@@ -356,6 +386,7 @@ public abstract class WorldUtil {
      */
     @NonNegative
     public abstract double getHealth(@NonNull PlotPlayer<?> player);
+
     /**
      * Set the player health
      *
@@ -363,6 +394,7 @@ public abstract class WorldUtil {
      * @param health Non-negative health
      */
     public abstract void setHealth(@NonNull PlotPlayer<?> player, @NonNegative double health);
+
     /**
      * Get the player food level
      *
@@ -371,6 +403,7 @@ public abstract class WorldUtil {
      */
     @NonNegative
     public abstract int getFoodLevel(@NonNull PlotPlayer<?> player);
+
     /**
      * Set the player food level
      *
@@ -378,6 +411,7 @@ public abstract class WorldUtil {
      * @param foodLevel Non-negative food level
      */
     public abstract void setFoodLevel(@NonNull PlotPlayer<?> player, @NonNegative int foodLevel);
+
     /**
      * Get all entity types belonging to an entity category
      *
@@ -386,6 +420,7 @@ public abstract class WorldUtil {
      */
     public @NonNull
     abstract Set<EntityType> getTypesInCategory(@NonNull String category);
+
     /**
      * Get all recognized tile entity types
      *
@@ -393,6 +428,7 @@ public abstract class WorldUtil {
      */
     public @NonNull
     abstract Collection<BlockType> getTileEntityTypes();
+
     /**
      * Get the tile entity count in a chunk
      *
@@ -402,4 +438,5 @@ public abstract class WorldUtil {
      */
     @NonNegative
     public abstract int getTileEntityCount(@NonNull String world, @NonNull BlockVector2 chunk);
+
 }

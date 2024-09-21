@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -26,19 +27,23 @@ import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import java.util.Collection;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 @CommandDeclaration(command = "target",
         usage = "/plot target <<X;Z> | nearest>",
         permission = "plots.target",
         requiredType = RequiredType.PLAYER,
         category = CommandCategory.INFO)
 public class Target extends SubCommand {
+
     public Target() {
         super();
     }
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -77,6 +82,7 @@ public class Target extends SubCommand {
         );
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
         return Stream.of("<X;Z>", "nearest")
@@ -84,4 +90,5 @@ public class Target extends SubCommand {
                 .map(value -> new Command(null, false, value, "plots.target", RequiredType.PLAYER, null) {
                 }).collect(Collectors.toList());
     }
+
 }

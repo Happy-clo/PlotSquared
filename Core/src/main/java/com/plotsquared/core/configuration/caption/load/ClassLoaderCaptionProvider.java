@@ -17,10 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption.load;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,11 +30,15 @@ import java.io.InputStreamReader;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+
 import static com.plotsquared.core.configuration.caption.load.CaptionLoader.loadFromReader;
+
 final class ClassLoaderCaptionProvider implements DefaultCaptionProvider {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ClassLoaderCaptionProvider.class.getSimpleName());
     private final ClassLoader classLoader;
     private final Function<@NonNull Locale, @NonNull String> urlProvider;
+
     ClassLoaderCaptionProvider(
             final @NonNull ClassLoader classLoader,
             final @NonNull Function<@NonNull Locale, @NonNull String> urlProvider
@@ -40,6 +46,7 @@ final class ClassLoaderCaptionProvider implements DefaultCaptionProvider {
         this.classLoader = classLoader;
         this.urlProvider = urlProvider;
     }
+
     @Override
     public @Nullable Map<String, String> loadDefaults(final @NonNull Locale locale) {
         final String url = this.urlProvider.apply(locale);
@@ -61,4 +68,5 @@ final class ClassLoaderCaptionProvider implements DefaultCaptionProvider {
             return null;
         }
     }
+
 }

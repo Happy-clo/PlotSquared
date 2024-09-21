@@ -17,18 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.database.DBFunc;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.util.query.PlotQuery;
+
 import java.util.List;
+
 @CommandDeclaration(command = "debugsavetest",
         permission = "plots.debugsavetest",
         category = CommandCategory.DEBUG,
         requiredType = RequiredType.CONSOLE,
         usage = "/plot debugsavetest")
 public class DebugSaveTest extends SubCommand {
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         final List<Plot> plots = PlotQuery.newQuery().allPlots().asList();
@@ -39,4 +43,5 @@ public class DebugSaveTest extends SubCommand {
         );
         return true;
     }
+
 }

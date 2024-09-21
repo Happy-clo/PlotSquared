@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class NotifyEnterFlag extends BooleanFlag<NotifyEnterFlag> {
+
     public static final NotifyEnterFlag NOTIFY_ENTER_TRUE = new NotifyEnterFlag(true);
     public static final NotifyEnterFlag NOTIFY_ENTER_FALSE = new NotifyEnterFlag(false);
+
     private NotifyEnterFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_notify_enter"));
     }
+
     @Override
     protected NotifyEnterFlag flagOf(@NonNull Boolean value) {
         return value ? NOTIFY_ENTER_TRUE : NOTIFY_ENTER_FALSE;
     }
+
 }

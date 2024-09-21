@@ -17,8 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import java.util.HashMap;
 import java.util.Map;
+
 /**
  * Enum for {@link CancellablePlotEvent}.
  * <p>
@@ -28,19 +30,25 @@ import java.util.Map;
  * WARNING: this may have unintended consequences! Make sure you study the appropriate code before using!
  */
 public enum Result {
+
     DENY(0),
     ACCEPT(1),
     FORCE(2);
+
     private static final Map<Integer, Result> map = new HashMap<>();
+
     static {
         for (Result eventResult : Result.values()) {
             map.put(eventResult.value, eventResult);
         }
     }
+
     private final int value;
+
     Result(int value) {
         this.value = value;
     }
+
     /**
      * Obtain the Result enum associated with the int value
      *
@@ -50,6 +58,7 @@ public enum Result {
     public static Result valueOf(int eventResult) {
         return map.get(eventResult);
     }
+
     /**
      * Get int value of enum
      *

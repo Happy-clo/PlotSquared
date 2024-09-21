@@ -17,10 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.database;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 /**
  * Abstract Database class, serves as a base for any connection method (MySQL, SQLite, etc.)
  *
@@ -28,7 +30,9 @@ import java.sql.Statement;
  * @author tips48
  */
 public abstract class Database {
+
     public abstract Connection forceConnection() throws SQLException, ClassNotFoundException;
+
     /**
      * Opens a connection with the database.
      *
@@ -37,6 +41,7 @@ public abstract class Database {
      * @throws ClassNotFoundException if the driver cannot be found
      */
     public abstract Connection openConnection() throws SQLException, ClassNotFoundException;
+
     /**
      * Checks if a connection is open with the database.
      *
@@ -44,12 +49,14 @@ public abstract class Database {
      * @throws SQLException if the connection cannot be checked
      */
     public abstract boolean checkConnection() throws SQLException;
+
     /**
      * Gets the connection with the database.
      *
      * @return Connection with the database, null if none
      */
     public abstract Connection getConnection();
+
     /**
      * Closes the connection with the database.
      *
@@ -57,6 +64,7 @@ public abstract class Database {
      * @throws SQLException if the connection cannot be closed
      */
     public abstract boolean closeConnection() throws SQLException;
+
     /**
      * Executes a SQL Query.
      * If the connection is closed, it will be opened.
@@ -67,6 +75,7 @@ public abstract class Database {
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
     public abstract ResultSet querySQL(String query) throws SQLException, ClassNotFoundException;
+
     /**
      * Executes an Update SQL Query.
      * See {@link Statement#executeUpdate(String)}.
@@ -78,4 +87,5 @@ public abstract class Database {
      * @throws ClassNotFoundException If the driver cannot be found; see {@link #openConnection()}
      */
     public abstract int updateSQL(String query) throws SQLException, ClassNotFoundException;
+
 }

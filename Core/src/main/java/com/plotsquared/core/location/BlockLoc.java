@@ -17,26 +17,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.location;
+
 import com.plotsquared.core.util.StringMan;
+
 public class BlockLoc {
+
     public static final BlockLoc ZERO = new BlockLoc(0, 0, 0);
     public static final BlockLoc MINY = new BlockLoc(0, Integer.MIN_VALUE, 0);
     private static final BlockLoc MIDDLE = new BlockLoc(Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE);
+
     private final int x;
     private final int y;
     private final int z;
+
     private final float yaw;
     private final float pitch;
+
     public BlockLoc(int x, int y, int z) {
         this(x, y, z, 0f, 0f);
     }
+
     public BlockLoc(int x, int y, int z, float yaw, float pitch) {
         this.x = x;
         this.y = y;
         this.z = z;
+
         this.yaw = yaw;
         this.pitch = pitch;
     }
+
     public static BlockLoc fromString(String string) {
         if (string == null || "side".equalsIgnoreCase(string)) {
             return null;
@@ -44,6 +53,7 @@ public class BlockLoc {
             return MIDDLE;
         } else {
             String[] parts = string.split(",");
+
             float yaw;
             float pitch;
             if (parts.length == 5) {
@@ -58,9 +68,11 @@ public class BlockLoc {
             int x = Integer.parseInt(parts[0]);
             int y = Integer.parseInt(parts[1]);
             int z = Integer.parseInt(parts[2]);
+
             return new BlockLoc(x, y, z, yaw, pitch);
         }
     }
+
     @Override
     public int hashCode() {
         int prime = 31;
@@ -70,6 +82,7 @@ public class BlockLoc {
         result = prime * result + this.getZ();
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -85,6 +98,7 @@ public class BlockLoc {
         return this.getX() == other.getX() && this.getY() == other.getY() && this.getZ() == other
                 .getZ() && this.getYaw() == other.getYaw() && this.getPitch() == other.getPitch();
     }
+
     @Override
     public String toString() {
         if (this.getX() == 0 && this.getY() == 0 && this.getZ() == 0 && this.getYaw() == 0 && this.getPitch() == 0) {
@@ -92,20 +106,27 @@ public class BlockLoc {
         }
         return this.getX() + "," + this.getY() + ',' + this.getZ() + ',' + this.getYaw() + ','
                 + this.getPitch();
+
     }
+
     public int getX() {
         return x;
     }
+
     public int getY() {
         return y;
     }
+
     public int getZ() {
         return z;
     }
+
     public float getYaw() {
         return yaw;
     }
+
     public float getPitch() {
         return pitch;
     }
+
 }

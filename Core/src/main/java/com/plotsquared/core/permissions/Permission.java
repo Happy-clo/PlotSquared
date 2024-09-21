@@ -17,14 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.permissions;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
+
 /**
  * Permission class.
  */
 public enum Permission implements ComponentLike {
+
+    //@formatter:off
+    //<editor-fold desc="Static Permission">
     PERMISSION_STAR("*"),
     PERMISSION_ADMIN("plots.admin"),
     PERMISSION_ADMIN_AREA_SUDO("plots.admin.area.sudo"),
@@ -201,19 +206,26 @@ public enum Permission implements ComponentLike {
     PERMISSION_ADMIN_COMPONENTS_OTHER("plots.admin.component.other"),
     PERMISSION_ADMIN_BYPASS_BORDER("plots.admin.border.bypass"),
     PERMISSION_ADMIN_BYPASS_ECON("plots.admin.econ.bypass");
+    //</editor-fold>
+
     private final String text;
+
     Permission(final @NonNull String text) {
         this.text = text;
     }
+
     @Override
     public String toString() {
         return this.text;
     }
+
     public String format(Object... replacements) {
         return String.format(this.toString(), replacements);
     }
+
     @Override
     public @NotNull Component asComponent() {
         return Component.text(text);
     }
+
 }

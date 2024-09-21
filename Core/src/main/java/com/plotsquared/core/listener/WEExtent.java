@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.listener;
+
 import com.plotsquared.core.util.WEManager;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.entity.BaseEntity;
@@ -32,15 +33,20 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.world.block.BlockTypes;
+
 import java.util.Set;
+
 public class WEExtent extends AbstractDelegateExtent {
+
     public static BlockState AIRSTATE = BlockTypes.AIR.getDefaultState();
     public static BaseBlock AIRBASE = BlockTypes.AIR.getDefaultState().toBaseBlock();
     private final Set<CuboidRegion> mask;
+
     public WEExtent(Set<CuboidRegion> mask, Extent extent) {
         super(extent);
         this.mask = mask;
     }
+
     @SuppressWarnings("unchecked")
     @Override
     public boolean setBlock(BlockVector3 location, BlockStateHolder block)
@@ -48,6 +54,7 @@ public class WEExtent extends AbstractDelegateExtent {
         return WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())
                 && super.setBlock(location, block);
     }
+
     @Override
     public Entity createEntity(Location location, BaseEntity entity) {
         if (WEManager.maskContains(this.mask, location.getBlockX(), location.getBlockY(),
@@ -57,11 +64,13 @@ public class WEExtent extends AbstractDelegateExtent {
         }
         return null;
     }
+
     @Override
     public boolean setBiome(BlockVector2 position, BiomeType biome) {
         return WEManager.maskContains(this.mask, position.getX(), position.getZ()) && super
                 .setBiome(position, biome);
     }
+
     @Override
     public BlockState getBlock(BlockVector3 location) {
         if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
@@ -69,6 +78,7 @@ public class WEExtent extends AbstractDelegateExtent {
         }
         return AIRSTATE;
     }
+
     @Override
     public BaseBlock getFullBlock(BlockVector3 location) {
         if (WEManager.maskContains(this.mask, location.getX(), location.getY(), location.getZ())) {
@@ -76,4 +86,5 @@ public class WEExtent extends AbstractDelegateExtent {
         }
         return AIRBASE;
     }
+
 }

@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class DisablePhysicsFlag extends BooleanFlag<DisablePhysicsFlag> {
+
     public static final DisablePhysicsFlag DISABLE_PHYSICS_TRUE = new DisablePhysicsFlag(true);
     public static final DisablePhysicsFlag DISABLE_PHYSICS_FALSE = new DisablePhysicsFlag(false);
+
     private DisablePhysicsFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_disable_physics"));
     }
+
     @Override
     protected DisablePhysicsFlag flagOf(@NonNull Boolean value) {
         return value ? DISABLE_PHYSICS_TRUE : DISABLE_PHYSICS_FALSE;
     }
+
 }

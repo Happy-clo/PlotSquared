@@ -17,15 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
+
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public abstract class NumberFlag<N extends Number & Comparable<N>, F extends PlotFlag<N, F>>
         extends PlotFlag<N, F> {
+
     protected final N minimum;
     protected final N maximum;
+
     protected NumberFlag(
             @NonNull N value, N minimum, N maximum, @NonNull Caption flagCategory,
             @NonNull Caption flagDescription
@@ -38,6 +42,7 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
         this.minimum = minimum;
         this.maximum = maximum;
     }
+
     @Override
     public F parse(@NonNull String input) throws FlagParseException {
         final N parsed = parseNumber(input);
@@ -45,7 +50,9 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
             throw new FlagParseException(this, input, TranslatableCaption.of("flags.flag_error_integer"));
         }
         return flagOf(parsed);
+
     }
+
     /**
      * Parse the raw string input to the number type.
      *
@@ -55,4 +62,5 @@ public abstract class NumberFlag<N extends Number & Comparable<N>, F extends Plo
      */
     @NonNull
     protected abstract N parseNumber(String input) throws FlagParseException;
+
 }

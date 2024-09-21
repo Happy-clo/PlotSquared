@@ -17,16 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
+
 import java.util.Collection;
+
 /**
  * A utility class for modifying components.
  *
  * @since 7.0.0
  */
 public class ComponentHelper {
+
     /**
      * Joins multiple {@link Component}s into one final {@link ComponentLike}
      *
@@ -38,6 +42,7 @@ public class ComponentHelper {
     public static ComponentLike join(Collection<? extends ComponentLike> components, Component delimiter) {
         return join(components.toArray(ComponentLike[]::new), delimiter);
     }
+
     /**
      * Joins multiple {@link ComponentLike}s into one final {@link ComponentLike}
      *
@@ -56,4 +61,5 @@ public class ComponentHelper {
         }
         return builder.build();
     }
+
 }

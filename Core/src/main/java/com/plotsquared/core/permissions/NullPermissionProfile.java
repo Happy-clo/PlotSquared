@@ -17,10 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.permissions;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 public enum NullPermissionProfile implements PermissionProfile {
     INSTANCE;
+
     @Override
     public boolean hasPermission(
             final @Nullable String world,
@@ -28,6 +31,7 @@ public enum NullPermissionProfile implements PermissionProfile {
     ) {
         return false;
     }
+
     @Override
     public boolean hasKeyedPermission(
             final @Nullable String world,
@@ -36,4 +40,5 @@ public enum NullPermissionProfile implements PermissionProfile {
     ) {
         return false;
     }
+
 }

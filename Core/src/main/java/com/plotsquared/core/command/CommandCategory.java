@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.LocaleHolder;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -25,6 +26,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
+
 /**
  * CommandCategory.
  */
@@ -73,23 +75,29 @@ public enum CommandCategory implements Caption {
      * The category name (Readable).
      */
     private final Caption caption;
+
     CommandCategory(final Caption caption) {
         this.caption = caption;
     }
+
+    // TODO this method shouldn't be invoked
     @Deprecated
     @Override
     public @NotNull String toString() {
         return this.caption.getComponent(LocaleHolder.console());
     }
+
     @NonNull
     @Override
     public String getComponent(@NonNull LocaleHolder localeHolder) {
         return this.caption.getComponent(localeHolder);
     }
+
     @Override
     public @NonNull Component toComponent(@NonNull final LocaleHolder localeHolder) {
         return MiniMessage.miniMessage().deserialize(getComponent(localeHolder));
     }
+
     /**
      * Checks if a player has access to this command category
      *
@@ -100,4 +108,6 @@ public enum CommandCategory implements Caption {
     boolean canAccess(PlotPlayer<?> player) {
         return !MainCommand.getInstance().getCommands(this, player).isEmpty();
     }
+
+
 }

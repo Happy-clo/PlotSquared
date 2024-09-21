@@ -17,14 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.util.task.TaskManager;
+
 @CommandDeclaration(command = "confirm",
         permission = "plots.confirm",
         category = CommandCategory.INFO)
 public class Confirm extends SubCommand {
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         CmdInstance command = CmdConfirm.getPending(player);
@@ -41,4 +44,5 @@ public class Confirm extends SubCommand {
         TaskManager.runTask(command.command);
         return true;
     }
+
 }

@@ -17,14 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events.post;
+
 import com.plotsquared.core.events.PlotEvent;
 import com.plotsquared.core.plot.Plot;
+
 /**
  * Called after a {@link Plot} was deleted.
  *
  * @since 6.2.0
  */
 public class PostPlotDeleteEvent extends PlotEvent {
+
     /**
      * Instantiate a new PlotDeleteEvent.
      *
@@ -33,4 +36,5 @@ public class PostPlotDeleteEvent extends PlotEvent {
     public PostPlotDeleteEvent(final Plot plot) {
         super(plot);
     }
+
 }

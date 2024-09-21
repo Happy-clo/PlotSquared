@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
@@ -38,6 +39,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,15 +49,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 @CommandDeclaration(command = "schematic",
         permission = "plots.schematic",
         aliases = "schem",
         category = CommandCategory.SCHEMATIC,
         usage = "/plot schematic <save | saveall | paste | list>")
 public class SchematicCmd extends SubCommand {
+
     private final PlotAreaManager plotAreaManager;
     private final SchematicHandler schematicHandler;
     private boolean running = false;
+
     @Inject
     public SchematicCmd(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -64,6 +69,7 @@ public class SchematicCmd extends SubCommand {
         this.plotAreaManager = plotAreaManager;
         this.schematicHandler = schematicHandler;
     }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length < 1) {
@@ -295,6 +301,7 @@ public class SchematicCmd extends SubCommand {
         }
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -327,4 +334,5 @@ public class SchematicCmd extends SubCommand {
         }
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
+
 }

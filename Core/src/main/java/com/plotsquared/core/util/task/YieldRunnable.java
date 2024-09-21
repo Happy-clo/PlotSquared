@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.task;
+
 /**
  * A runnable that can be yielded.
  * If {@link #yield()} is invoked, {@link #run()} will be called
@@ -24,10 +25,12 @@ package com.plotsquared.core.util.task;
  * correctly.
  */
 public interface YieldRunnable extends Runnable {
+
     /**
      * Runs the {@link #run()} method again on the next tick.
      */
     default void yield() {
         TaskManager.runTaskLater(this, TaskTime.ticks(1L));
     }
+
 }

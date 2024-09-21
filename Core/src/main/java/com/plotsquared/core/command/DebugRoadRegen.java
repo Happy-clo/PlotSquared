@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.HybridPlotManager;
@@ -31,23 +32,29 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 @CommandDeclaration(command = "debugroadregen",
         usage = DebugRoadRegen.USAGE,
         requiredType = RequiredType.NONE,
         category = CommandCategory.DEBUG,
         permission = "plots.debugroadregen")
 public class DebugRoadRegen extends SubCommand {
+
     public static final String USAGE = "/plot debugroadregen <plot | region [height]>";
+
     private final HybridUtils hybridUtils;
+
     @Inject
     public DebugRoadRegen(final @NonNull HybridUtils hybridUtils) {
         this.hybridUtils = hybridUtils;
     }
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -59,6 +66,7 @@ public class DebugRoadRegen extends SubCommand {
             );
             return false;
         }
+
         PlotArea area = player.getPlotAreaAbs();
         check(area, TranslatableCaption.of("errors.not_in_plot_world"));
         if (plot.getVolume() > Integer.MAX_VALUE) {
@@ -82,6 +90,7 @@ public class DebugRoadRegen extends SubCommand {
             }
         }
     }
+
     public boolean regenPlot(PlotPlayer<?> player) {
         Location location = player.getLocation();
         PlotArea area = location.getPlotArea();
@@ -114,6 +123,7 @@ public class DebugRoadRegen extends SubCommand {
         }
         return true;
     }
+
     public boolean regenRegion(PlotPlayer<?> player, String[] args) {
         int height = 0;
         if (args.length == 1) {
@@ -137,6 +147,7 @@ public class DebugRoadRegen extends SubCommand {
             );
             return false;
         }
+
         Location location = player.getLocation();
         PlotArea area = location.getPlotArea();
         if (area == null) {
@@ -163,6 +174,7 @@ public class DebugRoadRegen extends SubCommand {
         }
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, String[] args, boolean space) {
         return Stream.of("plot", "region")
@@ -170,4 +182,5 @@ public class DebugRoadRegen extends SubCommand {
                 .map(value -> new Command(null, false, value, "plots.debugroadregen", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());
     }
+
 }

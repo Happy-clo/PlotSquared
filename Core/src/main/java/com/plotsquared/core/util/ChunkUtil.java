@@ -17,10 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 /**
  * This cache is used for world generation and just saves a bit of calculation time when checking if something is in the plot area.
  */
 public class ChunkUtil {
+
     /**
      * Cache of mapping x,y,z coordinates to the chunk array<br>
      * - Used for efficient world generation<br>
@@ -29,6 +31,7 @@ public class ChunkUtil {
     private static final short[] y_loc;
     private static final short[] z_loc;
     private static final short[][][] CACHE_J;
+
     static {
         x_loc = new short[4096];
         y_loc = new short[4096];
@@ -52,8 +55,10 @@ public class ChunkUtil {
             }
         }
     }
+
     private ChunkUtil() {
     }
+
     /**
      * Get the J value for Chunk block storage from the chunk xyz coordinates.
      * J is in the range 0 to 4095 where it represents a position in an array of 16x16x16 xyz (ChunkSection  Array[4096]).
@@ -66,6 +71,7 @@ public class ChunkUtil {
     public static int getJ(int x, int y, int z) {
         return CACHE_J[y & 15][x & 15][z & 15];
     }
+
     /**
      * Gets the x coordinate for a specific J value for a ChunkSection 16x16x16 xyz Array[4096].
      *
@@ -75,6 +81,7 @@ public class ChunkUtil {
     public static int getX(int j) {
         return x_loc[j];
     }
+
     /**
      * Gets the y coordinate for specific I and J values for a Chunk Nx16x16x16 layerxyz Array[N][4096].
      *
@@ -85,6 +92,7 @@ public class ChunkUtil {
     public static int getY(int i, int j) {
         return (i << 4) + y_loc[j];
     }
+
     /**
      * Gets the z coordinate for a specific J value for a ChunkSection 16x16x16 xyz Array[4096].
      *
@@ -94,4 +102,5 @@ public class ChunkUtil {
     public static int getZ(int j) {
         return z_loc[j];
     }
+
 }

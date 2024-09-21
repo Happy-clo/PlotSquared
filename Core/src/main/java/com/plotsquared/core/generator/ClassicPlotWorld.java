@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
+
 import com.plotsquared.core.configuration.ConfigurationNode;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.ConfigurationUtil;
@@ -32,10 +33,14 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import javax.annotation.Nullable;
+
 @SuppressWarnings("WeakerAccess")
 public abstract class ClassicPlotWorld extends SquarePlotWorld {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + ClassicPlotWorld.class.getSimpleName());
+
     public int ROAD_HEIGHT = 62;
     public int PLOT_HEIGHT = 62;
     public int WALL_HEIGHT = 62;
@@ -48,6 +53,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     public boolean PLOT_BEDROCK = true;
     public boolean PLACE_TOP_BLOCK = true;
     public boolean COMPONENT_BELOW_BEDROCK = false;
+
     public ClassicPlotWorld(
             final @NonNull String worldName,
             final @Nullable String id,
@@ -59,6 +65,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
     ) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
     }
+
     private static BlockBucket createCheckedBlockBucket(String input, BlockBucket def) {
         final BlockBucket bucket = new BlockBucket(input);
         Pattern pattern = null;
@@ -73,6 +80,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         }
         return bucket;
     }
+
     /**
      * CONFIG NODE | DEFAULT VALUE | DESCRIPTION | CONFIGURATION TYPE | REQUIRED FOR INITIAL SETUP.
      *
@@ -127,6 +135,7 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
                         "setup.component_below_bedrock_boolean"), ConfigurationUtil.BOOLEAN
                 )};
     }
+
     /**
      * This method is called when a world loads. Make sure you set all your constants here. You are provided with the
      * configuration section for that specific world.
@@ -147,12 +156,14 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         this.CLAIMED_WALL_BLOCK = createCheckedBlockBucket(config.getString("wall.block_claimed"), CLAIMED_WALL_BLOCK);
         this.COMPONENT_BELOW_BEDROCK = config.getBoolean("world.component_below_bedrock");
     }
+
     @Override
     public int getMinComponentHeight() {
         return COMPONENT_BELOW_BEDROCK && getMinGenHeight() >= getMinBuildHeight()
                 ? getMinGenHeight() + (PLOT_BEDROCK ? 1 : 0)
                 : getMinBuildHeight();
     }
+
     int schematicStartHeight() {
         int plotRoadMin = Math.min(PLOT_HEIGHT, ROAD_HEIGHT);
         if (!Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT) {
@@ -160,4 +171,5 @@ public abstract class ClassicPlotWorld extends SquarePlotWorld {
         }
         return Math.min(WALL_HEIGHT, plotRoadMin);
     }
+
 }

@@ -17,14 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
+
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.function.Predicate;
+
 @FunctionalInterface
 interface PlotFilter extends Predicate<Plot> {
+
     @Override
     default boolean test(final @NonNull Plot plot) {
         return this.accepts(plot);
     }
+
     boolean accepts(final @NonNull Plot plot);
+
 }

@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class CopperOxideFlag extends BooleanFlag<CopperOxideFlag> {
+
     public static final CopperOxideFlag COPPER_OXIDE_TRUE = new CopperOxideFlag(true);
     public static final CopperOxideFlag COPPER_OXIDE_FALSE = new CopperOxideFlag(false);
+
     private CopperOxideFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_copper_oxide"));
     }
+
     @Override
     protected CopperOxideFlag flagOf(@NonNull Boolean value) {
         return value ? COPPER_OXIDE_TRUE : COPPER_OXIDE_FALSE;
     }
+
 }

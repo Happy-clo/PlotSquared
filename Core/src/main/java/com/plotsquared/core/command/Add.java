@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -34,24 +35,29 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
+
 @CommandDeclaration(command = "add",
         usage = "/plot add <player | *>",
         category = CommandCategory.SETTINGS,
         permission = "plots.add",
         requiredType = RequiredType.PLAYER)
 public class Add extends Command {
+
     private final EventDispatcher eventDispatcher;
+
     @Inject
     public Add(final @NonNull EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
     }
+
     @Override
     public CompletableFuture<Boolean> execute(
             final PlotPlayer<?> player,
@@ -144,6 +150,7 @@ public class Add extends Command {
                         );
                         return;
                     }
+                    // Success
                     confirm.run(this, () -> {
                         for (UUID uuid : uuids) {
                             if (uuid != DBFunc.EVERYONE) {
@@ -167,8 +174,10 @@ public class Add extends Command {
         });
         return future;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
+
 }

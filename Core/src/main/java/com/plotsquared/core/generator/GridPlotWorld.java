@@ -17,14 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
+
 import com.plotsquared.core.configuration.file.YamlConfiguration;
 import com.plotsquared.core.inject.annotations.WorldConfig;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public abstract class GridPlotWorld extends PlotArea {
+
     public short SIZE;
+
     public GridPlotWorld(
             String worldName, String id, @NonNull IndependentPlotGenerator generator,
             PlotId min, PlotId max, @WorldConfig final @NonNull YamlConfiguration worldConfiguration,
@@ -32,4 +36,5 @@ public abstract class GridPlotWorld extends PlotArea {
     ) {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
     }
+
 }

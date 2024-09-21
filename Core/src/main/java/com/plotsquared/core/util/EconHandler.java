@@ -17,12 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 import com.plotsquared.core.player.ConsolePlayer;
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.PlotArea;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public abstract class EconHandler {
+
     /**
      * Returns an econ handler that:
      * <ul>
@@ -38,17 +41,24 @@ public abstract class EconHandler {
     public static EconHandler nullEconHandler() {
         return new NullEconHandler();
     }
+
     public abstract boolean init();
+
     public double getMoney(PlotPlayer<?> player) {
         if (player instanceof ConsolePlayer) {
             return Double.MAX_VALUE;
         }
         return getBalance(player);
     }
+
     public abstract double getBalance(PlotPlayer<?> player);
+
     public abstract void withdrawMoney(PlotPlayer<?> player, double amount);
+
     public abstract void depositMoney(PlotPlayer<?> player, double amount);
+
     public abstract void depositMoney(OfflinePlotPlayer player, double amount);
+
     /**
      * Returns whether economy is enabled in the given plot area or not.
      * Implementations should only return true if {@link #isSupported()} returns
@@ -58,6 +68,7 @@ public abstract class EconHandler {
      * @return {@code true} if economy is enabled on the given plot area, {@code false} otherwise.
      */
     public abstract boolean isEnabled(PlotArea plotArea);
+
     /**
      * Formats the given balance into a human-readable number.
      *
@@ -65,41 +76,56 @@ public abstract class EconHandler {
      * @return the balance as formatted string.
      */
     public abstract @NonNull String format(double balance);
+
     /**
      * Returns whether economy is supported by the server or not.
      *
      * @return {@code true} if economy is supported, {@code false} otherwise.
      */
     public abstract boolean isSupported();
+
     private static final class NullEconHandler extends EconHandler {
+
         @Override
         public boolean init() {
             return false;
         }
+
         @Override
         public double getBalance(PlotPlayer<?> player) {
             return Double.MIN_VALUE;
         }
+
         @Override
         public void withdrawMoney(PlotPlayer<?> player, double amount) {
+
         }
+
         @Override
         public void depositMoney(PlotPlayer<?> player, double amount) {
+
         }
+
         @Override
         public void depositMoney(OfflinePlotPlayer player, double amount) {
+
         }
+
         @Override
         public boolean isEnabled(PlotArea plotArea) {
             return false;
         }
+
         @Override
         public @NonNull String format(double balance) {
             return "";
         }
+
         @Override
         public boolean isSupported() {
             return false;
         }
+
     }
+
 }

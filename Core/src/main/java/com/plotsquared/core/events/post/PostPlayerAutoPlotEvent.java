@@ -17,9 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events.post;
+
 import com.plotsquared.core.events.PlotPlayerEvent;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+
 /**
  * Called after a plot was chosen for a player by {@code /plot auto}
  * <br>
@@ -28,6 +30,7 @@ import com.plotsquared.core.plot.Plot;
  * @since 6.2.0
  */
 public class PostPlayerAutoPlotEvent extends PlotPlayerEvent {
+
     /**
      * Instantiate a new PlayerAutoPlotPostEvent.
      *
@@ -37,4 +40,5 @@ public class PostPlayerAutoPlotEvent extends PlotPlayerEvent {
     public PostPlayerAutoPlotEvent(final PlotPlayer<?> plotPlayer, final Plot plot) {
         super(plotPlayer, plot);
     }
+
 }

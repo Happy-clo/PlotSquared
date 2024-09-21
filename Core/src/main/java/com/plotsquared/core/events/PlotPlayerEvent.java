@@ -17,15 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
+
 public abstract class PlotPlayerEvent extends PlotEvent {
+
     private final PlotPlayer<?> plotPlayer;
+
     public PlotPlayerEvent(PlotPlayer<?> plotPlayer, Plot plot) {
         super(plot);
         this.plotPlayer = plotPlayer;
     }
+
     public PlotPlayer<?> getPlotPlayer() {
         return this.plotPlayer;
     }
+
 }

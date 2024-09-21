@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
+
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intellectualsites.annotations.DoNotUse;
@@ -53,13 +54,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
 public class HybridPlotWorld extends ClassicPlotWorld {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridPlotWorld.class.getSimpleName());
     private static final AffineTransform transform = new AffineTransform().rotateY(90);
     public boolean ROAD_SCHEMATIC_ENABLED;
@@ -72,6 +76,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
      * The Y level at which schematic generation will start, lowest of either road or plot schematic generation.
      */
     public int SCHEM_Y;
+
     private int plotY;
     private int roadY;
     private Location SIGN_LOCATION;
@@ -82,8 +87,10 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     private boolean schem1PopulationNeeded = false;
     private boolean schem2PopulationNeeded = false;
     private boolean schem3PopulationNeeded = false;
+
     @Inject
     private SchematicHandler schematicHandler;
+
     @Inject
     public HybridPlotWorld(
             @Assisted("world") final String worldName,
@@ -97,12 +104,18 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         super(worldName, id, generator, min, max, worldConfiguration, blockQueue);
         PlotSquared.platform().injector().injectMembers(this);
     }
+
     public static BaseBlock rotate(BaseBlock id) {
+
         CompoundTag tag = id.getNbtData();
+
         if (tag != null) {
+            // Handle blocks which store their rotation in NBT
             if (tag.containsKey("Rot")) {
                 int rot = tag.asInt("Rot");
+
                 Direction direction = MCDirections.fromRotation(rot);
+
                 if (direction != null) {
                     Vector3 vector = transform.apply(direction.toVector()).subtract(transform.apply(Vector3.ZERO)).normalize();
                     Direction newDirection =
@@ -110,9 +123,12 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                                     vector,
                                     Direction.Flag.CARDINAL | Direction.Flag.ORDINAL | Direction.Flag.SECONDARY_ORDINAL
                             );
+
                     if (newDirection != null) {
                         CompoundTagBuilder builder = tag.createBuilder();
+
                         builder.putByte("Rot", (byte) MCDirections.toRotation(newDirection));
+
                         id.setNbtData(builder.build());
                     }
                 }
@@ -120,6 +136,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         return BlockTransformExtent.transform(id, transform);
     }
+
     @NonNull
     @Override
     protected PlotManager createManager() {
@@ -127,6 +144,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class)
         );
     }
+
     public Location getSignLocation(@NonNull Plot plot) {
         plot = plot.getBasePlot(false);
         final Location bot = plot.getBottomAbs();
@@ -136,6 +154,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             return bot.withY(0).add(SIGN_LOCATION.getX(), SIGN_LOCATION.getY(), SIGN_LOCATION.getZ());
         }
     }
+
     /**
      * <p>This method is called when a world loads. Make sure you set all your constants here. You are provided with the
      * configuration section for that specific world.</p>
@@ -158,6 +177,8 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         } catch (Exception event) {
             event.printStackTrace();
         }
+
+        // Dump world settings
         if (Settings.DEBUG) {
             LOGGER.info("- Dumping settings for ClassicPlotWorld with name {}", this.getWorldName());
             final Field[] fields = this.getClass().getFields();
@@ -179,6 +200,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
     }
+
     @Override
     public boolean isCompatible(final @NonNull PlotArea plotArea) {
         if (!(plotArea instanceof SquarePlotWorld)) {
@@ -186,9 +208,13 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         return ((SquarePlotWorld) plotArea).PLOT_WIDTH == this.PLOT_WIDTH;
     }
+
     public void setupSchematics() throws SchematicHandler.UnsupportedFormatException {
         this.G_SCH = new HashMap<>();
         this.G_SCH_B = new HashMap<>();
+
+        // Try to determine root. This means that plot areas can have separate schematic
+        // directories
         if (!(root =
                 FileUtils.getFile(
                         PlotSquared.platform().getDirectory(),
@@ -200,6 +226,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     "schematics/GEN_ROAD_SCHEMATIC/" + this.getWorldName()
             );
         }
+
         File schematic1File = new File(root, "sideroad.schem");
         if (!schematic1File.exists()) {
             schematic1File = new File(root, "sideroad.schematic");
@@ -215,19 +242,32 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         Schematic schematic1 = this.schematicHandler.getSchematic(schematic1File);
         Schematic schematic2 = this.schematicHandler.getSchematic(schematic2File);
         Schematic schematic3 = this.schematicHandler.getSchematic(schematic3File);
+
+        // If the plot schematic contains entities, then they need to be populated upon generation.
         if (schematic3 != null && !schematic3.getClipboard().getEntities().isEmpty()) {
             this.schem3Entities = new ArrayList<>(schematic3.getClipboard().getEntities());
             this.schem3MinPoint = schematic3.getClipboard().getMinimumPoint();
             this.schem3PopulationNeeded = true;
         }
+
         int shift = this.ROAD_WIDTH / 2;
         int oddshift = (this.ROAD_WIDTH & 1);
+
         SCHEM_Y = schematicStartHeight();
+
+        // plotY and roadY are important to allow plot and/or road schematic "overflow" into each other
+        // without causing AIOOB exceptions when attempting either to set blocks to, or get block from G_SCH
+        // Default plot schematic start height, normalized to the minimum height schematics are pasted from.
         plotY = PLOT_HEIGHT - SCHEM_Y;
         int minRoadWall = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ? Math.min(ROAD_HEIGHT, WALL_HEIGHT) : ROAD_HEIGHT;
+        // Default road schematic start height, normalized to the minimum height schematics are pasted from.
         roadY = minRoadWall - SCHEM_Y;
+
         int worldGenHeight = getMaxGenHeight() - getMinGenHeight() + 1;
+
         int plotSchemHeight = 0;
+
+        // SCHEM_Y should be normalised to the plot "start" height
         if (schematic3 != null) {
             plotSchemHeight = schematic3.getClipboard().getDimensions().getY();
             if (plotSchemHeight == worldGenHeight) {
@@ -238,7 +278,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 plotY = 0;
             }
         }
+
         int roadSchemHeight = 0;
+
         if (schematic1 != null) {
             roadSchemHeight = Math.max(
                     schematic1.getClipboard().getDimensions().getY(),
@@ -246,8 +288,9 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             );
             if (roadSchemHeight == worldGenHeight) {
                 SCHEM_Y = getMinGenHeight();
-                roadY = 0;
+                roadY = 0; // Road is the lowest schematic
                 if (schematic3 != null && schematic3.getClipboard().getDimensions().getY() != worldGenHeight) {
+                    // Road is the lowest schematic. Normalize plotY to it.
                     if (Settings.Schematics.PASTE_ON_TOP) {
                         plotY = PLOT_HEIGHT - getMinGenHeight();
                     }
@@ -257,6 +300,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 SCHEM_Y = getMinGenHeight();
                 if (schematic3 != null) {
                     if (Settings.Schematics.PASTE_ON_TOP) {
+                        // Road is the lowest schematic. Normalize plotY to it.
                         plotY = PLOT_HEIGHT - SCHEM_Y;
                     }
                 }
@@ -265,9 +309,11 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
         int maxSchematicHeight = Math.max(plotY + plotSchemHeight, roadY + roadSchemHeight);
+
         if (schematic3 != null) {
             this.PLOT_SCHEMATIC = true;
             Clipboard blockArrayClipboard3 = schematic3.getClipboard();
+
             BlockVector3 d3 = blockArrayClipboard3.getDimensions();
             short w3 = (short) d3.getX();
             short l3 = (short) d3.getZ();
@@ -287,6 +333,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             } else {
                 centerShiftX = (PLOT_WIDTH - w3) / 2;
             }
+
             BlockVector3 min = blockArrayClipboard3.getMinimumPoint();
             for (short x = 0; x < w3; x++) {
                 for (short z = 0; z < l3; z++) {
@@ -319,6 +366,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                     }
                 }
             }
+
             if (Settings.DEBUG) {
                 LOGGER.info("- plot schematic: {}", schematic3File.getPath());
             }
@@ -330,14 +378,20 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             return;
         }
         this.ROAD_SCHEMATIC_ENABLED = true;
+        // Do not populate road if using schematic population
+        // TODO: What? this.ROAD_BLOCK = BlockBucket.empty(); // BlockState.getEmptyData(this.ROAD_BLOCK); // BlockUtil.get(this.ROAD_BLOCK.id, (byte) 0);
+
         Clipboard blockArrayClipboard1 = schematic1.getClipboard();
+
         BlockVector3 d1 = blockArrayClipboard1.getDimensions();
         short w1 = (short) d1.getX();
         short l1 = (short) d1.getZ();
         short h1 = (short) d1.getY();
+        // Workaround for schematic height issue if proper calculation of road schematic height is disabled
         if (!Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT) {
             h1 += Math.max(ROAD_HEIGHT - WALL_HEIGHT, 0);
         }
+
         BlockVector3 min = blockArrayClipboard1.getMinimumPoint();
         for (short x = 0; x < w1; x++) {
             for (short z = 0; z < l1; z++) {
@@ -372,11 +426,13 @@ public class HybridPlotWorld extends ClassicPlotWorld {
                 }
             }
         }
+
         Clipboard blockArrayClipboard2 = schematic2.getClipboard();
         BlockVector3 d2 = blockArrayClipboard2.getDimensions();
         short w2 = (short) d2.getX();
         short l2 = (short) d2.getZ();
         short h2 = (short) d2.getY();
+        // Workaround for schematic height issue if proper calculation of road schematic height is disabled
         if (!Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT) {
             h2 += Math.max(ROAD_HEIGHT - WALL_HEIGHT, 0);
         }
@@ -406,6 +462,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
             }
         }
     }
+
     private void addOverlayBlock(short x, short y, short z, BaseBlock id, boolean rotate, int height) {
         if (z < 0) {
             z += this.SIZE;
@@ -436,6 +493,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         }
         existing[y] = id;
     }
+
     private void addOverlayBiome(short x, short z, BiomeType id) {
         if (z < 0) {
             z += this.SIZE;
@@ -450,6 +508,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
         int pair = MathMan.pair(x, z);
         this.G_SCH_B.put(pair, id);
     }
+
     /**
      * Get the entities contained within the plot schematic for generation. Intended for internal use only.
      *
@@ -459,6 +518,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public @Nullable List<Entity> getPlotSchematicEntities() {
         return schem3Entities;
     }
+
     /**
      * Get the minimum point of the plot schematic for generation. Intended for internal use only.
      *
@@ -468,6 +528,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public @Nullable BlockVector3 getPlotSchematicMinPoint() {
         return schem3MinPoint;
     }
+
     /**
      * Get if post-generation population of chunks with tiles/entities is needed for this world. Not for public API use.
      *
@@ -477,6 +538,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public boolean populationNeeded() {
         return schem1PopulationNeeded || schem2PopulationNeeded || schem3PopulationNeeded;
     }
+
     /**
      * Get the root folder for this world's generation schematics. May be null if schematics not initialised via
      * {@link HybridPlotWorld#setupSchematics()}
@@ -486,6 +548,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public @Nullable File getSchematicRoot() {
         return this.root;
     }
+
     /**
      * Get the y value where the plot schematic should be pasted from.
      *
@@ -495,6 +558,7 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public int getPlotYStart() {
         return SCHEM_Y + plotY;
     }
+
     /**
      * Get the y value where the road schematic should be pasted from.
      *
@@ -504,4 +568,5 @@ public class HybridPlotWorld extends ClassicPlotWorld {
     public int getRoadYStart() {
         return SCHEM_Y + roadY;
     }
+
 }

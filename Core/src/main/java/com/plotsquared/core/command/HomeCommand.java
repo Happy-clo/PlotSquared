@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -37,10 +38,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
 @CommandDeclaration(command = "home",
         permission = "plots.home",
         usage = "/plot home [<page> | <alias> | <area;x;y> | <area> <x;y> | <area> <page>]",
@@ -48,12 +51,15 @@ import java.util.concurrent.CompletableFuture;
         requiredType = RequiredType.PLAYER,
         category = CommandCategory.TELEPORT)
 public class HomeCommand extends Command {
+
     private final PlotAreaManager plotAreaManager;
+
     @Inject
     public HomeCommand(final @NonNull PlotAreaManager plotAreaManager) {
         super(MainCommand.getInstance(), true);
         this.plotAreaManager = plotAreaManager;
     }
+
     private void home(
             final @NonNull PlotPlayer<?> player,
             final @NonNull PlotQuery query, final int page,
@@ -83,16 +89,24 @@ public class HomeCommand extends Command {
             }
         }), () -> whenDone.run(HomeCommand.this, CommandResult.FAILURE));
     }
+
     @NonNull
     private PlotQuery query(final @NonNull PlotPlayer<?> player) {
+        // everything plots need to have in common here
         return PlotQuery.newQuery().thatPasses(plot -> plot.isOwner(player.getUUID()));
     }
+
     @Override
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
             RunnableVal3<Command, Runnable, Runnable> confirm,
             RunnableVal2<Command, CommandResult> whenDone
     ) throws CommandException {
+        // /plot home <number> (or page, whatever it's called)
+        // /plot home <alias>
+        // /plot home <[area;]x;y>
+        // /plot home <area> <x;y>
+        // /plot home <area> <page>
         if (!player.hasPermission(Permission.PERMISSION_VISIT_OWNED) && !player.hasPermission(Permission.PERMISSION_HOME)) {
             player.sendMessage(
                     TranslatableCaption.of("permission.no_permission"),
@@ -105,7 +119,7 @@ public class HomeCommand extends Command {
             return CompletableFuture.completedFuture(false);
         }
         PlotQuery query = query(player);
-        int page = 1;
+        int page = 1; // page = index + 1
         String identifier;
         PlotArea plotArea;
         boolean basePlotOnly = true;
@@ -125,28 +139,35 @@ public class HomeCommand extends Command {
                     sortBySettings(query, player);
                     break;
                 }
+                // either plot id or alias
                 Plot fromId = Plot.getPlotFromString(player, identifier, false);
                 if (fromId != null && fromId.isOwner(player.getUUID())) {
+                    // it was a valid plot id
                     basePlotOnly = false;
                     query.withPlot(fromId);
                     break;
                 }
+                // allow for plot home within a plot area
                 plotArea = this.plotAreaManager.getPlotAreaByString(args[0]);
                 if (plotArea != null) {
                     query.inArea(plotArea);
                     break;
                 }
+                // it wasn't a valid plot id, trying to find plot by alias
                 query.withAlias(identifier);
             }
             case 2 -> {
+                // we assume args[0] is a plot area and args[1] an identifier
                 plotArea = this.plotAreaManager.getPlotAreaByString(args[0]);
                 identifier = args[1];
                 if (plotArea == null) {
+                    // invalid command, therefore no plots
                     query.noPlots();
                     break;
                 }
                 query.inArea(plotArea);
                 if (MathMan.isInteger(identifier)) {
+                    // identifier is a page number
                     try {
                         page = Integer.parseInt(identifier);
                     } catch (NumberFormatException ignored) {
@@ -159,16 +180,20 @@ public class HomeCommand extends Command {
                     query.withSortingStrategy(SortingStrategy.SORT_BY_CREATION);
                     break;
                 }
+                // identifier needs to be a plot id then
                 PlotId id = PlotId.fromStringOrNull(identifier);
                 if (id == null) {
+                    // invalid command, therefore no plots
                     query.noPlots();
                     break;
                 }
+                // we can try to get this plot
                 Plot plot = plotArea.getPlot(id);
                 if (plot == null) {
                     query.noPlots();
                     break;
                 }
+                // as the query already filters by owner, this is fine
                 basePlotOnly = false;
                 query.withPlot(plot);
             }
@@ -180,7 +205,9 @@ public class HomeCommand extends Command {
         home(player, query, page, confirm, whenDone);
         return CompletableFuture.completedFuture(true);
     }
+
     private void sortBySettings(PlotQuery plotQuery, PlotPlayer<?> player) {
+        // Player may not be in a plot world when attempting to get to a plot home
         PlotArea area = player.getApplicablePlotArea();
         if (Settings.Teleport.PER_WORLD_VISIT && area != null) {
             plotQuery.relativeToArea(area)
@@ -189,6 +216,7 @@ public class HomeCommand extends Command {
             plotQuery.withSortingStrategy(SortingStrategy.SORT_BY_TEMP);
         }
     }
+
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<Command> completions = new ArrayList<>();
@@ -197,10 +225,12 @@ public class HomeCommand extends Command {
                 completions.addAll(
                         TabCompletions.completeAreas(args[0]));
                 if (args[0].isEmpty()) {
+                    // if no input is given, only suggest 1 - 3
                     completions.addAll(
                             TabCompletions.asCompletions("1", "2", "3"));
                     break;
                 }
+                // complete more numbers from the already given input
                 completions.addAll(
                         TabCompletions.completeNumbers(args[0], 10, 999));
             }
@@ -209,4 +239,5 @@ public class HomeCommand extends Command {
         }
         return completions;
     }
+
 }

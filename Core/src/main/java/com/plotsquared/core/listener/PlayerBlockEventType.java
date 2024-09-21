@@ -17,12 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.listener;
+
 public enum PlayerBlockEventType {
+    // Non interactive
     READ,
+
+    // Right click with monster egg
     SPAWN_MOB,
+
+    // Dragon egg
     TELEPORT_OBJECT,
+
+    // armor stands
     PLACE_MISC,
     PLACE_VEHICLE,
-    INTERACT_BLOCK,
+
+    // armor stands
+    INTERACT_BLOCK, // blocks
+
+    // Pressure plate, tripwire etc
     TRIGGER_PHYSICAL,
 }

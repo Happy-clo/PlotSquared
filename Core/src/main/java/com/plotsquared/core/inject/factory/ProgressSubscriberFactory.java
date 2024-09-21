@@ -17,19 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.inject.factory;
+
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import javax.annotation.Nullable;
+
 public interface ProgressSubscriberFactory {
+
     @NonNull ProgressSubscriber create();
+
     @NonNull ProgressSubscriber createWithActor(@Nullable @Assisted("subscriber") PlotPlayer<?> actor);
+
     @NonNull ProgressSubscriber createFull(
             @Nullable @Assisted("subscriber") PlotPlayer<?> actor,
             @Assisted("progressInterval") final long interval,
             @Assisted("waitBeforeStarting") final long wait,
             @Nullable @Assisted("caption") Caption caption
     );
+
 }

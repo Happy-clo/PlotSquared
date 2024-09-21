@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.location;
+
 public enum Direction {
     ALL(-1, "all"),
     NORTH(0, "north"),
@@ -34,12 +35,17 @@ public enum Direction {
     ),
     NORTHWEST(7, "northwest"),
     ;
+
+
     private final int index;
     private final String name;
+
     Direction(int index, String name) {
+
         this.index = index;
         this.name = name;
     }
+
     public static Direction getFromIndex(int index) {
         for (Direction value : values()) {
             if (value.getIndex() == index) {
@@ -48,6 +54,7 @@ public enum Direction {
         }
         return NORTH;
     }
+
     /**
      * {@return the opposite direction}
      * If this is {@link Direction#ALL}, then {@link Direction#ALL} is returned.
@@ -66,9 +73,11 @@ public enum Direction {
             case NORTHWEST -> SOUTHEAST;
         };
     }
+
     public int getIndex() {
         return index;
     }
+
     public String getName() {
         return name;
     }

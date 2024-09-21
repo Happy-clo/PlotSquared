@@ -17,14 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.types;
+
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 /**
  * Plot flag representing a string value.
  * This should be used where strings are not "keys" themselves, e.g. when setting enums
  */
 public abstract class StringFlag<F extends StringFlag<F>> extends PlotFlag<String, F> {
+
     /**
      * Construct a new flag instance.
      *
@@ -39,8 +42,10 @@ public abstract class StringFlag<F extends StringFlag<F>> extends PlotFlag<Strin
     ) {
         super(value, flagCategory, flagDescription);
     }
+
     @Override
     public boolean isValuedPermission() {
         return false;
     }
+
 }

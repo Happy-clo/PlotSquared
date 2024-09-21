@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.expiration;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.Caption;
@@ -47,6 +48,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +59,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
 public class ExpireManager {
+
     private final ConcurrentHashMap<UUID, Long> dates_cache;
     private final ConcurrentHashMap<UUID, Long> account_age_cache;
     private final EventDispatcher eventDispatcher;
@@ -67,6 +71,7 @@ public class ExpireManager {
      * 0 = stopped, 1 = stopping, 2 = running
      */
     private int running;
+
     @Inject
     public ExpireManager(final @NonNull EventDispatcher eventDispatcher) {
         this.tasks = new ArrayDeque<>();
@@ -74,9 +79,11 @@ public class ExpireManager {
         this.account_age_cache = new ConcurrentHashMap<>();
         this.eventDispatcher = eventDispatcher;
     }
+
     public void addTask(ExpiryTask task) {
         this.tasks.add(task);
     }
+
     public void handleJoin(PlotPlayer<?> pp) {
         storeDate(pp.getUUID(), System.currentTimeMillis());
         if (plotsToDelete != null && !plotsToDelete.isEmpty()) {
@@ -86,6 +93,7 @@ public class ExpireManager {
         }
         confirmExpiry(pp);
     }
+
     public void handleEntry(PlotPlayer<?> pp, Plot plot) {
         if (plotsToDelete != null && !plotsToDelete.isEmpty() && pp
                 .hasPermission("plots.admin.command.autoclear") && plotsToDelete.contains(plot)) {
@@ -97,6 +105,7 @@ public class ExpireManager {
             }
         }
     }
+
     /**
      * Gets the account last joined - first joined (or Long.MAX_VALUE)
      *
@@ -107,10 +116,12 @@ public class ExpireManager {
         Long value = this.account_age_cache.get(uuid);
         return value == null ? Long.MAX_VALUE : value;
     }
+
     public long getTimestamp(UUID uuid) {
         Long value = this.dates_cache.get(uuid);
         return value == null ? 0 : value;
     }
+
     public void updateExpired(Plot plot) {
         if (plotsToDelete != null && !plotsToDelete.isEmpty() && plotsToDelete.contains(plot)) {
             if (isExpired(new ArrayDeque<>(tasks), plot).isEmpty()) {
@@ -118,6 +129,7 @@ public class ExpireManager {
             }
         }
     }
+
     public void confirmExpiry(final PlotPlayer<?> pp) {
         TaskManager.runTask(() -> {
             try (final MetaDataAccess<Boolean> metaDataAccess = pp.accessTemporaryMetaData(
@@ -156,6 +168,8 @@ public class ExpireManager {
             }
         });
     }
+
+
     public boolean cancelTask() {
         if (this.running != 2) {
             return false;
@@ -163,6 +177,7 @@ public class ExpireManager {
         this.running = 1;
         return true;
     }
+
     public boolean runAutomatedTask() {
         return runTask(new RunnableVal3<>() {
             @Override
@@ -179,7 +194,9 @@ public class ExpireManager {
             }
         });
     }
+
     public Collection<ExpiryTask> isExpired(ArrayDeque<ExpiryTask> applicable, Plot plot) {
+        // Filter out invalid worlds
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask et = applicable.poll();
             if (et.applies(plot.getArea())) {
@@ -189,9 +206,13 @@ public class ExpireManager {
         if (applicable.isEmpty()) {
             return new ArrayList<>();
         }
+
+        // Don't delete server plots
         if (plot.getFlag(ServerPlotFlag.class)) {
             return new ArrayList<>();
         }
+
+        // Filter out non old plots
         boolean shouldCheckAccountAge = false;
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask et = applicable.poll();
@@ -203,6 +224,7 @@ public class ExpireManager {
         if (applicable.isEmpty()) {
             return new ArrayList<>();
         }
+        // Check account age
         if (shouldCheckAccountAge) {
             for (int i = 0; i < applicable.size(); i++) {
                 ExpiryTask et = applicable.poll();
@@ -215,6 +237,8 @@ public class ExpireManager {
                 return new ArrayList<>();
             }
         }
+
+        // Run applicable non confirming tasks
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask expiryTask = applicable.poll();
             if (!expiryTask.needsAnalysis() || plot.getArea().getType() != PlotAreaType.NORMAL) {
@@ -224,6 +248,7 @@ public class ExpireManager {
             }
             applicable.add(expiryTask);
         }
+        // Run applicable confirming tasks
         for (int i = 0; i < applicable.size(); i++) {
             ExpiryTask expiryTask = applicable.poll();
             if (!expiryTask.needsAnalysis() || plot.getArea().getType() != PlotAreaType.NORMAL) {
@@ -233,16 +258,19 @@ public class ExpireManager {
         }
         return applicable;
     }
+
     public ArrayDeque<ExpiryTask> getTasks(PlotArea area) {
         ArrayDeque<ExpiryTask> queue = new ArrayDeque<>(tasks);
         queue.removeIf(expiryTask -> !expiryTask.applies(area));
         return queue;
     }
+
     public void passesComplexity(
             PlotAnalysis analysis, Collection<ExpiryTask> applicable,
             RunnableVal<Boolean> success, Runnable failure
     ) {
         if (analysis != null) {
+            // Run non confirming tasks
             for (ExpiryTask et : applicable) {
                 if (!et.requiresConfirmation() && et.applies(analysis)) {
                     success.run(false);
@@ -258,6 +286,7 @@ public class ExpireManager {
             failure.run();
         }
     }
+
     public boolean runTask(final RunnableVal3<Plot, Runnable, Boolean> expiredTask) {
         if (this.running != 0) {
             return false;
@@ -265,6 +294,7 @@ public class ExpireManager {
         this.running = 2;
         TaskManager.runTaskAsync(new Runnable() {
             private ConcurrentLinkedDeque<Plot> plots = null;
+
             @Override
             public void run() {
                 final Runnable task = this;
@@ -328,6 +358,7 @@ public class ExpireManager {
                             };
                     final Runnable doAnalysis =
                             () -> PlotSquared.platform().hybridUtils().analyzePlot(newPlot, handleAnalysis);
+
                     PlotAnalysis analysis = newPlot.getComplexity(null);
                     if (analysis != null) {
                         passesComplexity(analysis, expired, new RunnableVal<>() {
@@ -356,6 +387,7 @@ public class ExpireManager {
         });
         return true;
     }
+
     public void storeDate(UUID uuid, long time) {
         Long existing = this.dates_cache.put(uuid, time);
         if (existing != null) {
@@ -368,9 +400,11 @@ public class ExpireManager {
             }
         }
     }
+
     public HashSet<Plot> getPendingExpired() {
         return plotsToDelete == null ? new HashSet<>() : plotsToDelete;
     }
+
     public void deleteWithMessage(Plot plot, Runnable whenDone) {
         if (plot.isMerged()) {
             PlotUnlinkEvent event = this.eventDispatcher
@@ -404,6 +438,7 @@ public class ExpireManager {
         }
         plot.getPlotModificationManager().deletePlot(null, whenDone);
     }
+
     /**
      * Get the age (last play time) of the passed player
      *
@@ -430,11 +465,13 @@ public class ExpireManager {
         }
         return System.currentTimeMillis() - last;
     }
+
     public long getAge(Plot plot, final boolean shouldDeleteUnknownOwner) {
         if (!plot.hasOwner() || Objects.equals(DBFunc.EVERYONE, plot.getOwner())
                 || PlotSquared.platform().playerManager().getPlayerIfExists(plot.getOwner()) != null || plot.getRunning() > 0) {
             return 0;
         }
+
         final Object value = plot.getFlag(KeepFlag.class);
         if (!value.equals(false)) {
             if (value instanceof Boolean) {
@@ -445,7 +482,7 @@ public class ExpireManager {
                 if ((Long) value > System.currentTimeMillis()) {
                     return 0;
                 }
-            } else {
+            } else { // Invalid?
                 return 0;
             }
         }
@@ -458,4 +495,5 @@ public class ExpireManager {
         }
         return min;
     }
+
 }

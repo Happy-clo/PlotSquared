@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.backup.BackupManager;
 import com.plotsquared.core.backup.BackupProfile;
@@ -32,6 +33,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.nio.file.Files;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -47,18 +49,22 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
 @CommandDeclaration(command = "backup",
         usage = "/plot backup <save | list | load>",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER,
         permission = "plots.backup")
 public final class Backup extends Command {
+
     private final BackupManager backupManager;
+
     @Inject
     public Backup(final @NonNull BackupManager backupManager) {
         super(MainCommand.getInstance(), true);
         this.backupManager = backupManager;
     }
+
     private static boolean sendMessage(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
@@ -66,6 +72,7 @@ public final class Backup extends Command {
         );
         return true;
     }
+
     @Override
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
@@ -78,6 +85,7 @@ public final class Backup extends Command {
         }
         return super.execute(player, args, confirm, whenDone);
     }
+
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         if (args.length == 1) {
@@ -86,6 +94,7 @@ public final class Backup extends Command {
                     .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
                     }).collect(Collectors.toList());
         } else if (args[0].equalsIgnoreCase("load")) {
+
             final Plot plot = player.getCurrentPlot();
             if (plot != null) {
                 final BackupProfile backupProfile = Objects.requireNonNull(this.backupManager.getProfile(plot));
@@ -103,12 +112,14 @@ public final class Backup extends Command {
                                         RequiredType.NONE, null
                                 ) {
                                 }).collect(Collectors.toList());
+
                     }
                 }
             }
         }
         return tabOf(player, args, space);
     }
+
     @CommandDeclaration(command = "save",
             usage = "/plot backup save",
             category = CommandCategory.SETTINGS,
@@ -172,6 +183,7 @@ public final class Backup extends Command {
             }
         }
     }
+
     @CommandDeclaration(command = "list",
             usage = "/plot backup list",
             category = CommandCategory.SETTINGS,
@@ -256,6 +268,7 @@ public final class Backup extends Command {
             }
         }
     }
+
     @CommandDeclaration(command = "load",
             usage = "/plot backup load <#>",
             category = CommandCategory.SETTINGS,
@@ -374,4 +387,5 @@ public final class Backup extends Command {
             }
         }
     }
+
 }

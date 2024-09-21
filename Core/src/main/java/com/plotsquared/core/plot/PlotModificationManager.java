@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationUtil;
@@ -51,6 +52,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,18 +64,23 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+
 /**
  * Manager that handles {@link Plot} modifications
  */
 public final class PlotModificationManager {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotModificationManager.class.getSimpleName());
+
     private final Plot plot;
     private final ProgressSubscriberFactory subscriberFactory;
+
     @Inject
     PlotModificationManager(final @NonNull Plot plot) {
         this.plot = plot;
         this.subscriberFactory = PlotSquared.platform().injector().getInstance(ProgressSubscriberFactory.class);
     }
+
     /**
      * Copy a plot to a location, both physically and the settings
      *
@@ -103,7 +110,9 @@ public final class PlotModificationManager {
                 return future;
             }
         }
+        // world border
         destination.updateWorldBorder();
+        // copy data
         for (final Plot plot : plots) {
             final Plot other = plot.getRelative(destination.getArea(), offset.getX(), offset.getY());
             other.getPlotModificationManager().create(plot.getOwner(), false);
@@ -111,6 +120,7 @@ public final class PlotModificationManager {
                 final Collection<PlotFlag<?, ?>> existingFlags = other.getFlags();
                 other.getFlagContainer().clearLocal();
                 other.getFlagContainer().addAll(plot.getFlagContainer().getFlagMap().values());
+                // Update the database
                 for (final PlotFlag<?, ?> flag : existingFlags) {
                     final PlotFlag<?, ?> newFlag = other.getFlagContainer().queryLocal(flag.getClass());
                     if (other.getFlagContainer().queryLocal(flag.getClass()) == null) {
@@ -142,6 +152,7 @@ public final class PlotModificationManager {
                 }
             }
         }
+        // copy terrain
         final ArrayDeque<CuboidRegion> regions = new ArrayDeque<>(this.plot.getRegions());
         final Runnable run = new Runnable() {
             @Override
@@ -169,6 +180,7 @@ public final class PlotModificationManager {
         run.run();
         return future;
     }
+
     /**
      * Clear the plot
      *
@@ -182,6 +194,7 @@ public final class PlotModificationManager {
     public void clear(final @Nullable Runnable whenDone) {
         this.clear(false, false, null, whenDone);
     }
+
     /**
      * Clear the plot
      *
@@ -276,6 +289,7 @@ public final class PlotModificationManager {
         }
         return true;
     }
+
     /**
      * Sets the biome for a plot asynchronously.
      *
@@ -303,6 +317,7 @@ public final class PlotModificationManager {
         };
         run.run();
     }
+
     /**
      * Unlink the plot and all connected plots.
      *
@@ -313,6 +328,7 @@ public final class PlotModificationManager {
     public boolean unlinkPlot(final boolean createRoad, final boolean createSign) {
         return unlinkPlot(createRoad, createSign, null);
     }
+
     /**
      * Unlink the plot and all connected plots.
      *
@@ -388,6 +404,7 @@ public final class PlotModificationManager {
         queue.enqueue();
         return true;
     }
+
     /**
      * Sets the sign for a plot to a specific name
      *
@@ -410,6 +427,7 @@ public final class PlotModificationManager {
                     .build());
         }
     }
+
     /**
      * Resend all chunks inside the plot to nearby players<br>
      * This should not need to be called
@@ -426,6 +444,7 @@ public final class PlotModificationManager {
             }
         }
     }
+
     /**
      * Remove the plot sign if it is set.
      */
@@ -443,6 +462,7 @@ public final class PlotModificationManager {
         queue.setBlock(location.getX(), location.getY(), location.getZ(), BlockTypes.AIR.getDefaultState());
         queue.enqueue();
     }
+
     /**
      * Sets the plot sign if plot signs are enabled.
      */
@@ -456,6 +476,7 @@ public final class PlotModificationManager {
                 (username, sign) -> this.setSign(username)
         );
     }
+
     /**
      * Register a plot and create it in the database<br>
      * - The plot will not be created if the owner is null<br>
@@ -467,6 +488,7 @@ public final class PlotModificationManager {
     public boolean create() {
         return this.create(this.plot.getOwnerAbs(), true);
     }
+
     /**
      * Register a plot and create it in the database<br>
      * - The plot will not be created if the owner is null<br>
@@ -499,12 +521,14 @@ public final class PlotModificationManager {
                 PlotArea plotworld = plot.getArea();
                 if (notify && plotworld.isAutoMerge()) {
                     final PlotPlayer<?> player = PlotSquared.platform().playerManager().getPlayerIfExists(uuid);
+
                     PlotMergeEvent event = PlotSquared.get().getEventDispatcher().callMerge(
                             this.plot,
                             Direction.ALL,
                             Integer.MAX_VALUE,
                             player
                     );
+
                     if (event.getEventResult() == Result.DENY) {
                         if (player != null) {
                             player.sendMessage(
@@ -528,6 +552,7 @@ public final class PlotModificationManager {
         );
         return false;
     }
+
     /**
      * Auto merge a plot in a specific direction.
      *
@@ -545,6 +570,7 @@ public final class PlotModificationManager {
             @Nullable PlotPlayer<?> actor,
             final boolean removeRoads
     ) {
+        //Ignore merging if there is no owner for the plot
         if (!this.plot.hasOwner()) {
             return false;
         }
@@ -569,6 +595,7 @@ public final class PlotModificationManager {
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
+
                     if (removeRoads) {
                         ArrayList<PlotId> ids = new ArrayList<>();
                         ids.add(current.getId());
@@ -585,6 +612,7 @@ public final class PlotModificationManager {
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
+
                     if (removeRoads) {
                         ArrayList<PlotId> ids = new ArrayList<>();
                         ids.add(current.getId());
@@ -601,6 +629,7 @@ public final class PlotModificationManager {
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
+
                     if (removeRoads) {
                         ArrayList<PlotId> ids = new ArrayList<>();
                         ids.add(current.getId());
@@ -617,6 +646,7 @@ public final class PlotModificationManager {
                     merged.add(current.getId());
                     merged.add(other.getId());
                     toReturn = true;
+
                     if (removeRoads) {
                         ArrayList<PlotId> ids = new ArrayList<>();
                         ids.add(current.getId());
@@ -635,6 +665,7 @@ public final class PlotModificationManager {
         visited.forEach(Plot::clearCache);
         return toReturn;
     }
+
     /**
      * Moves a plot physically, as well as the corresponding settings.
      *
@@ -676,10 +707,14 @@ public final class PlotModificationManager {
                 plot.getPlotModificationManager().removeSign();
             }
         }
+        // world border
         destination.updateWorldBorder();
         final ArrayDeque<CuboidRegion> regions = new ArrayDeque<>(this.plot.getRegions());
+        // move / swap data
         final PlotArea originArea = this.plot.getArea();
+
         final Iterator<Plot> plotIterator = plots.iterator();
+
         CompletableFuture<Boolean> future = null;
         if (plotIterator.hasNext()) {
             while (plotIterator.hasNext()) {
@@ -695,17 +730,21 @@ public final class PlotModificationManager {
         } else {
             future = CompletableFuture.completedFuture(true);
         }
+
         return future.thenApply(result -> {
             if (!result) {
                 return false;
             }
+            // copy terrain
             if (occupied.get()) {
                 new Runnable() {
                     @Override
                     public void run() {
                         if (regions.isEmpty()) {
+                            // Update signs
                             destination.getPlotModificationManager().setSign();
                             setSign();
+                            // Run final tasks
                             TaskManager.runTask(whenDone);
                         } else {
                             CuboidRegion region = regions.poll();
@@ -762,6 +801,7 @@ public final class PlotModificationManager {
             return true;
         });
     }
+
     /**
      * Unlink a plot and remove the roads
      *
@@ -771,6 +811,7 @@ public final class PlotModificationManager {
     public boolean unlink() {
         return this.unlinkPlot(true, true);
     }
+
     /**
      * Swap the plot contents and settings with another location<br>
      * - The destination must correspond to a valid plot of equal dimensions
@@ -787,6 +828,7 @@ public final class PlotModificationManager {
     ) {
         return this.move(destination, actor, whenDone, true);
     }
+
     /**
      * Moves the plot to an empty location<br>
      * - The location must be empty
@@ -803,6 +845,7 @@ public final class PlotModificationManager {
     ) {
         return this.move(destination, actor, whenDone, false);
     }
+
     /**
      * Sets a component for a plot to the provided blocks<br>
      * - E.g. floor, wall, border etc.<br>
@@ -824,6 +867,7 @@ public final class PlotModificationManager {
         final PlotComponentSetEvent event = PlotSquared.get().getEventDispatcher().callComponentSet(this.plot, component, blocks);
         return this.plot.getManager().setComponent(this.plot.getId(), event.getComponent(), event.getPattern(), actor, queue);
     }
+
     /**
      * Delete a plot (use null for the runnable if you don't need to be notified on completion)
      *
@@ -849,6 +893,7 @@ public final class PlotModificationManager {
         });
         return true;
     }
+
     /**
      * Sets components such as border, wall, floor.
      * (components are generator specific)
@@ -873,6 +918,7 @@ public final class PlotModificationManager {
         }
         return this.setComponent(component, parsed.toPattern(), actor, queue);
     }
+
     /**
      * Remove the south road section of a plot<br>
      * - Used when a plot is merged<br>
@@ -890,10 +936,11 @@ public final class PlotModificationManager {
             Location pos1 = Location.at(this.plot.getWorldName(), bot.getX(), plot.getArea().getMinGenHeight(), top.getZ());
             Location pos2 = Location.at(this.plot.getWorldName(), top.getX(), plot.getArea().getMaxGenHeight(), bot.getZ());
             PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
-        } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) {
+        } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.plot.getManager().removeRoadSouth(this.plot, queue);
         }
     }
+
     /**
      * Remove the east road section of a plot<br>
      * - Used when a plot is merged<br>
@@ -911,10 +958,11 @@ public final class PlotModificationManager {
             Location pos1 = Location.at(this.plot.getWorldName(), top.getX(), plot.getArea().getMinGenHeight(), bot.getZ());
             Location pos2 = Location.at(this.plot.getWorldName(), bot.getX(), plot.getArea().getMaxGenHeight(), top.getZ());
             PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
-        } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) {
+        } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.plot.getArea().getPlotManager().removeRoadEast(this.plot, queue);
         }
     }
+
     /**
      * Remove the SE road (only effects terrain)
      *
@@ -929,8 +977,9 @@ public final class PlotModificationManager {
             Location pos1 = this.plot.getTopAbs().add(1, 0, 1);
             Location pos2 = other.getBottomAbs().subtract(1, 0, 1);
             PlotSquared.platform().regionManager().regenerateRegion(pos1, pos2, true, null);
-        } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) {
+        } else if (this.plot.getArea().getTerrain() != PlotAreaTerrainType.ALL) { // no road generated => no road to remove
             this.plot.getArea().getPlotManager().removeRoadSouthEast(this.plot, queue);
         }
     }
+
 }

@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -37,19 +38,23 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
+
 @CommandDeclaration(command = "deny",
         aliases = {"d", "ban"},
         usage = "/plot deny <player>",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.PLAYER)
 public class Deny extends SubCommand {
+
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final WorldUtil worldUtil;
+
     @Inject
     public Deny(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -61,8 +66,10 @@ public class Deny extends SubCommand {
         this.eventDispatcher = eventDispatcher;
         this.worldUtil = worldUtil;
     }
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
+
         Location location = player.getLocation();
         final Plot plot = location.getPlotAbs();
         if (plot == null) {
@@ -77,6 +84,7 @@ public class Deny extends SubCommand {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return true;
         }
+
         int maxDenySize = player.hasPermissionRange(Permission.PERMISSION_DENY, Settings.Limit.MAX_PLOTS);
         int size = plot.getDenied().size();
         if (size >= maxDenySize) {
@@ -86,6 +94,7 @@ public class Deny extends SubCommand {
             );
             return false;
         }
+
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {
                 player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
@@ -126,6 +135,7 @@ public class Deny extends SubCommand {
                             handleKick(PlotSquared.platform().playerManager().getPlayerIfExists(uuid), plot);
                         } else {
                             for (PlotPlayer<?> plotPlayer : plot.getPlayersInPlot()) {
+                                // Ignore plot-owners
                                 if (plot.isAdded(plotPlayer.getUUID())) {
                                     continue;
                                 }
@@ -137,12 +147,15 @@ public class Deny extends SubCommand {
                 player.sendMessage(TranslatableCaption.of("deny.denied_added"));
             }
         });
+
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
+
     private void handleKick(PlotPlayer<?> player, Plot plot) {
         plot = plot.getBasePlot(false);
         if (player == null) {
@@ -163,6 +176,8 @@ public class Deny extends SubCommand {
         if (plot.equals(spawn.getPlot())) {
             Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
             if (plot.equals(newSpawn.getPlot())) {
+                // Kick from server if you can't be teleported to spawn
+                // Use string based message here for legacy uses
                 player.kick("You got kicked from the plot! This server did not set up a loaded spawn, so you got " +
                         "kicked from the server.");
             } else {
@@ -172,4 +187,5 @@ public class Deny extends SubCommand {
             player.teleport(spawn, TeleportCause.DENIED);
         }
     }
+
 }

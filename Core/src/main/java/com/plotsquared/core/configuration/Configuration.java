@@ -17,11 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration;
+
 import java.util.Map;
+
 /**
  * Represents a source of configurable options and settings.
  */
 public interface Configuration extends ConfigurationSection {
+
     /**
      * Sets the default value of the given path as provided.
      * <p>If no source {@link Configuration} was provided as a default
@@ -36,6 +39,7 @@ public interface Configuration extends ConfigurationSection {
      */
     @Override
     void addDefault(String path, Object value);
+
     /**
      * Sets the default values of the given paths as provided.
      * <p>If no source {@link Configuration} was provided as a default
@@ -46,6 +50,7 @@ public interface Configuration extends ConfigurationSection {
      * @throws IllegalArgumentException Thrown if defaults is null.
      */
     void addDefaults(Map<String, Object> defaults);
+
     /**
      * Sets the default values of the given paths as provided.
      * <p>If no source {@link Configuration} was provided as a default
@@ -60,6 +65,7 @@ public interface Configuration extends ConfigurationSection {
      * @throws IllegalArgumentException Thrown if defaults is null or this.
      */
     void addDefaults(Configuration defaults);
+
     /**
      * Gets the source {@link Configuration} for this configuration.
      *
@@ -70,6 +76,7 @@ public interface Configuration extends ConfigurationSection {
      * @return Configuration source for default values, or null if none exist.
      */
     Configuration getDefaults();
+
     /**
      * Sets the source of all default values for this {@link Configuration}.
      *
@@ -80,6 +87,7 @@ public interface Configuration extends ConfigurationSection {
      * @throws IllegalArgumentException Thrown if defaults is null or this.
      */
     void setDefaults(Configuration defaults);
+
     /**
      * Gets the {@link ConfigurationOptions} for this {@link Configuration}.
      * <p>All setters through this method are chainable.</p>
@@ -87,4 +95,5 @@ public interface Configuration extends ConfigurationSection {
      * @return Options for this configuration
      */
     ConfigurationOptions options();
+
 }

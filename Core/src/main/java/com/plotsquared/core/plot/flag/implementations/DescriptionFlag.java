@@ -17,11 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.StringFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class DescriptionFlag extends StringFlag<DescriptionFlag> {
+
     public static final DescriptionFlag DESCRIPTION_FLAG_EMPTY = new DescriptionFlag("");
+
     protected DescriptionFlag(@NonNull String value) {
         super(
                 value,
@@ -29,24 +33,30 @@ public class DescriptionFlag extends StringFlag<DescriptionFlag> {
                 TranslatableCaption.of("flags.flag_description_description")
         );
     }
+
     @Override
     public DescriptionFlag parse(@NonNull String input) {
         return flagOf(input);
     }
+
     @Override
     public DescriptionFlag merge(@NonNull String newValue) {
         return flagOf(this.getValue() + " " + newValue);
     }
+
     @Override
     public String toString() {
         return this.getValue();
     }
+
     @Override
     public String getExample() {
         return "<gold>This is my plot!";
     }
+
     @Override
     protected DescriptionFlag flagOf(@NonNull String value) {
         return new DescriptionFlag(value);
     }
+
 }

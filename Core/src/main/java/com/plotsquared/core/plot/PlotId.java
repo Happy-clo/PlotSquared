@@ -17,19 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
+
 import com.plotsquared.core.location.Direction;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
 /**
  * The PlotId class represents a Plot's x and y coordinates within a {@link PlotArea}. PlotId x,y values do not correspond to Block locations.
  * A PlotId instance can be created using the {@link #of(int, int)} method or parsed from a string using the {@link #fromString(String)} method.
  */
 public final class PlotId {
+
     private final int x;
     private final int y;
     private final int hash;
+
     /**
      * Constructs a new PlotId with the given x and y coordinates.
      *
@@ -41,6 +46,7 @@ public final class PlotId {
         this.y = y;
         this.hash = (this.getX() << 16) | (this.getY() & 0xFFFF);
     }
+
     /**
      * Returns a new PlotId instance with the specified x and y coordinates.
      *
@@ -51,6 +57,7 @@ public final class PlotId {
     public static @NonNull PlotId of(final int x, final int y) {
         return new PlotId(x, y);
     }
+
     /**
      * Get a Plot Id based on a string
      *
@@ -65,6 +72,7 @@ public final class PlotId {
         }
         return plot;
     }
+
     /**
      * Returns a PlotId object from the given string, or null if the string is invalid.
      * The string should be in the format "x;y" where x and y are integers.
@@ -89,6 +97,8 @@ public final class PlotId {
         }
         return of(x, y);
     }
+
+
     /**
      * Returns a new PlotId instance from the given hash.
      *
@@ -98,6 +108,7 @@ public final class PlotId {
     public static @NonNull PlotId unpair(final int hash) {
         return PlotId.of(hash >> 16, hash & 0xFFFF);
     }
+
     /**
      * Returns the x-coordinate of this Plot ID.
      *
@@ -106,6 +117,7 @@ public final class PlotId {
     public int getX() {
         return this.x;
     }
+
     /**
      * Returns the y-coordinate of this Plot ID.
      *
@@ -114,6 +126,7 @@ public final class PlotId {
     public int getY() {
         return this.y;
     }
+
     /**
      * Returns the next Plot ID for claiming purposes based on the current Plot ID.
      *
@@ -147,6 +160,7 @@ public final class PlotId {
             return PlotId.of(x + 1, y);
         }
     }
+
     /**
      * Returns a new Plot ID in the specified relative direction based on the
      * current Plot ID.
@@ -163,6 +177,7 @@ public final class PlotId {
             default -> this;
         };
     }
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -180,6 +195,7 @@ public final class PlotId {
         final PlotId other = (PlotId) obj;
         return this.getX() == other.getX() && this.getY() == other.getY();
     }
+
     /**
      * Returns a string representation of this Plot ID in the format "x;y".
      *
@@ -191,6 +207,7 @@ public final class PlotId {
     public @NonNull String toString() {
         return this.getX() + ";" + this.getY();
     }
+
     /**
      * Returns a string representation of this Plot ID with the specified separator.
      * <p>
@@ -202,6 +219,7 @@ public final class PlotId {
     public @NonNull String toSeparatedString(String separator) {
         return this.getX() + separator + this.getY();
     }
+
     /**
      * Returns a string representation of this Plot ID in the format "x,y".
      *
@@ -210,14 +228,17 @@ public final class PlotId {
     public @NonNull String toCommaSeparatedString() {
         return this.getX() + "," + this.getY();
     }
+
     /**
      * Returns a string representation of this Plot ID in the format "x_y".
      *
      * @return a string representation of this Plot ID
      */
+
     public @NonNull String toUnderscoreSeparatedString() {
         return this.getX() + "_" + this.getY();
     }
+
     /**
      * Returns a string representation of this Plot ID in the format "x-y".
      *
@@ -226,25 +247,32 @@ public final class PlotId {
     public @NonNull String toDashSeparatedString() {
         return this.getX() + "-" + this.getY();
     }
+
     @Override
     public int hashCode() {
         return this.hash;
     }
+
+
     /**
      * An iterator that iterates over a range of {@link PlotId}s.
      * The range is defined by a start and end {@link PlotId}.
      */
     public static final class PlotRangeIterator implements Iterator<PlotId>, Iterable<PlotId> {
+
         private final PlotId start;
         private final PlotId end;
+
         private int x;
         private int y;
+
         private PlotRangeIterator(final @NonNull PlotId start, final @NonNull PlotId end) {
             this.start = start;
             this.end = end;
             this.x = this.start.getX();
             this.y = this.start.getY();
         }
+
         /**
          * Returns a new {@link PlotRangeIterator} that iterates over the range of Plots between the specified start and end Plots (inclusive).
          *
@@ -255,16 +283,22 @@ public final class PlotId {
         public static PlotRangeIterator range(final @NonNull PlotId start, final @NonNull PlotId end) {
             return new PlotRangeIterator(start, end);
         }
+
         @Override
         public boolean hasNext() {
+            // end is fully included
             return this.x <= this.end.getX() && this.y <= this.end.getY();
         }
+
         @Override
         public PlotId next() {
             if (!hasNext()) {
                 throw new NoSuchElementException("The iterator has no more entries");
             }
+            // increment *after* getting the result to include the minimum
+            // the id to return
             PlotId result = PlotId.of(this.x, this.y);
+            // first increase y, then x
             if (this.y == this.end.getY()) {
                 this.x++;
                 this.y = this.start.getY();
@@ -273,10 +307,13 @@ public final class PlotId {
             }
             return result;
         }
+
         @NonNull
         @Override
         public Iterator<PlotId> iterator() {
             return this;
         }
+
     }
+
 }

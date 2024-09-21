@@ -17,13 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.google.common.collect.Sets;
+
 import java.util.EnumSet;
 import java.util.Set;
+
 /**
  * The reason for an internal player teleport.
  */
 public enum TeleportCause {
+
     COMMAND,
     COMMAND_AREA_CREATE,
     COMMAND_AREA_TELEPORT,
@@ -45,10 +49,12 @@ public enum TeleportCause {
     LOGIN,
     PLUGIN,
     UNKNOWN;
+
     /**
      * @since 6.1.0
      */
     public static final class CauseSets {
+
         public static final Set<TeleportCause> COMMAND = Sets.immutableEnumSet(EnumSet.range(
                 TeleportCause.COMMAND,
                 TeleportCause.COMMAND_VISIT
@@ -58,5 +64,6 @@ public enum TeleportCause {
                 TeleportCause.DEATH,
                 TeleportCause.PLUGIN
         ));
+
     }
 }

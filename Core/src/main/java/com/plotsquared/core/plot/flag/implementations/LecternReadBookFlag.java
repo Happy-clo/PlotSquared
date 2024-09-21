@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class LecternReadBookFlag extends BooleanFlag<LecternReadBookFlag> {
+
     public static final LecternReadBookFlag LECTERN_READ_BOOK_TRUE = new LecternReadBookFlag(true);
     public static final LecternReadBookFlag LECTERN_READ_BOOK_FALSE = new LecternReadBookFlag(false);
+
     private LecternReadBookFlag(final boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_lectern_read_book"));
     }
+
     @Override
     protected LecternReadBookFlag flagOf(final @NonNull Boolean value) {
         return value ? LECTERN_READ_BOOK_TRUE : LECTERN_READ_BOOK_FALSE;
     }
+
 }

@@ -17,7 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 public class MathMan {
+
     private static final int ATAN2_BITS = 7;
     private static final int ATAN2_BITS2 = ATAN2_BITS << 1;
     private static final int ATAN2_MASK = ~(-1 << ATAN2_BITS2);
@@ -41,21 +43,25 @@ public class MathMan {
                     234, 234, 235, 235, 236, 236, 237, 237, 238, 238, 239, 240, 240, 241, 241, 242, 242,
                     243, 243, 244, 244, 245, 245, 246, 246, 247, 247, 248, 248, 249, 249, 250, 250, 251,
                     251, 252, 252, 253, 253, 254, 254, 255};
+
     static {
         for (int i = 0; i < ATAN2_DIM; i++) {
             for (int j = 0; j < ATAN2_DIM; j++) {
                 float x0 = (float) i / ATAN2_DIM;
                 float y0 = (float) j / ATAN2_DIM;
+
                 atan2[(j * ATAN2_DIM) + i] = (float) Math.atan2(y0, x0);
             }
         }
     }
+
     public static final int gcd(int a, int b) {
         if (b == 0) {
             return a;
         }
         return gcd(b, a % b);
     }
+
     public static final int gcd(int[] a) {
         int result = a[0];
         for (int i = 1; i < a.length; i++) {
@@ -63,6 +69,7 @@ public class MathMan {
         }
         return result;
     }
+
     public static double getMean(int[] array) {
         double count = 0;
         for (int i : array) {
@@ -70,21 +77,26 @@ public class MathMan {
         }
         return count / array.length;
     }
+
     public static int pair(short x, short y) {
         return (x << 16) | (y & 0xFFFF);
     }
+
     public static final int average(int a, int b) {
         return (a & b) + (a ^ b) / 2;
     }
+
     public static int roundInt(double value) {
         return (int) (value < 0 ? (value == (int) value) ? value : value - 1 : value);
     }
+
     public static int getPositiveId(int i) {
         if (i < 0) {
             return (-i * 2) - 1;
         }
         return i * 2;
     }
+
     public static boolean isInteger(String str) {
         if (str == null) {
             return false;
@@ -108,6 +120,7 @@ public class MathMan {
         }
         return true;
     }
+
     public static double getSD(int[] array, double av) {
         double sd = 0;
         for (int element : array) {
@@ -115,4 +128,5 @@ public class MathMan {
         }
         return Math.sqrt(sd / array.length);
     }
+
 }

@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -32,22 +33,27 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+
 @CommandDeclaration(command = "setup",
         permission = "plots.admin.command.setup",
         usage = "/plot setup",
         aliases = {"create"},
         category = CommandCategory.ADMINISTRATION)
 public class Setup extends SubCommand {
+
     private final SetupUtils setupUtils;
+
     @Inject
     public Setup(final @NonNull SetupUtils setupUtils) {
         this.setupUtils = setupUtils;
     }
+
     public void displayGenerators(PlotPlayer<?> player) {
         StringBuilder message = new StringBuilder();
         message.append(TranslatableCaption.of("setup.choose_generator").getComponent(player));
@@ -63,6 +69,7 @@ public class Setup extends SubCommand {
         }
         player.sendMessage(StaticCaption.of(message.toString()));
     }
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         try (final MetaDataAccess<SetupProcess> metaDataAccess =
@@ -107,6 +114,7 @@ public class Setup extends SubCommand {
             return true;
         }
     }
+
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         SetupProcess process;
@@ -117,6 +125,7 @@ public class Setup extends SubCommand {
         if (process == null) {
             return Collections.emptyList();
         }
+        // player already provided too many arguments
         if (args.length > 1 || (args.length == 1 && space)) {
             return Collections.emptyList();
         }
@@ -126,10 +135,12 @@ public class Setup extends SubCommand {
         tryAddSubCommand("cancel", args[0], commands);
         return commands;
     }
+
     private void tryAddSubCommand(String subCommand, String argument, List<Command> suggestions) {
         if (!argument.isEmpty() && subCommand.startsWith(argument)) {
             suggestions.add(new Command(null, false, subCommand, "", RequiredType.NONE, null) {
             });
         }
     }
+
 }

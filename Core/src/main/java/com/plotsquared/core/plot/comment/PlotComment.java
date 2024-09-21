@@ -17,7 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.comment;
+
 import com.plotsquared.core.plot.PlotId;
+
 public record PlotComment(
         String world,
         PlotId id,
@@ -26,4 +28,5 @@ public record PlotComment(
         String inbox,
         long timestamp
 ) {
+
 }

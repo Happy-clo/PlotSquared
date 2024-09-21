@@ -17,9 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.location;
+
 import com.intellectualsites.annotations.DoNotUse;
 import com.sk89q.worldedit.math.BlockVector3;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 /**
  * Used internally for generation to reference locations in worlds that "don't exist yet". There is no guarantee that the world
  * name provided by {@link UncheckedWorldLocation#getWorldName()} exists on the server.
@@ -28,7 +30,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @DoNotUse
 public final class UncheckedWorldLocation extends Location {
+
     private final String worldName;
+
     /**
      * @since 6.9.0
      */
@@ -38,6 +42,7 @@ public final class UncheckedWorldLocation extends Location {
         super(World.nullWorld(), BlockVector3.at(x, y, z), 0f, 0f);
         this.worldName = worldName;
     }
+
     /**
      * Construct a new location with yaw and pitch equal to 0
      *
@@ -54,6 +59,7 @@ public final class UncheckedWorldLocation extends Location {
     ) {
         return new UncheckedWorldLocation(world, x, y, z);
     }
+
     /**
      * Construct a new location with yaw and pitch equal to 0
      *
@@ -66,9 +72,11 @@ public final class UncheckedWorldLocation extends Location {
     public static @NonNull UncheckedWorldLocation at(final @NonNull String world, BlockVector3 loc) {
         return new UncheckedWorldLocation(world, loc.getX(), loc.getY(), loc.getZ());
     }
+
     @Override
     @DoNotUse
     public @NonNull String getWorldName() {
         return this.worldName;
     }
+
 }

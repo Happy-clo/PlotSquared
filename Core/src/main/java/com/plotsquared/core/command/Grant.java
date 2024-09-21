@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.common.primitives.Ints;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -33,6 +34,7 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -42,15 +44,18 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
+
 @CommandDeclaration(command = "grant",
         category = CommandCategory.CLAIMING,
         usage = "/plot grant <check | add> [player]",
         permission = "plots.grant",
         requiredType = RequiredType.NONE)
 public class Grant extends Command {
+
     public Grant() {
         super(MainCommand.getInstance(), true);
     }
+
     @Override
     public CompletableFuture<Boolean> execute(
             final PlotPlayer<?> player, String[] args,
@@ -103,7 +108,7 @@ public class Grant extends Command {
                                 @Override
                                 public void run(Map<String, byte[]> value) {
                                     final byte[] array = value.get("grantedPlots");
-                                    if (arg0.equals("check")) {
+                                    if (arg0.equals("check")) { // check
                                         int granted;
                                         if (array == null) {
                                             granted = 0;
@@ -114,7 +119,7 @@ public class Grant extends Command {
                                                 TranslatableCaption.of("grants.granted_plots"),
                                                 TagResolver.resolver("amount", Tag.inserting(Component.text(granted)))
                                         );
-                                    } else {
+                                    } else { // add
                                         int amount;
                                         if (array == null) {
                                             amount = 1;
@@ -141,6 +146,7 @@ public class Grant extends Command {
         sendUsage(player);
         return CompletableFuture.completedFuture(true);
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -170,4 +176,5 @@ public class Grant extends Command {
         }
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
+
 }

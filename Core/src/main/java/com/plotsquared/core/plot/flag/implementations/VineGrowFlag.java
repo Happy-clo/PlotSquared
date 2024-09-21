@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class VineGrowFlag extends BooleanFlag<VineGrowFlag> {
+
     public static final VineGrowFlag VINE_GROW_TRUE = new VineGrowFlag(true);
     public static final VineGrowFlag VINE_GROW_FALSE = new VineGrowFlag(false);
+
     private VineGrowFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_vine_grow"));
     }
+
     @Override
     protected VineGrowFlag flagOf(@NonNull Boolean value) {
         return value ? VINE_GROW_TRUE : VINE_GROW_FALSE;
     }
+
 }

@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.task;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.Result;
@@ -30,13 +31,17 @@ import com.plotsquared.core.util.EventDispatcher;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import java.util.concurrent.Callable;
+
 public final class AutoClaimFinishTask implements Callable<Boolean> {
+
     private final PlotPlayer<?> player;
     private final Plot plot;
     private final PlotArea area;
     private final String schematic;
     private final EventDispatcher eventDispatcher;
+
     public AutoClaimFinishTask(
             final PlotPlayer<?> player, final Plot plot, final PlotArea area,
             final String schematic, final EventDispatcher eventDispatcher
@@ -47,6 +52,7 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
         this.schematic = schematic;
         this.eventDispatcher = eventDispatcher;
     }
+
     @Override
     public Boolean call() {
         try (final MetaDataAccess<Boolean> autoAccess
@@ -74,4 +80,5 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
         }
         return true;
     }
+
 }

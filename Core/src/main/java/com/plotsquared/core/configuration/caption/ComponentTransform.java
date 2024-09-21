@@ -17,11 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Set;
+
 public interface ComponentTransform {
+
     /**
      * Creates a transform that applies the given transform on all child components and the
      * component itself. The children are transformed before the component itself is transformed.
@@ -33,6 +37,7 @@ public interface ComponentTransform {
     static ComponentTransform nested(ComponentTransform transform) {
         return new NestedComponentTransform(transform);
     }
+
     /**
      * Creates a transform that removes click events of the given actions from a component.
      * Note: To remove click events from children too, the returned transform must be wrapped
@@ -45,6 +50,7 @@ public interface ComponentTransform {
     static ComponentTransform stripClicks(ClickEvent.Action... actionsToRemove) {
         return new ClickStripTransform(Set.of(actionsToRemove));
     }
+
     /**
      * Applies this transform on the given component and returns the result.
      *
@@ -53,4 +59,5 @@ public interface ComponentTransform {
      * @since 6.0.10
      */
     @NonNull Component transform(@NonNull Component original);
+
 }

@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class VehicleUseFlag extends BooleanFlag<VehicleUseFlag> {
+
     public static final VehicleUseFlag VEHICLE_USE_TRUE = new VehicleUseFlag(true);
     public static final VehicleUseFlag VEHICLE_USE_FALSE = new VehicleUseFlag(false);
+
     private VehicleUseFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_vehicle_use"));
     }
+
     @Override
     protected VehicleUseFlag flagOf(@NonNull Boolean value) {
         return value ? VEHICLE_USE_TRUE : VEHICLE_USE_FALSE;
     }
+
 }

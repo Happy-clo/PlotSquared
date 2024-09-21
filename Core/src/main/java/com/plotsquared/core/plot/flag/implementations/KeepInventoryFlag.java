@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class KeepInventoryFlag extends BooleanFlag<KeepInventoryFlag> {
+
     public static final KeepInventoryFlag KEEP_INVENTORY_TRUE = new KeepInventoryFlag(true);
     public static final KeepInventoryFlag KEEP_INVENTORY_FALSE = new KeepInventoryFlag(false);
+
     private KeepInventoryFlag(final boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_keep_inventory"));
     }
+
     @Override
     protected KeepInventoryFlag flagOf(final @NonNull Boolean value) {
         return value ? KEEP_INVENTORY_TRUE : KEEP_INVENTORY_FALSE;
     }
+
 }

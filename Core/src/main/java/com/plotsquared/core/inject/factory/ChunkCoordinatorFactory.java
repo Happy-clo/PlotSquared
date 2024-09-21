@@ -17,15 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.inject.factory;
+
 import com.google.inject.assistedinject.Assisted;
 import com.plotsquared.core.queue.ChunkCoordinator;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.world.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collection;
 import java.util.function.Consumer;
+
 public interface ChunkCoordinatorFactory {
+
     @NonNull ChunkCoordinator create(
             final long maxIterationTime,
             final int initialBatchSize,
@@ -38,4 +42,5 @@ public interface ChunkCoordinatorFactory {
             final @NonNull Collection<ProgressSubscriber> progressSubscribers,
             @Assisted("forceSync") final boolean forceSync
     );
+
 }

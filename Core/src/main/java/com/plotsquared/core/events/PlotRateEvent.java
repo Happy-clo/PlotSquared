@@ -17,15 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.Rating;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 public class PlotRateEvent extends PlotEvent implements CancellablePlotEvent {
+
     private final PlotPlayer<?> rater;
     @Nullable
     private Rating rating;
     private Result eventResult;
+
     /**
      * PlotRateEvent: Called when a player rates a plot
      *
@@ -38,21 +42,27 @@ public class PlotRateEvent extends PlotEvent implements CancellablePlotEvent {
         this.rater = rater;
         this.rating = rating;
     }
+
     public PlotPlayer<?> getRater() {
         return this.rater;
     }
+
     public @Nullable Rating getRating() {
         return this.rating;
     }
+
     public void setRating(@Nullable Rating rating) {
         this.rating = rating;
     }
+
     @Override
     public Result getEventResult() {
         return eventResult;
     }
+
     @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
 }

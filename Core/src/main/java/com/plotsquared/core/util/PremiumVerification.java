@@ -17,26 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 public class PremiumVerification {
+
     private static Boolean usingPremium;
+
     /**
      * @return Account ID if downloaded through SpigotMC
      */
     public static String getUserID() {
         return "%%__USER__%%";
     }
+
     /**
      * @return Resource ID if downloaded through SpigotMC
      */
     public static String getResourceID() {
         return "%%__RESOURCE__%%";
     }
+
     /**
      * @return Download ID if downloaded through SpigotMC
      */
     public static String getDownloadID() {
         return "%%__NONCE__%%";
     }
+
     /**
      * @param userID Spigot user ID
      * @return {@code true} if userID does not contain __USER__
@@ -44,6 +50,7 @@ public class PremiumVerification {
     private static Boolean isPremium(String userID) {
         return !userID.contains("__USER__");
     }
+
     /**
      * Returns true if this plugin is premium
      *
@@ -52,4 +59,5 @@ public class PremiumVerification {
     public static Boolean isPremium() {
         return usingPremium == null ? (usingPremium = isPremium(getUserID())) : usingPremium;
     }
+
 }

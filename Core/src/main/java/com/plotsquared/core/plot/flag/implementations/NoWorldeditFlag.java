@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class NoWorldeditFlag extends BooleanFlag<NoWorldeditFlag> {
+
     public static final NoWorldeditFlag NO_WORLDEDIT_TRUE = new NoWorldeditFlag(true);
     public static final NoWorldeditFlag NO_WORLDEDIT_FALSE = new NoWorldeditFlag(false);
+
     private NoWorldeditFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_no_worldedit"));
     }
+
     @Override
     protected NoWorldeditFlag flagOf(@NonNull Boolean value) {
         return value ? NO_WORLDEDIT_TRUE : NO_WORLDEDIT_FALSE;
     }
+
 }

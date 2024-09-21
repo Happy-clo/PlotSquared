@@ -17,11 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.collection;
+
 import com.plotsquared.core.util.RegionUtil;
 import com.sk89q.worldedit.regions.CuboidRegion;
+
 import java.util.HashSet;
 import java.util.Set;
+
 public class QuadMap<T> {
+
     public final int size;
     public final int x;
     public final int z;
@@ -33,6 +37,7 @@ public class QuadMap<T> {
     public QuadMap<T> three;
     public QuadMap<T> four;
     public QuadMap<T> skip;
+
     public QuadMap(int size, int x, int z) {
         this.size = size;
         this.x = x;
@@ -40,6 +45,7 @@ public class QuadMap<T> {
         this.newsize = size >> 1;
         this.min = 512;
     }
+
     public QuadMap(int size, int x, int z, int min) {
         this.size = size;
         this.x = x;
@@ -47,6 +53,7 @@ public class QuadMap<T> {
         this.newsize = size >> 1;
         this.min = min;
     }
+
     public int count() {
         int size = countBelow();
         if (this.objects != null) {
@@ -54,6 +61,7 @@ public class QuadMap<T> {
         }
         return size;
     }
+
     public Set<T> getAll() {
         HashSet<T> all = new HashSet<>();
         if (this.objects != null) {
@@ -77,9 +85,11 @@ public class QuadMap<T> {
         }
         return all;
     }
+
     public int countCurrent() {
         return this.objects == null ? 0 : this.objects.size();
     }
+
     public int countBelow() {
         int size = 0;
         if (this.one != null) {
@@ -96,6 +106,7 @@ public class QuadMap<T> {
         }
         return size;
     }
+
     public void add(T area) {
         if (this.size <= this.min) {
             if (this.objects == null) {
@@ -155,9 +166,11 @@ public class QuadMap<T> {
         }
         this.objects.add(area);
     }
+
     public CuboidRegion getRegion(T value) {
         return null;
     }
+
     public QuadMap<T> newInstance(int newsize, int x, int z, int min) {
         try {
             return new QuadMap<T>(newsize, x, z, min) {
@@ -171,6 +184,7 @@ public class QuadMap<T> {
             return null;
         }
     }
+
     public boolean remove(T area) {
         if (this.objects != null) {
             if (this.objects.remove(area)) {
@@ -219,6 +233,7 @@ public class QuadMap<T> {
         }
         return false;
     }
+
     @SuppressWarnings("unchecked")
     public void recalculateSkip() {
         QuadMap<T> map = null;
@@ -233,6 +248,7 @@ public class QuadMap<T> {
         }
         this.skip = map.skip == null ? map : map.skip;
     }
+
     public Set<T> get(CuboidRegion region) {
         HashSet<T> set = new HashSet<>();
         if (this.objects != null) {
@@ -262,11 +278,13 @@ public class QuadMap<T> {
         }
         return set;
     }
+
     public boolean intersects(CuboidRegion other) {
         return (other.getMinimumPoint().getX() <= this.x + this.size) && (
                 other.getMaximumPoint().getX() >= this.x - this.size) && (other.getMinimumPoint().getZ()
                 <= this.z + this.size) && (other.getMaximumPoint().getZ() >= this.z - this.size);
     }
+
     public T get(int x, int z) {
         if (this.objects != null) {
             for (T obj : this.objects) {
@@ -302,4 +320,5 @@ public class QuadMap<T> {
         }
         return null;
     }
+
 }

@@ -17,16 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Arrays;
 import java.util.Collection;
+
 public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFlowFlag> {
+
     public static final LiquidFlowFlag LIQUID_FLOW_ENABLED = new LiquidFlowFlag(FlowStatus.ENABLED);
     public static final LiquidFlowFlag LIQUID_FLOW_DISABLED =
             new LiquidFlowFlag(FlowStatus.DISABLED);
     public static final LiquidFlowFlag LIQUID_FLOW_DEFAULT = new LiquidFlowFlag(FlowStatus.DEFAULT);
+
     private LiquidFlowFlag(FlowStatus value) {
         super(
                 value,
@@ -34,6 +39,7 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
                 TranslatableCaption.of("flags.flag_description_liquid_flow")
         );
     }
+
     @Override
     public LiquidFlowFlag parse(final @NonNull String input) {
         return switch (input.toLowerCase()) {
@@ -42,6 +48,7 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
             default -> LIQUID_FLOW_DEFAULT;
         };
     }
+
     @Override
     public LiquidFlowFlag merge(final @NonNull FlowStatus newValue) {
         if (newValue == FlowStatus.ENABLED || this.getValue() == FlowStatus.ENABLED) {
@@ -49,14 +56,17 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
         }
         return flagOf(newValue);
     }
+
     @Override
     public String toString() {
         return this.getValue().name().toLowerCase();
     }
+
     @Override
     public String getExample() {
         return "true";
     }
+
     @Override
     protected LiquidFlowFlag flagOf(final @NonNull FlowStatus value) {
         return switch (value) {
@@ -65,13 +75,16 @@ public class LiquidFlowFlag extends PlotFlag<LiquidFlowFlag.FlowStatus, LiquidFl
             default -> LIQUID_FLOW_DEFAULT;
         };
     }
+
     @Override
     public Collection<String> getTabCompletions() {
         return Arrays.asList("true", "false", "default");
     }
+
     public enum FlowStatus {
         ENABLED,
         DISABLED,
         DEFAULT
     }
+
 }

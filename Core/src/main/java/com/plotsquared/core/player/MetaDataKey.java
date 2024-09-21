@@ -17,29 +17,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.player;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.inject.TypeLiteral;
 import com.plotsquared.core.synchronization.LockKey;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.HashMap;
 import java.util.Map;
+
 /**
  * Key used to access meta data
  *
  * @param <T> Meta data type
  */
 public final class MetaDataKey<T> {
+
     private static final Map<String, MetaDataKey<?>> keyMap = new HashMap<>();
     private static final Object keyMetaData = new Object();
+
     private final String key;
     private final TypeLiteral<T> type;
     private final LockKey lockKey;
+
     private MetaDataKey(final @NonNull String key, final @NonNull TypeLiteral<T> type) {
         this.key = Preconditions.checkNotNull(key, "Key may not be null");
         this.type = Preconditions.checkNotNull(type, "Type may not be null");
         this.lockKey = LockKey.of(this.key);
     }
+
     /**
      * Get a new named lock key
      *
@@ -55,10 +62,12 @@ public final class MetaDataKey<T> {
                     keyMap.computeIfAbsent(key, missingKey -> new MetaDataKey<>(missingKey, type));
         }
     }
+
     @Override
     public String toString() {
         return this.key;
     }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -70,10 +79,12 @@ public final class MetaDataKey<T> {
         final MetaDataKey<?> lockKey = (MetaDataKey<?>) o;
         return Objects.equal(this.key, lockKey.key);
     }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(this.key);
     }
+
     /**
      * Get the {@link LockKey} associated with this key
      *
@@ -82,6 +93,7 @@ public final class MetaDataKey<T> {
     public @NonNull LockKey getLockKey() {
         return this.lockKey;
     }
+
     /**
      * Get the meta data type
      *
@@ -90,4 +102,5 @@ public final class MetaDataKey<T> {
     public @NonNull TypeLiteral<T> getType() {
         return this.type;
     }
+
 }

@@ -17,19 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 /**
  * Event called when several merged plots are unlinked
  * {@inheritDoc}
  */
 public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotEvent {
+
     private final PlotArea area;
     boolean createRoad;
     boolean createSign;
     REASON reason;
     private Result eventResult = Result.ACCEPT;
+
     /**
      * PlotUnlinkEvent: Called when a mega plot is unlinked
      *
@@ -49,32 +53,41 @@ public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotE
         this.createSign = createSign;
         this.reason = reason;
     }
+
     @Override
     public Result getEventResult() {
         return eventResult;
     }
+
     @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
     public PlotArea getArea() {
         return this.area;
     }
+
     public boolean isCreateRoad() {
         return this.createRoad;
     }
+
     public void setCreateRoad(boolean createRoad) {
         this.createRoad = createRoad;
     }
+
     public boolean isCreateSign() {
         return this.createSign;
     }
+
     public void setCreateSign(boolean createSign) {
         this.createSign = createSign;
     }
+
     public REASON getReason() {
         return this.reason;
     }
+
     public enum REASON {
         NEW_OWNER,
         PLAYER_COMMAND,
@@ -82,4 +95,5 @@ public final class PlotUnlinkEvent extends PlotEvent implements CancellablePlotE
         DELETE,
         EXPIRE_DELETE
     }
+
 }

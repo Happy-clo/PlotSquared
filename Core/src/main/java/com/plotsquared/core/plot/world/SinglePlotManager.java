@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.world;
+
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
@@ -30,29 +31,38 @@ import com.plotsquared.core.util.task.TaskManager;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.File;
 import java.util.List;
+
 public class SinglePlotManager extends PlotManager {
+
     private static final int MAX_COORDINATE = 20000000;
+
     public SinglePlotManager(final @NonNull PlotArea plotArea) {
         super(plotArea);
     }
+
     @Override
     public PlotId getPlotIdAbs(int x, int y, int z) {
         return PlotId.of(0, 0);
     }
+
     @Override
     public PlotId getPlotId(int x, int y, int z) {
         return PlotId.of(0, 0);
     }
+
     @Override
     public Location getPlotBottomLocAbs(final @NonNull PlotId plotId) {
         return Location.at(plotId.toUnderscoreSeparatedString(), -MAX_COORDINATE, 0, -MAX_COORDINATE);
     }
+
     @Override
     public Location getPlotTopLocAbs(final @NonNull PlotId plotId) {
         return Location.at(plotId.toUnderscoreSeparatedString(), MAX_COORDINATE, 0, MAX_COORDINATE);
     }
+
     @Override
     public boolean clearPlot(
             @NonNull Plot plot,
@@ -70,10 +80,13 @@ public class SinglePlotManager extends PlotManager {
         });
         return true;
     }
+
     @Override
     public boolean claimPlot(@NonNull Plot plot, @Nullable QueueCoordinator queue) {
+        // TODO
         return true;
     }
+
     @Override
     public boolean unClaimPlot(@NonNull Plot plot, Runnable whenDone, @Nullable QueueCoordinator queue) {
         if (whenDone != null) {
@@ -81,14 +94,17 @@ public class SinglePlotManager extends PlotManager {
         }
         return true;
     }
+
     @Override
     public Location getSignLoc(@NonNull Plot plot) {
         return null;
     }
+
     @Override
     public String[] getPlotComponents(@NonNull PlotId plotId) {
         return new String[0];
     }
+
     @Override
     public boolean setComponent(
             @NonNull PlotId plotId,
@@ -99,48 +115,60 @@ public class SinglePlotManager extends PlotManager {
     ) {
         return false;
     }
+
     @Override
     public boolean createRoadEast(@NonNull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
+
     @Override
     public boolean createRoadSouth(@NonNull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
+
     @Override
     public boolean createRoadSouthEast(@NonNull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
+
     @Override
     public boolean removeRoadEast(@NonNull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
+
     @Override
     public boolean removeRoadSouth(@NonNull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
+
     @Override
     public boolean removeRoadSouthEast(@NonNull Plot plot, @Nullable QueueCoordinator queue) {
         return false;
     }
+
     @Override
     public boolean startPlotMerge(@NonNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
+
     @Override
     public boolean startPlotUnlink(@NonNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
+
     @Override
     public boolean finishPlotMerge(@NonNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
+
     @Override
     public boolean finishPlotUnlink(@NonNull List<PlotId> plotIds, @Nullable QueueCoordinator queue) {
         return false;
     }
+
     @Override
     public boolean regenerateAllPlotWalls(@Nullable QueueCoordinator queue) {
         return false;
     }
+
 }

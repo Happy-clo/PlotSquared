@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
@@ -31,18 +32,23 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.concurrent.CompletableFuture;
+
 @CommandDeclaration(usage = "/plot move <X;Z>",
         command = "move",
         permission = "plots.move",
         category = CommandCategory.CLAIMING,
         requiredType = RequiredType.PLAYER)
 public class Move extends SubCommand {
+
     private final PlotAreaManager plotAreaManager;
+
     @Inject
     public Move(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
     }
+
     @Override
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
@@ -90,8 +96,11 @@ public class Move extends SubCommand {
             player.sendMessage(TranslatableCaption.of("move.move_merged"));
             return CompletableFuture.completedFuture(false);
         }
+
+        // Set strings here as the plot objects are mutable (the PlotID changes after being moved).
         String p1 = plot1.toString();
         String p2 = plot2.toString();
+
         return plot1.getPlotModificationManager().move(plot2, player, () -> {
         }, false).thenApply(result -> {
             if (result) {
@@ -109,8 +118,10 @@ public class Move extends SubCommand {
             }
         });
     }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         return true;
     }
+
 }

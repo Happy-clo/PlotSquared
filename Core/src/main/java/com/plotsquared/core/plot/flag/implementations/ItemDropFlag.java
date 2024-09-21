@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class ItemDropFlag extends BooleanFlag<ItemDropFlag> {
+
     public static final ItemDropFlag ITEM_DROP_TRUE = new ItemDropFlag(true);
     public static final ItemDropFlag ITEM_DROP_FALSE = new ItemDropFlag(false);
+
     private ItemDropFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_item_drop"));
     }
+
     @Override
     protected ItemDropFlag flagOf(@NonNull Boolean value) {
         return value ? ITEM_DROP_TRUE : ITEM_DROP_FALSE;
     }
+
 }

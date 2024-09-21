@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.events.PlotFlagAddEvent;
@@ -58,6 +59,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -69,9 +71,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
 public class HybridUtils {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + HybridUtils.class.getSimpleName());
     private static final BlockState AIR = BlockTypes.AIR.getDefaultState();
+
     /**
      * Deprecated and likely to be removed in a future release.
      */
@@ -79,15 +84,19 @@ public class HybridUtils {
     public static HybridUtils manager;
     public static Set<BlockVector2> regions;
     public static int height;
+    // Use ordered for reasonable chunk loading order to reduce paper unloading neighbour chunks and then us attempting to load
+    // them again, causing errors
     public static Set<BlockVector2> chunks = new LinkedHashSet<>();
     public static PlotArea area;
     public static boolean UPDATE = false;
+
     private final PlotAreaManager plotAreaManager;
     private final ChunkManager chunkManager;
     private final GlobalBlockQueue blockQueue;
     private final WorldUtil worldUtil;
     private final SchematicHandler schematicHandler;
     private final EventDispatcher eventDispatcher;
+
     @Inject
     public HybridUtils(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -104,11 +113,14 @@ public class HybridUtils {
         this.schematicHandler = schematicHandler;
         this.eventDispatcher = eventDispatcher;
     }
+
     public void regeneratePlotWalls(final PlotArea area) {
         PlotManager plotManager = area.getPlotManager();
         plotManager.regenerateAllPlotWalls(null);
     }
+
     public void analyzeRegion(final String world, final CuboidRegion region, final RunnableVal<PlotAnalysis> whenDone) {
+        // int diff, int variety, int vertices, int rotation, int height_sd
         /*
          * diff: compare to base by looping through all blocks
          * variety: add to HashSet for each BlockState
@@ -125,8 +137,10 @@ public class HybridUtils {
             if (!(area instanceof HybridPlotWorld hpw)) {
                 return;
             }
+
             final BlockVector3 bot = region.getMinimumPoint();
             final BlockVector3 top = region.getMaximumPoint();
+
             final int bx = bot.getX();
             final int bz = bot.getZ();
             final int tx = top.getX();
@@ -139,11 +153,14 @@ public class HybridUtils {
             final int length = tz - bz + 1;
             final int height = area.getMaxGenHeight() - area.getMinGenHeight() + 1;
             final int minHeight = area.getMinGenHeight();
+
             final BlockState[][][] newBlocks = new BlockState[height][width][length];
+
             BlockArrayCacheScopedQueueCoordinator oldBlockQueue = new BlockArrayCacheScopedQueueCoordinator(
                     Location.at("", region.getMinimumPoint().withY(hpw.getMinGenHeight())),
                     Location.at("", region.getMaximumPoint().withY(hpw.getMaxGenHeight()))
             );
+
             region.getChunks().forEach(chunkPos -> {
                 int relChunkX = chunkPos.getX() - cbx;
                 int relChunkZ = chunkPos.getZ() - cbz;
@@ -151,7 +168,9 @@ public class HybridUtils {
                 oldBlockQueue.setOffsetZ(relChunkZ << 4);
                 hpw.getGenerator().generateChunk(oldBlockQueue, hpw, false);
             });
+
             final BlockState[][][] oldBlocks = oldBlockQueue.getBlockStates();
+
             QueueCoordinator queue = area.getQueue();
             queue.addReadChunks(region.getChunks());
             queue.setChunkConsumer(chunkPos -> {
@@ -181,8 +200,10 @@ public class HybridUtils {
                 } else {
                     maxZ = 15;
                 }
+
                 int chunkBlockX = X << 4;
                 int chunkBlockZ = Z << 4;
+
                 int xb = chunkBlockX - bx;
                 int zb = chunkBlockZ - bz;
                 for (int x = minX; x <= maxX; x++) {
@@ -202,6 +223,7 @@ public class HybridUtils {
                     }
                 }
             });
+
             final Runnable run = () -> {
                 int size = width * length;
                 int[] changes = new int[size];
@@ -214,8 +236,8 @@ public class HybridUtils {
                     for (int z = 0; z < length; z++) {
                         Set<BlockType> types = new HashSet<>();
                         for (int yIndex = 0; yIndex < height; yIndex++) {
-                            BlockState old = oldBlocks[yIndex][x][z];
-                            BlockState now = newBlocks[yIndex][x][z];
+                            BlockState old = oldBlocks[yIndex][x][z]; // Nullable
+                            BlockState now = newBlocks[yIndex][x][z]; // Not null
                             if (now == null) {
                                 throw new NullPointerException(String.format(
                                         "\"now\" block null attempting to perform plot analysis. Indexes: x=%d of %d, yIndex=%d" +
@@ -234,6 +256,8 @@ public class HybridUtils {
                             if (now.getBlockType().getMaterial().isAir()) {
                                 air[i]++;
                             } else {
+                                // check vertices
+                                // modifications_adjacent
                                 if (x > 0 && z > 0 && yIndex > 0 && x < width - 1 && z < length - 1 && yIndex < (height - 1)) {
                                     if (newBlocks[yIndex - 1][x][z].getBlockType().getMaterial().isAir()) {
                                         faces[i]++;
@@ -254,6 +278,7 @@ public class HybridUtils {
                                         faces[i]++;
                                     }
                                 }
+
                                 if (!now.equals(now.getBlockType().getDefaultState())) {
                                     data[i]++;
                                 }
@@ -264,12 +289,17 @@ public class HybridUtils {
                         i++;
                     }
                 }
+                // analyze plot
+                // put in analysis obj
+
+                // run whenDone
                 PlotAnalysis analysis = new PlotAnalysis();
                 analysis.changes = (int) (MathMan.getMean(changes) * 100);
                 analysis.faces = (int) (MathMan.getMean(faces) * 100);
                 analysis.data = (int) (MathMan.getMean(data) * 100);
                 analysis.air = (int) (MathMan.getMean(air) * 100);
                 analysis.variety = (int) (MathMan.getMean(variety) * 100);
+
                 analysis.changes_sd = (int) (MathMan.getSD(changes, analysis.changes) * 100);
                 analysis.faces_sd = (int) (MathMan.getSD(faces, analysis.faces) * 100);
                 analysis.data_sd = (int) (MathMan.getSD(data, analysis.data) * 100);
@@ -282,6 +312,7 @@ public class HybridUtils {
             queue.enqueue();
         });
     }
+
     public void analyzePlot(final Plot origin, final RunnableVal<PlotAnalysis> whenDone) {
         final ArrayDeque<CuboidRegion> zones = new ArrayDeque<>(origin.getRegions());
         final ArrayList<PlotAnalysis> analysis = new ArrayList<>();
@@ -322,6 +353,7 @@ public class HybridUtils {
                     result.add(whenDone.value.data);
                     result.add(whenDone.value.air);
                     result.add(whenDone.value.variety);
+
                     result.add(whenDone.value.changes_sd);
                     result.add(whenDone.value.faces_sd);
                     result.add(whenDone.value.data_sd);
@@ -350,6 +382,7 @@ public class HybridUtils {
         };
         run.run();
     }
+
     public final ArrayList<BlockVector2> getChunks(BlockVector2 region) {
         ArrayList<BlockVector2> chunks = new ArrayList<>();
         int sx = region.getX() << 5;
@@ -361,6 +394,7 @@ public class HybridUtils {
         }
         return chunks;
     }
+
     public boolean scheduleRoadUpdate(PlotArea area, int extend) {
         if (HybridUtils.UPDATE) {
             return false;
@@ -369,6 +403,7 @@ public class HybridUtils {
         Set<BlockVector2> regions = this.worldUtil.getChunkChunks(area.getWorldName());
         return scheduleRoadUpdate(area, regions, extend, new LinkedHashSet<>());
     }
+
     public boolean scheduleSingleRegionRoadUpdate(Plot plot, int extend) {
         if (HybridUtils.UPDATE) {
             return false;
@@ -378,6 +413,7 @@ public class HybridUtils {
         regions.add(RegionManager.getRegion(plot.getCenterSynchronous()));
         return scheduleRoadUpdate(plot.getArea(), regions, extend, new LinkedHashSet<>());
     }
+
     public boolean scheduleRoadUpdate(
             final PlotArea area,
             Set<BlockVector2> regions,
@@ -414,8 +450,10 @@ public class HybridUtils {
                 }
                 if (HybridUtils.regions.isEmpty() && chunks.isEmpty()) {
                     regeneratePlotWalls(area);
+
                     HybridUtils.UPDATE = false;
                     LOGGER.info("Finished road conversion");
+                    // CANCEL TASK
                 } else {
                     final Runnable task = this;
                     TaskManager.runTaskAsync(() -> {
@@ -482,12 +520,15 @@ public class HybridUtils {
         });
         return true;
     }
+
     public boolean setupRoadSchematic(Plot plot) {
         final String world = plot.getWorldName();
         final QueueCoordinator queue = blockQueue.getNewQueue(worldUtil.getWeWorld(world));
         Location bot = plot.getBottomAbs().subtract(1, 0, 1);
         Location top = plot.getTopAbs();
         final HybridPlotWorld plotworld = (HybridPlotWorld) plot.getArea();
+        // Do not use plotworld#schematicStartHeight() here as we want to restore the pre 6.1.4 way of doing it if
+        //  USE_WALL_IN_ROAD_SCHEM_HEIGHT is false
         int schemY = Settings.Schematics.USE_WALL_IN_ROAD_SCHEM_HEIGHT ?
                 Math.min(plotworld.PLOT_HEIGHT, Math.min(plotworld.WALL_HEIGHT, plotworld.ROAD_HEIGHT)) : plotworld.ROAD_HEIGHT;
         int sx = bot.getX() - plotworld.ROAD_WIDTH + 1;
@@ -499,11 +540,14 @@ public class HybridUtils {
         int bz = sz - plotworld.ROAD_WIDTH;
         int tz = sz - 1;
         int ty = get_ey(plotworld, queue, sx, ex, bz, tz, sy);
+
         final Set<CuboidRegion> sideRoad = Collections.singleton(RegionUtil.createRegion(sx, ex, sy, ey, sz, ez));
         final Set<CuboidRegion> intersection = Collections.singleton(RegionUtil.createRegion(sx, ex, sy, ty, bz, tz));
+
         final String dir = Settings.Paths.SCHEMATICS + File.separator + "GEN_ROAD_SCHEMATIC" + File.separator + plot
                 .getArea()
                 .toString() + File.separator;
+
         this.schematicHandler.getCompoundTag(world, sideRoad)
                 .whenComplete((compoundTag, throwable) -> {
                     schematicHandler.save(compoundTag, dir + "sideroad.schem");
@@ -520,6 +564,7 @@ public class HybridUtils {
                 });
         return true;
     }
+
     private int get_ey(final HybridPlotWorld hpw, QueueCoordinator queue, int sx, int ex, int sz, int ez, int sy) {
         int ey = sy;
         for (int x = sx; x <= ex; x++) {
@@ -536,6 +581,7 @@ public class HybridUtils {
         }
         return ey;
     }
+
     /**
      * Regenerate the road in a chunk in a plot area.
      *
@@ -675,4 +721,5 @@ public class HybridUtils {
         }
         return false;
     }
+
 }

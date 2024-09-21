@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import cloud.commandframework.services.ServicePipeline;
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
@@ -48,10 +49,12 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @CommandDeclaration(command = "auto",
         permission = "plots.auto",
         category = CommandCategory.CLAIMING,
@@ -59,10 +62,12 @@ import java.util.stream.Collectors;
         aliases = "a",
         usage = "/plot auto [length, width]")
 public class Auto extends SubCommand {
+
     private final PlotAreaManager plotAreaManager;
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
     private final ServicePipeline servicePipeline;
+
     @Inject
     public Auto(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -84,6 +89,7 @@ public class Auto extends SubCommand {
                 Collections.singletonList(singlePlotService)
         );
     }
+
     public static boolean checkAllowedPlots(
             PlotPlayer<?> player, PlotArea plotarea,
             @Nullable Integer allowedPlots, int sizeX, int sizeZ
@@ -141,6 +147,7 @@ public class Auto extends SubCommand {
         }
         return true;
     }
+
     private void claimSingle(
             final @NonNull PlotPlayer<?> player, final @NonNull Plot plot,
             final @NonNull PlotArea plotArea, final @Nullable String schematic
@@ -150,10 +157,12 @@ public class Auto extends SubCommand {
             metaDataAccess.set(true);
         }
         plot.setOwnerAbs(player.getUUID());
+
         final RunnableVal<Plot> runnableVal = new RunnableVal<>() {
             {
                 this.value = plot;
             }
+
             @Override
             public void run(final Plot plot) {
                 try {
@@ -166,8 +175,11 @@ public class Auto extends SubCommand {
                 }
             }
         };
+
         DBFunc.createPlotSafe(plot, runnableVal, () -> claimSingle(player, plot, plotArea, schematic));
+
     }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         PlotArea plotarea = player.getApplicablePlotArea();
@@ -260,6 +272,7 @@ public class Auto extends SubCommand {
                 return false;
             }
         }
+
         if (schematic != null && !schematic.isEmpty()) {
             if (!plotarea.hasSchematic(schematic)) {
                 player.sendMessage(
@@ -315,11 +328,14 @@ public class Auto extends SubCommand {
                 );
             }
         }
+
         List<Plot> plots = this.servicePipeline
                 .pump(new AutoQuery(player, null, sizeX, sizeZ, plotarea))
                 .through(AutoService.class)
                 .getResult();
+
         plots = this.eventDispatcher.callAutoPlotsChosen(player, plots).getPlots();
+
         if (plots.isEmpty()) {
             player.sendMessage(TranslatableCaption.of("errors.no_free_plots"));
             return false;
@@ -350,4 +366,5 @@ public class Auto extends SubCommand {
         }
         return true;
     }
+
 }

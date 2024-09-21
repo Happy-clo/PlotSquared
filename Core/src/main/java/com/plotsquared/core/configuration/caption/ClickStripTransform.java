@@ -17,22 +17,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.EnumSet;
 import java.util.Set;
+
 final class ClickStripTransform implements ComponentTransform {
+
     private final Set<ClickEvent.@NonNull Action> actionsToStrip;
+
     public ClickStripTransform(final Set<ClickEvent.@NonNull Action> actionsToStrip) {
         this.actionsToStrip = EnumSet.copyOf(actionsToStrip);
     }
+
     @Override
     public @NonNull Component transform(@NonNull final Component original) {
         var clickEvent = original.clickEvent();
         if (clickEvent == null || !actionsToStrip.contains(clickEvent.action())) {
             return original;
         }
-        return original.clickEvent(null);
+        return original.clickEvent(null); // remove it
     }
+
 }

@@ -17,10 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public final class HashUtil {
+
     private HashUtil() {
     }
+
     /**
      * Hashcode of a boolean array.<br>
      * - Used for traversing mega plots quickly.
@@ -42,4 +46,5 @@ public final class HashUtil {
         }
         return n;
     }
+
 }

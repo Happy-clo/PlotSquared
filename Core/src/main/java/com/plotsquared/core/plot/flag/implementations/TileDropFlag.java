@@ -17,20 +17,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 /**
  * @since 7.3.7
  */
+
 public class TileDropFlag extends BooleanFlag<TileDropFlag> {
+
     public static final TileDropFlag TILE_DROP_TRUE = new TileDropFlag(true);
     public static final TileDropFlag TILE_DROP_FALSE = new TileDropFlag(false);
+
     private TileDropFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_tile_drop"));
     }
+
     @Override
     protected TileDropFlag flagOf(@NonNull Boolean value) {
         return value ? TILE_DROP_TRUE : TILE_DROP_FALSE;
     }
+
 }

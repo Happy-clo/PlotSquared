@@ -17,9 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Collection;
+
 /**
  * This class should be implemented by each platform to allow PlotSquared to interact
  * with the world management solution used on the server.
@@ -30,10 +33,12 @@ import java.util.Collection;
  * particular plugin
  */
 public interface PlatformWorldManager<T> {
+
     /**
      * Initialize the platform world manager
      */
     void initialize();
+
     /**
      * Inform the manager that PlotSquared has created a new world, using
      * a specified generator.
@@ -46,16 +51,19 @@ public interface PlatformWorldManager<T> {
             final @NonNull String worldName,
             final @Nullable String generator
     );
+
     /**
      * Get the implementation name
      *
      * @return implementation name
      */
     String getName();
+
     /**
      * Get the names of all worlds on the server
      *
      * @return Worlds
      */
     Collection<String> getWorlds();
+
 }

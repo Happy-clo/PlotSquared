@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.placeholders;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -40,6 +41,7 @@ import com.plotsquared.core.util.query.PlotQuery;
 import net.kyori.adventure.text.Component;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
@@ -51,19 +53,23 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+
 /**
  * Registry that contains {@link Placeholder placeholders}
  */
 @Singleton
 public final class PlaceholderRegistry {
+
     private final Map<String, Placeholder> placeholders;
     private final EventDispatcher eventDispatcher;
+
     @Inject
     public PlaceholderRegistry(final @NonNull EventDispatcher eventDispatcher) {
         this.placeholders = Maps.newHashMap();
         this.eventDispatcher = eventDispatcher;
         this.registerDefault();
     }
+
     /**
      * Converts a {@link Component} into a legacy-formatted string.
      *
@@ -74,6 +80,7 @@ public final class PlaceholderRegistry {
     private static String legacyComponent(TranslatableCaption caption, LocaleHolder localeHolder) {
         return PlotSquared.platform().toLegacyPlatformString(caption.toComponent(localeHolder).asComponent());
     }
+
     private void registerDefault() {
         final GlobalFlagContainer globalFlagContainer = GlobalFlagContainer.getInstance();
         for (final PlotFlag<?, ?> flag : globalFlagContainer.getRecognizedPlotFlags()) {
@@ -87,7 +94,7 @@ public final class PlaceholderRegistry {
         this.createPlaceholder("world_name", player -> player.getLocation().getWorldName());
         this.createPlaceholder("has_plot", player -> player.getPlotCount() > 0 ? "true" : "false");
         this.createPlaceholder("allowed_plot_count", (player) -> {
-            if (player.getAllowedPlots() >= Integer.MAX_VALUE) {
+            if (player.getAllowedPlots() >= Integer.MAX_VALUE) { // Beautifies cases with '*' permission
                 return legacyComponent(TranslatableCaption.of("info.infinite"), player);
             }
             return Integer.toString(player.getAllowedPlots());
@@ -198,6 +205,7 @@ public final class PlaceholderRegistry {
             }
         });
     }
+
     /**
      * Create a functional placeholder
      *
@@ -216,6 +224,7 @@ public final class PlaceholderRegistry {
             }
         });
     }
+
     /**
      * Create a functional placeholder
      *
@@ -233,6 +242,7 @@ public final class PlaceholderRegistry {
             }
         });
     }
+
     /**
      * Register a placeholder
      *
@@ -248,6 +258,7 @@ public final class PlaceholderRegistry {
             this.eventDispatcher.callGenericEvent(new PlaceholderAddedEvent(placeholder));
         }
     }
+
     /**
      * Get a placeholder instance from its key
      *
@@ -258,6 +269,7 @@ public final class PlaceholderRegistry {
         return this.placeholders.get(
                 Preconditions.checkNotNull(key, "Key may not be null").toLowerCase(Locale.ENGLISH));
     }
+
     /**
      * Get the placeholder value evaluated for a player, and catch and deal with any problems
      * occurring while doing so
@@ -277,6 +289,7 @@ public final class PlaceholderRegistry {
         String placeholderValue = "";
         try {
             placeholderValue = placeholder.getValue(player);
+            // If a placeholder for some reason decides to be disobedient, we catch it here
             if (placeholderValue == null) {
                 new RuntimeException(String
                         .format("Placeholder '%s' returned null for player '%s'", placeholder.getKey(),
@@ -291,6 +304,7 @@ public final class PlaceholderRegistry {
         }
         return placeholderValue;
     }
+
     /**
      * Get all placeholders
      *
@@ -299,11 +313,14 @@ public final class PlaceholderRegistry {
     public @NonNull Collection<Placeholder> getPlaceholders() {
         return Collections.unmodifiableCollection(this.placeholders.values());
     }
+
     /**
      * Event called when a new {@link Placeholder} has been added
      */
     public record PlaceholderAddedEvent(
             Placeholder placeholder
     ) {
+
     }
+
 }

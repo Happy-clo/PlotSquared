@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.plotsquared.core.PlotSquared;
@@ -29,6 +30,7 @@ import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.uuid.UUIDMapping;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,14 +41,17 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 /**
  * Tab completion utilities
  */
 public final class TabCompletions {
+
     private static final Cache<String, List<String>> cachedCompletionValues =
             CacheBuilder.newBuilder()
                     .expireAfterWrite(Settings.Tab_Completions.CACHE_EXPIRATION, TimeUnit.SECONDS)
                     .build();
+
     private static final Command booleanTrueCompletion = new Command(null, false, "true", "",
             RequiredType.NONE, null
     ) {
@@ -55,10 +60,12 @@ public final class TabCompletions {
             RequiredType.NONE, null
     ) {
     };
+
     private TabCompletions() {
         throw new UnsupportedOperationException(
                 "This is a utility class and cannot be instantiated");
     }
+
     /**
      * Get a list of tab completions corresponding to player names. This uses the UUID pipeline
      * cache, so it will complete will all names known to PlotSquared
@@ -76,6 +83,7 @@ public final class TabCompletions {
     ) {
         return completePlayers("players", issuer, input, existing, uuid -> true);
     }
+
     /**
      * Get a list of tab completions corresponding to player names added to the given plot.
      *
@@ -97,6 +105,7 @@ public final class TabCompletions {
                         || plot.getDenied().contains(uuid)
         );
     }
+
     public static @NonNull List<Command> completePlayersInPlot(
             final @NonNull PlotPlayer<?> issuer,
             final @NonNull Plot plot,
@@ -115,6 +124,7 @@ public final class TabCompletions {
         }
         return filterCached(players, input, existing);
     }
+
     /**
      * Get a list of completions corresponding to WorldEdit(/FastAsyncWorldEdit) patterns. This uses
      * WorldEdit's pattern completer internally.
@@ -129,6 +139,7 @@ public final class TabCompletions {
                 .map(value -> new Command(null, false, value, "", RequiredType.NONE, null) {
                 }).collect(Collectors.toList());
     }
+
     public static @NonNull List<Command> completeBoolean(final @NonNull String input) {
         if (input.isEmpty()) {
             return Arrays.asList(booleanTrueCompletion, booleanFalseCompletion);
@@ -141,6 +152,7 @@ public final class TabCompletions {
         }
         return Collections.emptyList();
     }
+
     /**
      * Get a list of integer numbers matching the given input. If the input string
      * is empty, nothing will be returned. The list is unmodifiable.
@@ -169,6 +181,7 @@ public final class TabCompletions {
         }
         return asCompletions(commands.toArray(new String[0]));
     }
+
     /**
      * Get a list of plot areas matching the given input.
      * The list is unmodifiable.
@@ -193,6 +206,7 @@ public final class TabCompletions {
         }
         return Collections.unmodifiableList(completions);
     }
+
     public static @NonNull List<Command> asCompletions(String... toFilter) {
         final List<Command> completions = new ArrayList<>();
         for (String completion : toFilter) {
@@ -203,6 +217,7 @@ public final class TabCompletions {
         }
         return Collections.unmodifiableList(completions);
     }
+
     /**
      * @param cacheIdentifier Cache key
      * @param issuer          The player who issued the tab completion
@@ -247,6 +262,7 @@ public final class TabCompletions {
         }
         return filterCached(players, input, existing);
     }
+
     private static List<Command> filterCached(
             Collection<String> playerNames, String input,
             List<String> existing
@@ -258,7 +274,9 @@ public final class TabCompletions {
                                 CommandCategory.INFO
                         ) {
                         })
+                /* If there are more than 200 suggestions, just send the first 200 */
                 .limit(200)
                 .collect(Collectors.toList());
     }
+
 }

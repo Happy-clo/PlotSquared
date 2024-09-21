@@ -17,19 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Objects;
+
 public class PlotTitle {
+
     /**
      * @since 6.1.0
      */
     public static final PlotTitle CONFIGURED = new PlotTitle();
+
     private final String title;
     private final String subtitle;
+
     private PlotTitle() {
         title = null;
         subtitle = null;
     }
+
     /**
      * @since 6.0.10
      */
@@ -39,6 +46,7 @@ public class PlotTitle {
         this.title = title;
         this.subtitle = subtitle;
     }
+
     /**
      * @since 6.0.10
      */
@@ -46,6 +54,7 @@ public class PlotTitle {
     public String title() {
         return title;
     }
+
     /**
      * @since 6.0.10
      */
@@ -53,4 +62,5 @@ public class PlotTitle {
     public String subtitle() {
         return subtitle;
     }
+
 }

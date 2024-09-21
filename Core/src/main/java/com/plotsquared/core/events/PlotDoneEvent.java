@@ -17,13 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
+
 /**
  * Called when a plot is cleared
  */
 public class PlotDoneEvent extends PlotEvent implements CancellablePlotEvent {
+
     private Result eventResult;
+
     /**
      * PlotDoneEvent: Called when a plot is being set as done
      *
@@ -32,6 +36,7 @@ public class PlotDoneEvent extends PlotEvent implements CancellablePlotEvent {
     public PlotDoneEvent(Plot plot) {
         super(plot);
     }
+
     /**
      * Get the PlotId.
      *
@@ -40,6 +45,7 @@ public class PlotDoneEvent extends PlotEvent implements CancellablePlotEvent {
     public PlotId getPlotId() {
         return getPlot().getId();
     }
+
     /**
      * Get the world name.
      *
@@ -48,12 +54,15 @@ public class PlotDoneEvent extends PlotEvent implements CancellablePlotEvent {
     public String getWorld() {
         return getPlot().getWorldName();
     }
+
     @Override
     public Result getEventResult() {
         return eventResult;
     }
+
     @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
 }

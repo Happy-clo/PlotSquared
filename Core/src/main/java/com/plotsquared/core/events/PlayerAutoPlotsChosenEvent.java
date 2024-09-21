@@ -17,19 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Collections;
 import java.util.List;
+
 /**
  * Event fired when the plots that are to be claimed by a player executing a /plot auto have been chosen. It contains an
  * unmodifiable list of the plots selected. This may be of length 0. This event is effectively cancellable by setting the list
  * of plots to an empty list.
  */
 public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
+
     private List<Plot> plots;
+
     /**
      * PlayerAutoPlotsChosenEvent: Called when one or more plots are chosen for a /plot auto
      *
@@ -41,6 +46,7 @@ public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
         super(player, plots.size() > 0 ? plots.get(0) : null);
         this.plots = Collections.unmodifiableList(plots);
     }
+
     /**
      * Returns the plot at index 0 in the list of plots selected. May be null if the list was of length 0.
      *
@@ -50,6 +56,7 @@ public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
     public @Nullable Plot getPlot() {
         return super.getPlot();
     }
+
     /**
      * Get the immutable list of plots selected to be claimed by the player. May be of length 0.
      *
@@ -59,6 +66,7 @@ public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
     public @NonNull List<Plot> getPlots() {
         return plots;
     }
+
     /**
      * Set the plots to be claimed by the player.
      *
@@ -68,4 +76,5 @@ public class PlayerAutoPlotsChosenEvent extends PlotPlayerEvent {
     public void setPlots(final @NonNull List<Plot> plots) {
         this.plots = List.copyOf(plots);
     }
+
 }

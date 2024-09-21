@@ -17,12 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.io.File;
 import java.nio.file.Paths;
+
 public final class FileUtils {
+
     private FileUtils() {
     }
+
     /**
      * Attempt to (recursively) delete a directory
      *
@@ -45,10 +50,12 @@ public final class FileUtils {
                     String.format("Failed to delete directory %s", directory.getName()));
         }
     }
+
     public static @NonNull File getFile(final @NonNull File base, final @NonNull String path) {
         if (Paths.get(path).isAbsolute()) {
             return new File(path);
         }
         return new File(base, path);
     }
+
 }

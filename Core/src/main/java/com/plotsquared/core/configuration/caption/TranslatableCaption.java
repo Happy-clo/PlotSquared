@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
+
 import com.google.common.base.Objects;
 import com.plotsquared.core.PlotSquared;
 import net.kyori.adventure.text.Component;
@@ -25,22 +26,28 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Locale;
 import java.util.regex.Pattern;
+
 /**
  * Caption that is user modifiable
  */
 public final class TranslatableCaption implements NamespacedCaption {
+
     /**
      * Default caption namespace
      */
     public static final String DEFAULT_NAMESPACE = "plotsquared";
+
     private final String namespace;
     private final String key;
+
     private TranslatableCaption(final @NonNull String namespace, final @NonNull String key) {
         this.namespace = namespace;
         this.key = key;
     }
+
     /**
      * Get a new {@link TranslatableCaption} instance
      *
@@ -64,6 +71,7 @@ public final class TranslatableCaption implements NamespacedCaption {
                 key.toLowerCase(Locale.ENGLISH)
         );
     }
+
     /**
      * Get a new {@link TranslatableCaption} instance
      *
@@ -80,10 +88,12 @@ public final class TranslatableCaption implements NamespacedCaption {
                 key.toLowerCase(Locale.ENGLISH)
         );
     }
+
     @Override
     public @NonNull String getComponent(final @NonNull LocaleHolder localeHolder) {
         return PlotSquared.get().getCaptionMap(this.namespace).getMessage(this, localeHolder);
     }
+
     @Override
     public @NonNull Component toComponent(@NonNull final LocaleHolder localeHolder) {
         if (getKey().equals("core.prefix")) {
@@ -94,14 +104,17 @@ public final class TranslatableCaption implements NamespacedCaption {
                 Tag.inserting(TranslatableCaption.of("core.prefix").toComponent(localeHolder))
         ));
     }
+
     @Override
     public @NonNull String getKey() {
         return this.key;
     }
+
     @Override
     public @NonNull String getNamespace() {
         return this.namespace;
     }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -114,12 +127,15 @@ public final class TranslatableCaption implements NamespacedCaption {
         return Objects.equal(this.getNamespace(), that.getNamespace()) && Objects
                 .equal(this.getKey(), that.getKey());
     }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(this.getNamespace(), this.getKey());
     }
+
     @Override
     public @NotNull String toString() {
         return "TranslatableCaption(" + getNamespace() + ":" + getKey() + ")";
     }
+
 }

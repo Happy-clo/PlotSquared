@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.helpmenu;
+
 import com.plotsquared.core.command.CommandCategory;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -26,12 +27,16 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import java.util.ArrayList;
 import java.util.List;
+
 public class HelpPage {
+
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     private final List<HelpObject> helpObjects;
     private final TagResolver pageHeaderResolver;
+
     public HelpPage(CommandCategory category, int currentPage, int maxPages) {
         this.helpObjects = new ArrayList<>();
         this.pageHeaderResolver = TagResolver.builder()
@@ -40,6 +45,7 @@ public class HelpPage {
                 .tag("max", Tag.inserting(Component.text(maxPages + 1)))
                 .build();
     }
+
     public void render(PlotPlayer<?> player) {
         if (this.helpObjects.size() < 1) {
             player.sendMessage(TranslatableCaption.of("help.no_permission"));
@@ -59,7 +65,9 @@ public class HelpPage {
             );
         }
     }
+
     public void addHelpItem(HelpObject object) {
         this.helpObjects.add(object);
     }
+
 }

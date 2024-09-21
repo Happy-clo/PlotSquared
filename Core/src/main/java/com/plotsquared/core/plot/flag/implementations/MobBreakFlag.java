@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class MobBreakFlag extends BooleanFlag<MobBreakFlag> {
+
     public static final MobBreakFlag MOB_BREAK_TRUE = new MobBreakFlag(true);
     public static final MobBreakFlag MOB_BREAK_FALSE = new MobBreakFlag(false);
+
     private MobBreakFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_mob_break"));
     }
+
     @Override
     protected MobBreakFlag flagOf(@NonNull Boolean value) {
         return value ? MOB_BREAK_TRUE : MOB_BREAK_FALSE;
     }
+
 }

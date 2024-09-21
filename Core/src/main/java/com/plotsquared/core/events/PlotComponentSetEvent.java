@@ -17,15 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
 import com.sk89q.worldedit.function.pattern.Pattern;
+
 /**
  * Called when a plot component is set
  */
 public class PlotComponentSetEvent extends PlotEvent {
+
     private String component;
     private Pattern pattern;
+
     /**
      * PlotComponentSetEvent: Called when a player attempts to set the component of a plot (e.g. walls)
      *
@@ -38,6 +42,7 @@ public class PlotComponentSetEvent extends PlotEvent {
         this.component = component;
         this.pattern = pattern;
     }
+
     /**
      * Get the PlotId
      *
@@ -46,6 +51,7 @@ public class PlotComponentSetEvent extends PlotEvent {
     public PlotId getPlotId() {
         return getPlot().getId();
     }
+
     /**
      * Get the world name
      *
@@ -54,6 +60,7 @@ public class PlotComponentSetEvent extends PlotEvent {
     public String getWorld() {
         return getPlot().getWorldName();
     }
+
     /**
      * Get the component which was set
      *
@@ -62,6 +69,7 @@ public class PlotComponentSetEvent extends PlotEvent {
     public String getComponent() {
         return this.component;
     }
+
     /**
      * Change the component being set
      *
@@ -70,6 +78,7 @@ public class PlotComponentSetEvent extends PlotEvent {
     public void setComponent(String component) {
         this.component = component;
     }
+
     /**
      * Get the pattern being set
      *
@@ -78,6 +87,7 @@ public class PlotComponentSetEvent extends PlotEvent {
     public Pattern getPattern() {
         return this.pattern;
     }
+
     /**
      * Change the pattern being set
      *
@@ -86,4 +96,5 @@ public class PlotComponentSetEvent extends PlotEvent {
     public void setPattern(Pattern pattern) {
         this.pattern = pattern;
     }
+
 }

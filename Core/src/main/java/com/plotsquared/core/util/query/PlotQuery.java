@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
+
 import com.google.common.base.Preconditions;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.player.PlotPlayer;
@@ -27,6 +28,7 @@ import com.plotsquared.core.plot.flag.implementations.DoneFlag;
 import com.plotsquared.core.plot.world.PlotAreaManager;
 import com.plotsquared.core.util.MathMan;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +42,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
 /**
  * This represents a plot query, and can be used to
  * search for plots matching certain criteria.
@@ -48,16 +51,19 @@ import java.util.stream.Stream;
  * in the query itself
  */
 public final class PlotQuery implements Iterable<Plot> {
+
     private final Collection<PlotFilter> filters = new LinkedList<>();
     private final PlotAreaManager plotAreaManager;
     private PlotProvider plotProvider;
     private SortingStrategy sortingStrategy = SortingStrategy.NO_SORTING;
     private PlotArea priorityArea;
     private Comparator<Plot> plotComparator;
+
     private PlotQuery(final @NonNull PlotAreaManager plotAreaManager) {
         this.plotAreaManager = plotAreaManager;
         this.plotProvider = new GlobalPlotProvider(plotAreaManager);
     }
+
     /**
      * Create a new plot query instance
      *
@@ -66,6 +72,7 @@ public final class PlotQuery implements Iterable<Plot> {
     public static PlotQuery newQuery() {
         return new PlotQuery(PlotSquared.get().getPlotAreaManager());
     }
+
     /**
      * Query for plots in a single area
      *
@@ -77,6 +84,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.plotProvider = new AreaLimitedPlotProvider(Collections.singletonList(area));
         return this;
     }
+
     /**
      * Query for plots in all areas in a world
      *
@@ -88,6 +96,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.plotProvider = new AreaLimitedPlotProvider(this.plotAreaManager.getPlotAreasSet(world));
         return this;
     }
+
     /**
      * Query for plots in specific areas
      *
@@ -100,6 +109,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.plotProvider = new AreaLimitedPlotProvider(Collections.unmodifiableCollection(areas));
         return this;
     }
+
     /**
      * Query for expired plots
      *
@@ -109,6 +119,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.plotProvider = new ExpiredPlotProvider();
         return this;
     }
+
     /**
      * Query for all plots
      *
@@ -118,6 +129,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.plotProvider = new GlobalPlotProvider(this.plotAreaManager);
         return this;
     }
+
     /**
      * Don't query at all
      *
@@ -127,6 +139,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.plotProvider = new NullProvider();
         return this;
     }
+
     /**
      * Query for plots based on a search term
      *
@@ -138,6 +151,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.plotProvider = new SearchPlotProvider(searchTerm);
         return this;
     }
+
     /**
      * Query with a pre-defined result
      *
@@ -149,6 +163,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.plotProvider = new FixedPlotProvider(plot);
         return this;
     }
+
     /**
      * Query for base plots only
      *
@@ -157,6 +172,7 @@ public final class PlotQuery implements Iterable<Plot> {
     public @NonNull PlotQuery whereBasePlot() {
         return this.addFilter(new PredicateFilter(Plot::isBasePlot));
     }
+
     /**
      * Query for plots owned by a specific player
      *
@@ -167,6 +183,7 @@ public final class PlotQuery implements Iterable<Plot> {
         Preconditions.checkNotNull(owner, "Owner may not be null");
         return this.addFilter(new OwnerFilter(owner));
     }
+
     /**
      * Query for plots owned by a specific player
      *
@@ -177,6 +194,7 @@ public final class PlotQuery implements Iterable<Plot> {
         Preconditions.checkNotNull(owner, "Owner may not be null");
         return this.addFilter(new OwnerFilter(owner.getUUID()));
     }
+
     /**
      * Query for base plots where one of the merged plots is owned by a specific player
      *
@@ -188,6 +206,7 @@ public final class PlotQuery implements Iterable<Plot> {
         Preconditions.checkNotNull(owner, "Owner may not be null");
         return this.addFilter(new OwnersIncludeFilter(owner));
     }
+
     /**
      * Query for base plots where one of the merged plots is owned by a specific player
      *
@@ -199,12 +218,14 @@ public final class PlotQuery implements Iterable<Plot> {
         Preconditions.checkNotNull(owner, "Owner may not be null");
         return this.addFilter(new OwnersIncludeFilter(owner.getUUID()));
     }
+
     /**
      * Query only for plots that have an owner
      *
      * @return The query instance
      * @since 7.2.1
      */
+
     public @NonNull PlotQuery hasOwner() {
         return this.addFilter(new HasOwnerFilter());
     }
@@ -218,6 +239,7 @@ public final class PlotQuery implements Iterable<Plot> {
         Preconditions.checkNotNull(alias, "Alias may not be null");
         return this.addFilter(new AliasFilter(alias));
     }
+
     /**
      * Query for plots with a specific member (added/trusted/owner)
      *
@@ -228,6 +250,7 @@ public final class PlotQuery implements Iterable<Plot> {
         Preconditions.checkNotNull(member, "Member may not be null");
         return this.addFilter(new MemberFilter(member));
     }
+
     /**
      * Query for plots that passes a given predicate
      *
@@ -238,6 +261,7 @@ public final class PlotQuery implements Iterable<Plot> {
         Preconditions.checkNotNull(predicate, "Predicate may not be null");
         return this.addFilter(new PredicateFilter(predicate));
     }
+
     /**
      * Specify the sorting strategy that will decide how to
      * sort the results. This only matters if you use {@link #asList()}
@@ -250,6 +274,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.sortingStrategy = strategy;
         return this;
     }
+
     /**
      * Use a custom comparator to sort the results
      *
@@ -262,6 +287,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.plotComparator = comparator;
         return this;
     }
+
     /**
      * Defines the area around which plots may be sorted, depending on the
      * sorting strategy
@@ -274,6 +300,7 @@ public final class PlotQuery implements Iterable<Plot> {
         this.priorityArea = plotArea;
         return this;
     }
+
     /**
      * Get all plots that match the given criteria
      *
@@ -282,6 +309,7 @@ public final class PlotQuery implements Iterable<Plot> {
     public @NonNull Stream<Plot> asStream() {
         return this.asList().stream();
     }
+
     /**
      * Get all plots that match the given criteria
      *
@@ -352,6 +380,7 @@ public final class PlotQuery implements Iterable<Plot> {
         }
         return result;
     }
+
     /**
      * Get all plots that match the given criteria
      *
@@ -360,6 +389,7 @@ public final class PlotQuery implements Iterable<Plot> {
     public @NonNull Set<Plot> asSet() {
         return new HashSet<>(this.asList());
     }
+
     /**
      * Get all plots that match the given criteria
      * in the form of a {@link PaginatedPlotResult}
@@ -371,6 +401,7 @@ public final class PlotQuery implements Iterable<Plot> {
         Preconditions.checkState(pageSize > 0, "Page size must be greater than 0");
         return new PaginatedPlotResult(this.asList(), pageSize);
     }
+
     /**
      * Get all plots that match the given criteria
      *
@@ -379,6 +410,7 @@ public final class PlotQuery implements Iterable<Plot> {
     public @NonNull Collection<Plot> asCollection() {
         return this.asList();
     }
+
     /**
      * Get the amount of plots contained in the query result
      *
@@ -387,6 +419,7 @@ public final class PlotQuery implements Iterable<Plot> {
     public int count() {
         return this.asList().size();
     }
+
     /**
      * Get whether any provided plot matches the given filters.
      * If no plot was provided, false will be returned.
@@ -400,24 +433,28 @@ public final class PlotQuery implements Iterable<Plot> {
             final Collection<Plot> plots = this.plotProvider.getPlots();
             outer:
             for (final Plot plot : plots) {
+                // a plot must pass all filters to match the criteria
                 for (final PlotFilter filter : this.filters) {
                     if (!filter.accepts(plot)) {
                         continue outer;
                     }
                 }
-                return true;
+                return true; // a plot passed all filters, so we have a match
             }
             return false;
         }
     }
+
     @NonNull
     private PlotQuery addFilter(final @NonNull PlotFilter filter) {
         this.filters.add(filter);
         return this;
     }
+
     @NonNull
     @Override
     public Iterator<Plot> iterator() {
         return this.asCollection().iterator();
     }
+
 }

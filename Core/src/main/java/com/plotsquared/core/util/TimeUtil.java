@@ -17,11 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public final class TimeUtil {
+
     private TimeUtil() {
     }
+
     /**
      * Format seconds into a string with the format
      * #y #w #d #h #s
@@ -61,6 +65,7 @@ public final class TimeUtil {
         }
         return toReturn.toString().trim();
     }
+
     /**
      * Parse a time string back into time
      *
@@ -86,6 +91,7 @@ public final class TimeUtil {
                 case "weeks":
                 case "wks":
                 case "w":
+
                     time += 604800 * numbers;
                 case "days":
                 case "day":
@@ -113,4 +119,5 @@ public final class TimeUtil {
         }
         return time;
     }
+
 }

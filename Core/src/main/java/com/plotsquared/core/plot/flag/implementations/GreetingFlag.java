@@ -17,11 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.StringFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class GreetingFlag extends StringFlag<GreetingFlag> {
+
     public static final GreetingFlag GREETING_FLAG_EMPTY = new GreetingFlag("");
+
     protected GreetingFlag(@NonNull String value) {
         super(
                 value,
@@ -29,24 +33,30 @@ public class GreetingFlag extends StringFlag<GreetingFlag> {
                 TranslatableCaption.of("flags.flag_description_greeting")
         );
     }
+
     @Override
     public GreetingFlag parse(@NonNull String input) {
         return flagOf(input);
     }
+
     @Override
     public GreetingFlag merge(@NonNull String newValue) {
         return flagOf(this.getValue() + " " + newValue);
     }
+
     @Override
     public String toString() {
         return this.getValue();
     }
+
     @Override
     public String getExample() {
         return "<gold>Welcome to my plot!";
     }
+
     @Override
     protected GreetingFlag flagOf(@NonNull String value) {
         return new GreetingFlag(value);
     }
+
 }

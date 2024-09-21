@@ -17,10 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * Called when a user attempts to buy a plot.
  * <p>
@@ -33,12 +35,16 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @since 7.3.2
  */
 public class PlayerBuyPlotEvent extends PlotPlayerEvent implements CancellablePlotEvent {
+
     private Result result;
     private double price;
+
     public PlayerBuyPlotEvent(final PlotPlayer<?> plotPlayer, final Plot plot, @NonNegative final double price) {
         super(plotPlayer, plot);
         this.price = price;
     }
+
+
     /**
      * Sets the price required to buy the plot.
      *
@@ -46,11 +52,13 @@ public class PlayerBuyPlotEvent extends PlotPlayerEvent implements CancellablePl
      * @since 7.3.2
      */
     public void setPrice(@NonNegative final double price) {
+        //noinspection ConstantValue - the annotation does not ensure a non-negative runtime value
         if (price < 0) {
             throw new IllegalArgumentException("price must be non-negative");
         }
         this.price = price;
     }
+
     /**
      * Returns the currently set price required to buy the plot.
      *
@@ -60,6 +68,7 @@ public class PlayerBuyPlotEvent extends PlotPlayerEvent implements CancellablePl
     public @NonNegative double price() {
         return price;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -67,6 +76,7 @@ public class PlayerBuyPlotEvent extends PlotPlayerEvent implements CancellablePl
     public void setEventResult(@Nullable final Result eventResult) {
         this.result = eventResult;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -74,4 +84,5 @@ public class PlayerBuyPlotEvent extends PlotPlayerEvent implements CancellablePl
     public @Nullable Result getEventResult() {
         return this.result;
     }
+
 }

@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
+
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.queue.subscriber.ProgressSubscriber;
 import com.sk89q.jnbt.CompoundTag;
@@ -31,25 +32,32 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+
 /**
  * Queue that delegates to a parent queue.
  */
 public class DelegateQueueCoordinator extends QueueCoordinator {
+
     private final QueueCoordinator parent;
+
     public DelegateQueueCoordinator(QueueCoordinator parent) {
         super(parent == null ? null : parent.getWorld());
         this.parent = parent;
+
         if (parent != null) {
             this.setForceSync(parent.isForceSync());
         }
     }
+
     public QueueCoordinator getParent() {
         return parent;
     }
+
     @Override
     public int size() {
         if (parent != null) {
@@ -57,12 +65,14 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return 0;
     }
+
     @Override
     public void setModified(long modified) {
         if (parent != null) {
             parent.setModified(modified);
         }
     }
+
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull Pattern pattern) {
         if (parent != null) {
@@ -70,6 +80,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull BaseBlock id) {
         if (parent != null) {
@@ -77,6 +88,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public boolean setBlock(int x, int y, int z, @NonNull BlockState id) {
         if (parent != null) {
@@ -84,6 +96,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public @Nullable BlockState getBlock(int x, int y, int z) {
         if (parent != null) {
@@ -91,6 +104,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return null;
     }
+
     @Override
     public boolean setBiome(int x, int z, @NonNull BiomeType biome) {
         if (parent != null) {
@@ -98,6 +112,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public boolean setBiome(int x, int y, int z, @NonNull BiomeType biome) {
         if (parent != null) {
@@ -105,6 +120,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public boolean isSettingBiomes() {
         if (parent != null) {
@@ -112,12 +128,14 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public void setBiomesEnabled(final boolean enabled) {
         if (parent != null) {
             parent.setBiomesEnabled(enabled);
         }
     }
+
     @Override
     public boolean setEntity(@NonNull Entity entity) {
         if (parent != null) {
@@ -125,12 +143,14 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public void regenChunk(int x, int z) {
         if (parent != null) {
             parent.regenChunk(x, z);
         }
     }
+
     @Override
     public @Nullable World getWorld() {
         if (parent != null) {
@@ -138,6 +158,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return null;
     }
+
     @Override
     public boolean setTile(int x, int y, int z, @NonNull CompoundTag tag) {
         if (parent != null) {
@@ -145,6 +166,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public boolean isSettingTiles() {
         if (parent != null) {
@@ -152,6 +174,7 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public boolean enqueue() {
         if (parent != null) {
@@ -159,18 +182,21 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public void start() {
         if (parent != null) {
             parent.start();
         }
     }
+
     @Override
     public void cancel() {
         if (parent != null) {
             parent.cancel();
         }
     }
+
     @Override
     public Runnable getCompleteTask() {
         if (parent != null) {
@@ -178,12 +204,14 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return null;
     }
+
     @Override
     public void setCompleteTask(Runnable whenDone) {
         if (parent != null) {
             parent.setCompleteTask(whenDone);
         }
     }
+
     @Override
     public @Nullable Consumer<BlockVector2> getChunkConsumer() {
         if (parent != null) {
@@ -191,18 +219,21 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return null;
     }
+
     @Override
     public void setChunkConsumer(@NonNull Consumer<BlockVector2> consumer) {
         if (parent != null) {
             parent.setChunkConsumer(consumer);
         }
     }
+
     @Override
     public void addProgressSubscriber(@NonNull ProgressSubscriber progressSubscriber) {
         if (parent != null) {
             parent.addProgressSubscriber(progressSubscriber);
         }
     }
+
     @Override
     public @NonNull LightingMode getLightingMode() {
         if (parent != null) {
@@ -210,12 +241,14 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return LightingMode.valueOf(Settings.QUEUE.LIGHTING_MODE);
     }
+
     @Override
     public void setLightingMode(@Nullable LightingMode mode) {
         if (parent != null) {
             parent.setLightingMode(mode);
         }
     }
+
     @Override
     public SideEffectSet getSideEffectSet() {
         if (parent != null) {
@@ -223,12 +256,14 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return null;
     }
+
     @Override
     public void setSideEffectSet(final SideEffectSet sideEffectSet) {
         if (parent != null) {
             parent.setSideEffectSet(sideEffectSet);
         }
     }
+
     @Override
     public @NonNull List<BlockVector2> getReadChunks() {
         if (parent != null) {
@@ -236,18 +271,21 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return new ArrayList<>();
     }
+
     @Override
     public void addReadChunks(@NonNull Set<BlockVector2> readChunks) {
         if (parent != null) {
             parent.addReadChunks(readChunks);
         }
     }
+
     @Override
     public void addReadChunk(@NonNull BlockVector2 chunk) {
         if (parent != null) {
             parent.addReadChunk(chunk);
         }
     }
+
     @Override
     public boolean isUnloadAfter() {
         if (parent != null) {
@@ -255,12 +293,14 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return false;
     }
+
     @Override
     public void setUnloadAfter(boolean setUnloadAfter) {
         if (parent != null) {
             parent.setUnloadAfter(setUnloadAfter);
         }
     }
+
     @Override
     public @Nullable CuboidRegion getRegenRegion() {
         if (parent != null) {
@@ -268,10 +308,12 @@ public class DelegateQueueCoordinator extends QueueCoordinator {
         }
         return null;
     }
+
     @Override
     public void setRegenRegion(@NonNull CuboidRegion regenRegion) {
         if (parent != null) {
             parent.setRegenRegion(regenRegion);
         }
     }
+
 }

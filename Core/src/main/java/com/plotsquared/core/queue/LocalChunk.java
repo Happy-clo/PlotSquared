@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.queue;
+
 import com.plotsquared.core.util.ChunkUtil;
 import com.plotsquared.core.util.MathMan;
 import com.sk89q.jnbt.CompoundTag;
@@ -26,16 +27,21 @@ import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.HashMap;
+
 public class LocalChunk {
+
     private final QueueCoordinator parent;
     private final int x;
     private final int z;
     private final int minSection;
+
     private final BaseBlock[][] baseblocks;
     private final BiomeType[][] biomes;
     private final HashMap<BlockVector3, CompoundTag> tiles = new HashMap<>();
     private final HashMap<Location, BaseEntity> entities = new HashMap<>();
+
     public LocalChunk(@NonNull QueueCoordinator parent, int x, int z) {
         this.parent = parent;
         this.x = x;
@@ -45,15 +51,19 @@ public class LocalChunk {
         baseblocks = new BaseBlock[sections][];
         biomes = new BiomeType[sections][];
     }
+
     public @NonNull QueueCoordinator getParent() {
         return this.parent;
     }
+
     public int getX() {
         return this.x;
     }
+
     public int getZ() {
         return this.z;
     }
+
     /**
      * Get the minimum layer position stored (usually -4 or 0).
      *
@@ -62,15 +72,19 @@ public class LocalChunk {
     public int getMinSection() {
         return this.minSection;
     }
+
     public @NonNull BaseBlock[][] getBaseblocks() {
         return this.baseblocks;
     }
+
     public @NonNull BiomeType[][] getBiomes() {
         return this.biomes;
     }
+
     public @NonNull HashMap<BlockVector3, CompoundTag> getTiles() {
         return this.tiles;
     }
+
     public void setBiome(final int x, final int y, final int z, final @NonNull BiomeType biomeType) {
         final int i = getLayerIndex(y);
         final int j = ChunkUtil.getJ(x, y, z);
@@ -80,10 +94,12 @@ public class LocalChunk {
         }
         array[j] = biomeType;
     }
+
     @Override
     public int hashCode() {
         return MathMan.pair((short) x, (short) z);
     }
+
     public void setBlock(final int x, final int y, final int z, final @NonNull BaseBlock baseBlock) {
         final int i = getLayerIndex(y);
         final int j = ChunkUtil.getJ(x, y, z);
@@ -93,16 +109,21 @@ public class LocalChunk {
         }
         array[j] = baseBlock;
     }
+
     public void setTile(final int x, final int y, final int z, final @NonNull CompoundTag tag) {
         tiles.put(BlockVector3.at(x, y, z), tag);
     }
+
     public void setEntity(@NonNull Location location, @NonNull BaseEntity entity) {
         this.entities.put(location, entity);
     }
+
     public @NonNull HashMap<Location, BaseEntity> getEntities() {
         return this.entities;
     }
+
     private int getLayerIndex(final int y) {
         return (y >> 4) - minSection;
     }
+
 }

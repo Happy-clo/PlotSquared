@@ -17,12 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.plot.Plot;
+
 /**
  * To be used as a notification that a plot has been claimed. For cancelling events, see {@link PlayerClaimPlotEvent}
  */
 public class PlotClaimedNotifyEvent extends PlotEvent {
+
     private final boolean auto;
+
     /**
      * New event instance.
      *
@@ -34,6 +38,7 @@ public class PlotClaimedNotifyEvent extends PlotEvent {
         super(plot);
         this.auto = auto;
     }
+
     /**
      * If the plot was claimed using /plot auto
      *
@@ -44,4 +49,5 @@ public class PlotClaimedNotifyEvent extends PlotEvent {
     public boolean wasAuto() {
         return auto;
     }
+
 }

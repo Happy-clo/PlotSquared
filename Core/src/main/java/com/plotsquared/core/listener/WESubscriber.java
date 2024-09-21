@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.listener;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -41,15 +42,20 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Set;
+
 public class WESubscriber {
+
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
+
     @Inject
     public WESubscriber(final @NonNull PlotAreaManager plotAreaManager, final @NonNull WorldUtil worldUtil) {
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;
     }
+
     @Subscribe(priority = Priority.VERY_EARLY)
     public void onEditSession(EditSessionEvent event) {
         if (!Settings.Enabled_Components.WORLDEDIT_RESTRICTIONS) {
@@ -111,4 +117,5 @@ public class WESubscriber {
             }
         }
     }
+
 }

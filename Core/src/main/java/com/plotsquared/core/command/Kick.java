@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -33,12 +34,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
+
 @CommandDeclaration(command = "kick",
         aliases = "k",
         permission = "plots.kick",
@@ -46,8 +49,10 @@ import java.util.concurrent.TimeoutException;
         category = CommandCategory.TELEPORT,
         requiredType = RequiredType.PLAYER)
 public class Kick extends SubCommand {
+
     private final PlotAreaManager plotAreaManager;
     private final WorldUtil worldUtil;
+
     @Inject
     public Kick(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -57,6 +62,7 @@ public class Kick extends SubCommand {
         this.plotAreaManager = plotAreaManager;
         this.worldUtil = worldUtil;
     }
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -69,6 +75,7 @@ public class Kick extends SubCommand {
             player.sendMessage(TranslatableCaption.of("permission.no_plot_perms"));
             return false;
         }
+
         PlayerManager.getUUIDsFromString(args[0], (uuids, throwable) -> {
             if (throwable instanceof TimeoutException) {
                 player.sendMessage(TranslatableCaption.of("players.fetching_players_timeout"));
@@ -94,7 +101,7 @@ public class Kick extends SubCommand {
                         players.add(pp);
                     }
                 }
-                players.remove(player);
+                players.remove(player); // Don't ever kick the calling player
                 if (players.isEmpty()) {
                     player.sendMessage(
                             TranslatableCaption.of("errors.invalid_player"),
@@ -122,6 +129,8 @@ public class Kick extends SubCommand {
                     if (plot.equals(spawn.getPlot())) {
                         Location newSpawn = this.worldUtil.getSpawn(this.plotAreaManager.getAllWorlds()[0]);
                         if (plot.equals(newSpawn.getPlot())) {
+                            // Kick from server if you can't be teleported to spawn
+                            // Use string based message here for legacy uses
                             player2.kick("You got kicked from the plot! This server did not set up a loaded spawn, so you got " +
                                     "kicked from the server.");
                         } else {
@@ -133,8 +142,10 @@ public class Kick extends SubCommand {
                 }
             }
         });
+
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         Location location = player.getLocation();
@@ -146,4 +157,5 @@ public class Kick extends SubCommand {
                 Collections.singletonList(player.getName())
         );
     }
+
 }

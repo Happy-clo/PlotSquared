@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.generator;
+
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.plot.PlotArea;
 import com.plotsquared.core.plot.PlotId;
@@ -24,18 +25,21 @@ import com.plotsquared.core.queue.ZeroedDelegateScopedQueueCoordinator;
 import com.plotsquared.core.setup.PlotAreaBuilder;
 import com.sk89q.worldedit.world.biome.BiomeType;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 /**
  * This class allows for implementation independent world generation.
  * - Sponge/Bukkit API
  * Use the specify method to get the generator for that platform.
  */
 public abstract class IndependentPlotGenerator {
+
     /**
      * Get the name of this generator.
      *
      * @return generator name
      */
     public abstract String getName();
+
     /**
      * Generate chunk block data
      *
@@ -45,6 +49,7 @@ public abstract class IndependentPlotGenerator {
      * @since 7.0.0
      */
     public abstract void generateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea settings, boolean biomes);
+
     /**
      * Populate a chunk-queue with tile entities, entities, etc.
      *
@@ -54,6 +59,7 @@ public abstract class IndependentPlotGenerator {
      */
     public void populateChunk(ZeroedDelegateScopedQueueCoordinator result, PlotArea setting) {
     }
+
     /**
      * Return a new PlotArea object.
      *
@@ -64,6 +70,7 @@ public abstract class IndependentPlotGenerator {
      * @return new plot area
      */
     public abstract PlotArea getNewPlotArea(String world, String id, PlotId min, PlotId max);
+
     /**
      * If any additional setup options need to be changed before world creation.
      * - e.g. If setup doesn't support some standard options
@@ -72,12 +79,14 @@ public abstract class IndependentPlotGenerator {
      */
     public void processAreaSetup(PlotAreaBuilder builder) {
     }
+
     /**
      * It is preferred for the PlotArea object to do most of the initialization necessary.
      *
      * @param area area
      */
     public abstract void initialize(PlotArea area);
+
     /**
      * Get the generator for your specific implementation (bukkit/sponge).<br>
      * - e.g. YourIndependentGenerator.&lt;ChunkGenerator&gt;specify() - Would return a ChunkGenerator object<br>
@@ -90,6 +99,7 @@ public abstract class IndependentPlotGenerator {
     public <T> GeneratorWrapper<T> specify(final @NonNull String world) {
         return (GeneratorWrapper<T>) PlotSquared.platform().wrapPlotGenerator(world, this);
     }
+
     /**
      * Get the biome to be generated at a specific point
      *
@@ -101,8 +111,10 @@ public abstract class IndependentPlotGenerator {
      * @since 7.0.0
      */
     public abstract BiomeType getBiome(PlotArea settings, int x, int y, int z);
+
     @Override
     public String toString() {
         return getName();
     }
+
 }

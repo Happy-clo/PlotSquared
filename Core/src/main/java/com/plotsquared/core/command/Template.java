@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationNode;
@@ -46,6 +47,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -59,16 +61,19 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
 @CommandDeclaration(command = "template",
         permission = "plots.admin",
         usage = "/plot template [import | export] <world> <template>",
         category = CommandCategory.ADMINISTRATION)
 public class Template extends SubCommand {
+
     private final PlotAreaManager plotAreaManager;
     private final YamlConfiguration worldConfiguration;
     private final File worldFile;
     private final SetupUtils setupUtils;
     private final WorldUtil worldUtil;
+
     @Inject
     public Template(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -83,6 +88,7 @@ public class Template extends SubCommand {
         this.setupUtils = setupUtils;
         this.worldUtil = worldUtil;
     }
+
     public static boolean extractAllFiles(String world, String template) {
         try {
             File folder =
@@ -125,6 +131,7 @@ public class Template extends SubCommand {
             return false;
         }
     }
+
     public static byte[] getBytes(PlotArea plotArea) {
         ConfigurationSection section = PlotSquared
                 .get()
@@ -140,12 +147,14 @@ public class Template extends SubCommand {
         }
         return config.saveToString().getBytes();
     }
+
     public static void zipAll(String world, Set<FileBytes> files) throws IOException {
         File output = FileUtils.getFile(PlotSquared.platform().getDirectory(), Settings.Paths.TEMPLATES);
         output.mkdirs();
         try (FileOutputStream fos = new FileOutputStream(
                 output + File.separator + world + ".template");
              ZipOutputStream zos = new ZipOutputStream(fos)) {
+
             for (FileBytes file : files) {
                 ZipEntry ze = new ZipEntry(file.path());
                 zos.putNextEntry(ze);
@@ -154,6 +163,7 @@ public class Template extends SubCommand {
             zos.closeEntry();
         }
     }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length != 2 && args.length != 3) {
@@ -228,6 +238,7 @@ public class Template extends SubCommand {
                         .generatorName(generator)
                         .settingsNodesWrapper(new SettingsNodesWrapper(new ConfigurationNode[0], null))
                         .worldName(world);
+
                 this.setupUtils.setupWorld(builder);
                 TaskManager.runTask(() -> {
                     player.teleport(this.worldUtil.getSpawn(world), TeleportCause.COMMAND_TEMPLATE);
@@ -255,7 +266,7 @@ public class Template extends SubCommand {
                 TaskManager.runTaskAsync(() -> {
                     try {
                         manager.exportTemplate();
-                    } catch (Exception e) {
+                    } catch (Exception e) { // Must recover from any exception thrown a third party template manager
                         e.printStackTrace();
                         player.sendMessage(
                                 TranslatableCaption.of("template.template_failed"),
@@ -271,6 +282,7 @@ public class Template extends SubCommand {
         }
         return false;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -300,4 +312,5 @@ public class Template extends SubCommand {
         }
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
+
 }

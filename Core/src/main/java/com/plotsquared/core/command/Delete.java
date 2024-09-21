@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -35,6 +36,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+
 @CommandDeclaration(command = "delete",
         permission = "plots.delete",
         usage = "/plot delete",
@@ -43,8 +46,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
         requiredType = RequiredType.NONE,
         confirmation = true)
 public class Delete extends SubCommand {
+
     private final EventDispatcher eventDispatcher;
     private final EconHandler econHandler;
+
     @Inject
     public Delete(
             final @NonNull EventDispatcher eventDispatcher,
@@ -53,6 +58,7 @@ public class Delete extends SubCommand {
         this.eventDispatcher = eventDispatcher;
         this.econHandler = econHandler;
     }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -135,4 +141,5 @@ public class Delete extends SubCommand {
         }
         return true;
     }
+
 }

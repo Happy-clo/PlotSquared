@@ -17,17 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
+
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collection;
 import java.util.Collections;
+
 class FixedPlotProvider implements PlotProvider {
+
     private final Plot plot;
+
     FixedPlotProvider(final @NonNull Plot plot) {
         this.plot = plot;
     }
+
     @Override
     public Collection<Plot> getPlots() {
         return Collections.singleton(plot);
     }
+
 }

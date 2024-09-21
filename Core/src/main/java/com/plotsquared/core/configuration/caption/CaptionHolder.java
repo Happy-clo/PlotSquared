@@ -17,14 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
+
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 /**
  * A holder for a caption.
  * Useful when constructing messages in multiple steps with {@link TagResolver}s.
  */
 public class CaptionHolder {
+
     private Caption caption = StaticCaption.of("");
     private TagResolver[] tagResolvers = new TagResolver[0];
+
     /**
      * Set the {@link Caption} to send.
      *
@@ -33,6 +37,7 @@ public class CaptionHolder {
     public void set(Caption caption) {
         this.caption = caption;
     }
+
     /**
      * Get the {@link Caption} to send.
      *
@@ -41,6 +46,7 @@ public class CaptionHolder {
     public Caption get() {
         return this.caption;
     }
+
     /**
      * Get the {@link TagResolver}s to use when resolving tags in the {@link Caption}.
      *
@@ -50,6 +56,7 @@ public class CaptionHolder {
     public TagResolver[] getTagResolvers() {
         return this.tagResolvers;
     }
+
     /**
      * Set the {@link TagResolver}s to use when resolving tags in the {@link Caption}.
      *
@@ -59,4 +66,5 @@ public class CaptionHolder {
     public void setTagResolvers(TagResolver... tagResolvers) {
         this.tagResolvers = tagResolvers;
     }
+
 }

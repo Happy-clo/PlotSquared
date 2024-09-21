@@ -17,19 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BlockTypeListFlag;
 import com.plotsquared.core.plot.flag.types.BlockTypeWrapper;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collections;
 import java.util.List;
+
 public class PlaceFlag extends BlockTypeListFlag<PlaceFlag> {
+
     public static final PlaceFlag PLACE_NONE = new PlaceFlag(Collections.emptyList());
+
     protected PlaceFlag(List<BlockTypeWrapper> blockTypeList) {
         super(blockTypeList, TranslatableCaption.of("flags.flag_description_place"));
     }
+
     @Override
     protected PlaceFlag flagOf(@NonNull List<BlockTypeWrapper> value) {
         return new PlaceFlag(value);
     }
+
 }

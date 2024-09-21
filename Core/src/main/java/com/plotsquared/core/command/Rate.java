@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -40,6 +41,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,6 +50,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 @CommandDeclaration(command = "rate",
         permission = "plots.rate",
         usage = "/plot rate [# | next | purge]",
@@ -55,8 +58,10 @@ import java.util.stream.Collectors;
         category = CommandCategory.INFO,
         requiredType = RequiredType.PLAYER)
 public class Rate extends SubCommand {
+
     private final EventDispatcher eventDispatcher;
     private final InventoryUtil inventoryUtil;
+
     @Inject
     public Rate(
             final @NonNull EventDispatcher eventDispatcher,
@@ -65,6 +70,7 @@ public class Rate extends SubCommand {
         this.eventDispatcher = eventDispatcher;
         this.inventoryUtil = inventoryUtil;
     }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 1) {
@@ -262,6 +268,7 @@ public class Rate extends SubCommand {
         run.run();
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -284,22 +291,31 @@ public class Rate extends SubCommand {
         }
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
+
     private static class MutableInt {
+
         private int value;
+
         MutableInt(int i) {
             this.value = i;
         }
+
         void increment() {
             this.value++;
         }
+
         void decrement() {
             this.value--;
         }
+
         int getValue() {
             return this.value;
         }
+
         void add(Number v) {
             this.value += v.intValue();
         }
+
     }
+
 }

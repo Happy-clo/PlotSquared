@@ -17,12 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.sk89q.worldedit.entity.Entity;
+
 /**
  * @since 6.11.0
  */
 public class RemoveRoadEntityEvent extends EntityEvent implements CancellablePlotEvent {
+
     private Result eventResult;
+
     /**
      * RemoveRoadEntityEvent: Called when an entity on road is removed.
      *
@@ -32,12 +36,15 @@ public class RemoveRoadEntityEvent extends EntityEvent implements CancellablePlo
     public RemoveRoadEntityEvent(Entity entity) {
         super(entity);
     }
+
     @Override
     public Result getEventResult() {
         return this.eventResult;
     }
+
     @Override
     public void setEventResult(Result eventResult) {
         this.eventResult = eventResult;
     }
+
 }

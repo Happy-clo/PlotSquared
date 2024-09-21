@@ -17,19 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotId;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collections;
 import java.util.List;
+
 /**
  * Event called when plots are automatically merged with /plot auto
  * {@inheritDoc}
  */
 public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePlotEvent {
+
     private final List<PlotId> plots;
     private final String world;
     private Result eventResult;
+
     /**
      * PlotAutoMergeEvent: Called when plots are automatically merged with /plot auto
      *
@@ -45,6 +50,7 @@ public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePl
         this.world = world;
         this.plots = plots;
     }
+
     /**
      * Get the plots being added.
      *
@@ -53,15 +59,19 @@ public final class PlotAutoMergeEvent extends PlotEvent implements CancellablePl
     public List<PlotId> getPlots() {
         return Collections.unmodifiableList(this.plots);
     }
+
     @Override
     public Result getEventResult() {
         return eventResult;
     }
+
     @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
     public String getWorld() {
         return this.world;
     }
+
 }

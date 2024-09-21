@@ -17,24 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public enum RequiredType {
     CONSOLE(TranslatableCaption.of("console.not_console")),
     PLAYER(TranslatableCaption.of("console.is_console")),
-    NONE(StaticCaption.of("Something went wrong: RequiredType=NONE"));
+    NONE(StaticCaption.of("Something went wrong: RequiredType=NONE")); // this caption should never be sent
+
     private final Caption caption;
+
     RequiredType(Caption caption) {
         this.caption = caption;
     }
+
     public boolean allows(CommandCaller player) {
         if (this == RequiredType.NONE) {
             return true;
         }
         return this == player.getSuperCaller();
     }
+
     public @NonNull Caption getErrorMessage() {
         return this.caption;
     }

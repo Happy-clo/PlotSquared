@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -38,12 +39,14 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 @CommandDeclaration(usage = "/plot purge world:<world> area:<area> id:<id> owner:<owner> shared:<shared> unknown:[true | false] clear:[true | false]",
         command = "purge",
         permission = "plots.admin",
@@ -51,9 +54,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
         requiredType = RequiredType.CONSOLE,
         confirmation = true)
 public class Purge extends SubCommand {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + Purge.class.getSimpleName());
+
     private final PlotAreaManager plotAreaManager;
     private final PlotListener plotListener;
+
     @Inject
     public Purge(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -62,12 +68,14 @@ public class Purge extends SubCommand {
         this.plotAreaManager = plotAreaManager;
         this.plotListener = plotListener;
     }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         if (args.length == 0) {
             sendUsage(player);
             return false;
         }
+
         String world = null;
         PlotArea area = null;
         PlotId id = null;
@@ -261,4 +269,5 @@ public class Purge extends SubCommand {
         }
         return true;
     }
+
 }

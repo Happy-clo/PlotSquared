@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
@@ -26,17 +27,21 @@ import com.plotsquared.core.util.task.RunnableVal3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
 @CommandDeclaration(command = "near",
         aliases = "n",
         usage = "/plot near",
         category = CommandCategory.INFO,
         requiredType = RequiredType.PLAYER)
 public class Near extends Command {
+
     public Near() {
         super(MainCommand.getInstance(), true);
     }
+
     @Override
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
@@ -50,7 +55,9 @@ public class Near extends Command {
         );
         return CompletableFuture.completedFuture(true);
     }
+
     private List<PlotPlayer<?>> getPlayersInPlotVisible(Plot plot, PlotPlayer<?> executor) {
         return plot.getPlayersInPlot().stream().filter(executor::canSee).toList();
     }
+
 }

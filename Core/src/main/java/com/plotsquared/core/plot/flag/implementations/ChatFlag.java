@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class ChatFlag extends BooleanFlag<ChatFlag> {
+
     public static final ChatFlag CHAT_FLAG_TRUE = new ChatFlag(true);
     public static final ChatFlag CHAT_FLAG_FALSE = new ChatFlag(false);
+
     protected ChatFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_chat"));
     }
+
     @Override
     protected ChatFlag flagOf(@NonNull Boolean value) {
         return value ? CHAT_FLAG_TRUE : CHAT_FLAG_FALSE;
     }
+
 }

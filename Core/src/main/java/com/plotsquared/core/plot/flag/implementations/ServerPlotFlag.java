@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class ServerPlotFlag extends BooleanFlag<ServerPlotFlag> {
+
     public static final ServerPlotFlag SERVER_PLOT_TRUE = new ServerPlotFlag(true);
     public static final ServerPlotFlag SERVER_PLOT_FALSE = new ServerPlotFlag(false);
+
     private ServerPlotFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_server_plot"));
     }
+
     @Override
     protected ServerPlotFlag flagOf(@NonNull Boolean value) {
         return value ? SERVER_PLOT_TRUE : SERVER_PLOT_FALSE;
     }
+
 }

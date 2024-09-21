@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class PlayerInteractFlag extends BooleanFlag<PlayerInteractFlag> {
+
     public static final PlayerInteractFlag PLAYER_INTERACT_TRUE = new PlayerInteractFlag(true);
     public static final PlayerInteractFlag PLAYER_INTERACT_FALSE = new PlayerInteractFlag(false);
+
     private PlayerInteractFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_player_interact"));
     }
+
     @Override
     protected PlayerInteractFlag flagOf(@NonNull Boolean value) {
         return value ? PLAYER_INTERACT_TRUE : PLAYER_INTERACT_FALSE;
     }
+
 }

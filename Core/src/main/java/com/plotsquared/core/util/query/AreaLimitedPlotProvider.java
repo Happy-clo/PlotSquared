@@ -17,16 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
+
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 class AreaLimitedPlotProvider implements PlotProvider {
+
     private final Collection<PlotArea> areas;
+
     AreaLimitedPlotProvider(Collection<PlotArea> areas) {
         this.areas = areas;
     }
+
     @Override
     public Collection<Plot> getPlots() {
         final List<Plot> plots = new LinkedList<>();
@@ -35,4 +41,5 @@ class AreaLimitedPlotProvider implements PlotProvider {
         }
         return plots;
     }
+
 }

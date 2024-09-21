@@ -17,19 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.permissions;
+
 import com.plotsquared.core.player.OfflinePlotPlayer;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Optional;
 import java.util.Set;
+
 /**
  * Permission handler
  */
 public interface PermissionHandler {
+
     /**
      * Initialize the permission handler
      */
     void initialize();
+
     /**
      * Attempt to construct a permission profile for a plot player
      *
@@ -39,6 +44,7 @@ public interface PermissionHandler {
     @NonNull Optional<PermissionProfile> getPermissionProfile(
             @NonNull PlotPlayer<?> playerPlotPlayer
     );
+
     /**
      * Attempt to construct a permission profile for an offline plot player
      *
@@ -48,12 +54,14 @@ public interface PermissionHandler {
     @NonNull Optional<PermissionProfile> getPermissionProfile(
             @NonNull OfflinePlotPlayer offlinePlotPlayer
     );
+
     /**
      * Get all capabilities that the permission handler has
      *
      * @return Immutable set of capabilities
      */
     @NonNull Set<PermissionHandlerCapability> getCapabilities();
+
     /**
      * Check whether the permission handler has a given capability
      *
@@ -63,6 +71,8 @@ public interface PermissionHandler {
     default boolean hasCapability(final @NonNull PermissionHandlerCapability capability) {
         return this.getCapabilities().contains(capability);
     }
+
+
     /**
      * Permission handler capabilities
      */
@@ -80,4 +90,5 @@ public interface PermissionHandler {
          */
         PER_WORLD_PERMISSIONS
     }
+
 }

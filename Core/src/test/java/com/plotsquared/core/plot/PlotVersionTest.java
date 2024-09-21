@@ -17,15 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
+
 import com.plotsquared.core.PlotVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
+
 public class PlotVersionTest {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + PlotVersionTest.class.getSimpleName());
+
     @Test
     public void tryParse() {
+        //These are all random values chosen to form the test class.
         PlotVersion version = new PlotVersion("4.340", "f06903f", "19.08.05");
         LOGGER.info(version.versionString);
+
     }
+
 }

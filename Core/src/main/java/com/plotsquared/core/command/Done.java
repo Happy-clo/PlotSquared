@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -38,14 +39,17 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 @CommandDeclaration(command = "done",
         aliases = {"submit"},
         permission = "plots.done",
         category = CommandCategory.SETTINGS,
         requiredType = RequiredType.NONE)
 public class Done extends SubCommand {
+
     private final EventDispatcher eventDispatcher;
     private final HybridUtils hybridUtils;
+
     @Inject
     public Done(
             final @NonNull EventDispatcher eventDispatcher,
@@ -54,6 +58,7 @@ public class Done extends SubCommand {
         this.eventDispatcher = eventDispatcher;
         this.hybridUtils = hybridUtils;
     }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -105,6 +110,7 @@ public class Done extends SubCommand {
         }
         return true;
     }
+
     private void finish(Plot plot, PlotPlayer<?> player, boolean success) {
         if (!success) {
             player.sendMessage(TranslatableCaption.of("done.done_insufficient_complexity"));
@@ -121,4 +127,5 @@ public class Done extends SubCommand {
         plot.setFlag(plotFlag);
         player.sendMessage(TranslatableCaption.of("done.done_success"));
     }
+
 }

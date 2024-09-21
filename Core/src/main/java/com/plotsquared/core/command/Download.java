@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -35,12 +36,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @CommandDeclaration(usage = "/plot download [schem | world]",
         command = "download",
         aliases = {"dl"},
@@ -48,11 +51,13 @@ import java.util.stream.Collectors;
         requiredType = RequiredType.NONE,
         permission = "plots.download")
 public class Download extends SubCommand {
+
     private final PlotAreaManager plotAreaManager;
     private final PlotUploader plotUploader;
     @NonNull
     private final SchematicHandler schematicHandler;
     private final WorldUtil worldUtil;
+
     @Inject
     public Download(
             final @NonNull PlotAreaManager plotAreaManager,
@@ -65,6 +70,7 @@ public class Download extends SubCommand {
         this.schematicHandler = schematicHandler;
         this.worldUtil = worldUtil;
     }
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         String world = player.getLocation().getWorldName();
@@ -145,6 +151,7 @@ public class Download extends SubCommand {
         );
         return true;
     }
+
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
         if (args.length == 1) {
@@ -174,6 +181,7 @@ public class Download extends SubCommand {
         }
         return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
+
     private void upload(PlotPlayer<?> player, Plot plot) {
         if (Settings.Web.LEGACY_WEBINTERFACE) {
             schematicHandler
@@ -198,6 +206,7 @@ public class Download extends SubCommand {
                     ));
             return;
         }
+        // TODO legacy support
         this.plotUploader.upload(plot)
                 .whenComplete((result, throwable) -> {
                     if (throwable != null || !result.isSuccess()) {
@@ -216,4 +225,5 @@ public class Download extends SubCommand {
                     }
                 });
     }
+
 }

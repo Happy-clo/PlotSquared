@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.generator.HybridPlotWorld;
@@ -28,6 +29,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 @CommandDeclaration(command = "createroadschematic",
         aliases = {"crs"},
         category = CommandCategory.ADMINISTRATION,
@@ -35,11 +37,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
         permission = "plots.createroadschematic",
         usage = "/plot createroadschematic")
 public class CreateRoadSchematic extends SubCommand {
+
     private final HybridUtils hybridUtils;
+
     @Inject
     public CreateRoadSchematic(final @NonNull HybridUtils hybridUtils) {
         this.hybridUtils = hybridUtils;
     }
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -62,4 +67,5 @@ public class CreateRoadSchematic extends SubCommand {
         );
         return true;
     }
+
 }

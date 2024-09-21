@@ -17,12 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.task;
+
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
+
 public class ObjectTaskRunnable<T> implements Runnable {
+
     private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();
+
     private final Iterator<T> iterator;
     private final RunnableVal<T> task;
+
     public ObjectTaskRunnable(
             final Iterator<T> iterator,
             final RunnableVal<T> task
@@ -30,9 +35,11 @@ public class ObjectTaskRunnable<T> implements Runnable {
         this.iterator = iterator;
         this.task = task;
     }
+
     public CompletableFuture<Void> getCompletionFuture() {
         return this.completionFuture;
     }
+
     @Override
     public void run() {
         long start = System.currentTimeMillis();
@@ -47,4 +54,5 @@ public class ObjectTaskRunnable<T> implements Runnable {
             TaskManager.runTaskLater(this, TaskTime.ticks(1L));
         }
     }
+
 }

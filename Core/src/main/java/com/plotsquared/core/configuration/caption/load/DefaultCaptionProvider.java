@@ -17,12 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption.load;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+
 public interface DefaultCaptionProvider {
+
     /**
      * Returns a DefaultCaptionProvider that loads captions from a {@link ClassLoader}'s resources.
      * The resource urls are determined by applying the given function to a locale.
@@ -37,6 +41,7 @@ public interface DefaultCaptionProvider {
     ) {
         return new ClassLoaderCaptionProvider(classLoader, urlProvider);
     }
+
     /**
      * Returns a DefaultCaptionProvider that loads captions from a {@link ClassLoader}'s resources.
      * The resource urls are determined by replacing the first occurrence of {@code %s} in the string with
@@ -53,6 +58,7 @@ public interface DefaultCaptionProvider {
     ) {
         return forClassLoader(classLoader, locale -> String.format(toFormat, locale));
     }
+
     /**
      * Loads default translation values for a specific language and returns it as a map.
      * If no default translation exists, {@code null} is returned. A returned map might be empty.
@@ -61,4 +67,5 @@ public interface DefaultCaptionProvider {
      * @return a map of default values for the given locale.
      */
     @Nullable Map<@NonNull String, @NonNull String> loadDefaults(final @NonNull Locale locale);
+
 }

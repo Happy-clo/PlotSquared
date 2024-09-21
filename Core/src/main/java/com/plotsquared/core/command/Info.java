@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -30,16 +31,19 @@ import com.plotsquared.core.util.TabCompletions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 @CommandDeclaration(command = "info",
         aliases = "i",
         usage = "/plot info <id> [-f to force info]",
         category = CommandCategory.INFO)
 public class Info extends SubCommand {
+
     @Override
     public boolean onCommand(final PlotPlayer<?> player, String[] args) {
         Plot plot;
@@ -47,6 +51,7 @@ public class Info extends SubCommand {
         if (args.length > 0) {
             arg = args[0];
             switch (arg) {
+                // TODO: (re?)implement /plot info inv. (it was never properly implemented)
                 case "trusted", "alias", "biome", "denied", "flags", "id", "size", "members", "creationdate", "seen", "owner", "rating", "likes" ->
                         plot = Plot
                                 .getPlotFromString(player, null, false);
@@ -70,6 +75,7 @@ public class Info extends SubCommand {
             player.sendMessage(TranslatableCaption.of("errors.not_in_plot"));
             return false;
         }
+
         if (arg != null) {
             if (args.length == 1) {
                 args = new String[0];
@@ -77,6 +83,8 @@ public class Info extends SubCommand {
                 args = new String[]{args[1]};
             }
         }
+
+        // hide-info flag
         if (plot.getFlag(HideInfoFlag.class)) {
             boolean allowed = false;
             for (final String argument : args) {
@@ -101,9 +109,12 @@ public class Info extends SubCommand {
                 return true;
             }
         }
+
         boolean hasOwner = plot.hasOwner();
+        // Wildcard player {added}
         boolean containsEveryone = plot.getTrusted().contains(DBFunc.EVERYONE);
         boolean trustedEveryone = plot.getMembers().contains(DBFunc.EVERYONE);
+        // Unclaimed?
         if (!hasOwner && !containsEveryone && !trustedEveryone) {
             player.sendMessage(
                     TranslatableCaption.of("info.plot_info_unclaimed"),
@@ -137,22 +148,27 @@ public class Info extends SubCommand {
         plot.format(info, player, full).thenAcceptAsync(player::sendMessage);
         return true;
     }
+
     @Override
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         final List<String> completions = new LinkedList<>();
         if (player.hasPermission(Permission.PERMISSION_AREA_INFO_FORCE)) {
             completions.add("-f");
         }
+
         final List<Command> commands = completions.stream().filter(completion -> completion
                         .toLowerCase()
                         .startsWith(args[0].toLowerCase()))
                 .map(completion -> new Command(null, true, completion, "", RequiredType.PLAYER, CommandCategory.INFO) {
                 }).collect(Collectors.toCollection(LinkedList::new));
+
         if (player.hasPermission(Permission.PERMISSION_AREA_INFO_FORCE) && args[0].length() > 0) {
             commands.addAll(TabCompletions.completePlayers(player, args[0], Collections.emptyList()));
         }
+
         return commands;
     }
+
     private Caption getCaption(String string) {
         return switch (string) {
             case "trusted" -> TranslatableCaption.of("info.plot_info_trusted");
@@ -171,4 +187,5 @@ public class Info extends SubCommand {
             default -> null;
         };
     }
+
 }

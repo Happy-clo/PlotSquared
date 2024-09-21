@@ -17,19 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.function.UnaryOperator;
+
 /**
  * Called when a player teleports to a plot
  */
 public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements CancellablePlotEvent {
+
     private final TeleportCause cause;
     private Result eventResult;
     private final Location from;
     private UnaryOperator<Location> locationTransformer;
+
+
     /**
      * PlayerTeleportToPlotEvent: Called when a player teleports to a plot
      *
@@ -44,6 +50,7 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
         this.from = from;
         this.cause = cause;
     }
+
     /**
      * Get the teleport cause
      *
@@ -53,6 +60,7 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     public TeleportCause getCause() {
         return cause;
     }
+
     /**
      * Get the location, from where the teleport was triggered
      * (the players current location when executing the home command for example)
@@ -62,6 +70,7 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     public Location getFrom() {
         return this.from;
     }
+
     /**
      * Gets the currently applied {@link UnaryOperator<Location> transformer} or null, if none was set
      *
@@ -71,6 +80,7 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     public @Nullable UnaryOperator<Location> getLocationTransformer() {
         return this.locationTransformer;
     }
+
     /**
      * Sets the {@link UnaryOperator<Location> transformer} to mutate the location where the player will be teleported to.
      * May be {@code null}, if any previous set transformations should be discarded.
@@ -81,12 +91,15 @@ public class PlayerTeleportToPlotEvent extends PlotPlayerEvent implements Cancel
     public void setLocationTransformer(@Nullable UnaryOperator<Location> locationTransformer) {
         this.locationTransformer = locationTransformer;
     }
+
     @Override
     public Result getEventResult() {
         return eventResult;
     }
+
     @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
 }

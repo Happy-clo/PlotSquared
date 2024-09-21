@@ -17,12 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.InternalFlag;
 import com.plotsquared.core.plot.flag.types.StringFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class DoneFlag extends StringFlag<DoneFlag> implements InternalFlag {
+
     /**
      * Construct a new flag instance.
      *
@@ -31,27 +34,34 @@ public class DoneFlag extends StringFlag<DoneFlag> implements InternalFlag {
     public DoneFlag(@NonNull String value) {
         super(value, TranslatableCaption.of("info.none"), TranslatableCaption.of("info.none"));
     }
+
     public static boolean isDone(final Plot plot) {
         return !plot.getFlag(DoneFlag.class).isEmpty();
     }
+
     @Override
     public DoneFlag parse(@NonNull String input) {
         return flagOf(input);
     }
+
     @Override
     public DoneFlag merge(@NonNull String newValue) {
         return flagOf(newValue);
     }
+
     @Override
     public String toString() {
         return this.getValue();
     }
+
     @Override
     public String getExample() {
         return "";
     }
+
     @Override
     protected DoneFlag flagOf(@NonNull String value) {
         return new DoneFlag(value);
     }
+
 }

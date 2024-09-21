@@ -17,21 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.player.PlotPlayer;
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.PlotArea;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 /**
  * PlayerAutoPlotEvent returns null for {@link PlotEvent#getPlot()} as the event is fired before the plot is chosen.
  */
 public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEvent {
+
     private final PlotPlayer<?> player;
     private final PlotArea plotArea;
     private Result eventResult;
     private String schematic;
     private int sizeX;
     private int sizeZ;
+
     /**
      * PlayerAutoPlotEvent: called when a player attempts to auto claim a plot.
      *
@@ -52,6 +56,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
         this.sizeX = sizeX;
         this.sizeZ = sizeZ;
     }
+
     /**
      * Returns null as the plots to be claimed haven't been chosen yet. This will depend on the size of the auto
      * ({@link PlayerAutoPlotEvent#setSizeX(int)} and {@link PlayerAutoPlotEvent#setSizeZ(int)}). To see which plots have been
@@ -63,6 +68,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     public @Nullable Plot getPlot() {
         return null;
     }
+
     /**
      * Obtain the schematic string as used by the {@link Claim} command or null.
      *
@@ -71,6 +77,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     public @Nullable String getSchematic() {
         return this.schematic;
     }
+
     /**
      * Set the schematic string used in the claim.
      *
@@ -79,20 +86,25 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     public void setSchematic(String schematic) {
         this.schematic = schematic;
     }
+
     @Override
     public Result getEventResult() {
         return eventResult;
     }
+
     @Override
     public void setEventResult(Result e) {
         this.eventResult = e;
     }
+
     public PlotPlayer<?> getPlayer() {
         return this.player;
     }
+
     public PlotArea getPlotArea() {
         return this.plotArea;
     }
+
     /**
      * Get the x size of the auto-area
      *
@@ -102,6 +114,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     public int getSizeX() {
         return this.sizeX;
     }
+
     /**
      * Set the x size of the auto-area
      *
@@ -111,6 +124,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     public void setSizeX(int sizeX) {
         this.sizeX = sizeX;
     }
+
     /**
      * Get the z size of the auto-area
      *
@@ -120,6 +134,7 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     public int getSizeZ() {
         return this.sizeZ;
     }
+
     /**
      * Set the z size of the auto-area
      *
@@ -129,4 +144,5 @@ public class PlayerAutoPlotEvent extends PlotEvent implements CancellablePlotEve
     public void setSizeZ(int sizeZ) {
         this.sizeZ = sizeZ;
     }
+
 }

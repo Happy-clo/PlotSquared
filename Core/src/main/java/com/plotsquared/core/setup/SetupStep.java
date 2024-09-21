@@ -17,15 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.setup;
+
 import com.plotsquared.core.command.Command;
 import com.plotsquared.core.command.RequiredType;
 import com.plotsquared.core.player.PlotPlayer;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 public interface SetupStep {
+
     /**
      * Handles the input for this setup step.
      *
@@ -35,14 +39,18 @@ public interface SetupStep {
      * @return the next step if input was valid, this setup step otherwise
      */
     SetupStep handleInput(final PlotPlayer<?> plotPlayer, PlotAreaBuilder builder, String argument);
+
     @NonNull Collection<String> getSuggestions();
+
     @Nullable String getDefaultValue();
+
     /**
      * Announces this step to the player.
      *
      * @param plotPlayer the player to announce this step to.
      */
     void announce(PlotPlayer<?> plotPlayer);
+
     /**
      * Creates a collection of suggestions for the current input.
      *
@@ -60,11 +68,14 @@ public interface SetupStep {
         }
         return result;
     }
+
     /**
      * This method is called when the SetupProcess reverts to a previous step.
      *
      * @param builder the builder associated with the setup process.
      */
     default void onBack(PlotAreaBuilder builder) {
+
     }
+
 }

@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.Settings;
@@ -50,6 +51,7 @@ import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,6 +64,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 @CommandDeclaration(command = "flag",
         aliases = {"f", "flag"},
         usage = "/plot flag <set | remove | add | list | info> <flag> <value>",
@@ -70,12 +73,15 @@ import java.util.stream.Stream;
         permission = "plots.flag")
 @SuppressWarnings("unused")
 public final class FlagCommand extends Command {
+
     private final EventDispatcher eventDispatcher;
+
     @Inject
     public FlagCommand(final @NonNull EventDispatcher eventDispatcher) {
         super(MainCommand.getInstance(), true);
         this.eventDispatcher = eventDispatcher;
     }
+
     private static boolean sendMessage(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
@@ -86,6 +92,7 @@ public final class FlagCommand extends Command {
         );
         return true;
     }
+
     private static boolean checkPermValue(
             final @NonNull PlotPlayer<?> player,
             final @NonNull PlotFlag<?, ?> flag, @NonNull String key, @NonNull String value
@@ -96,6 +103,7 @@ public final class FlagCommand extends Command {
         if (flag instanceof IntegerFlag && MathMan.isInteger(value)) {
             try {
                 int numeric = Integer.parseInt(value);
+                // Getting full permission without ".<amount>" at the end
                 perm = perm.substring(0, perm.length() - value.length() - 1);
                 boolean result = false;
                 if (numeric >= 0) {
@@ -164,6 +172,7 @@ public final class FlagCommand extends Command {
         }
         return result;
     }
+
     /**
      * Checks if the player is allowed to modify the flags at their current location
      *
@@ -189,6 +198,7 @@ public final class FlagCommand extends Command {
         }
         return true;
     }
+
     /**
      * Attempt to extract the plot flag from the command arguments. If the flag cannot
      * be found, a flag suggestion may be sent to the player.
@@ -221,7 +231,7 @@ public final class FlagCommand extends Command {
                         );
                         suggested = true;
                     }
-                } catch (final Exception ignored) { }
+                } catch (final Exception ignored) { /* Happens sometimes because of mean code */ }
                 if (!suggested) {
                     player.sendMessage(TranslatableCaption.of("flag.not_valid_flag"));
                 }
@@ -231,6 +241,7 @@ public final class FlagCommand extends Command {
         }
         return null;
     }
+
     @Override
     public CompletableFuture<Boolean> execute(
             PlotPlayer<?> player, String[] args,
@@ -247,6 +258,7 @@ public final class FlagCommand extends Command {
         }
         return super.execute(player, args, confirm, whenDone);
     }
+
     @Override
     public Collection<Command> tab(
             final PlotPlayer<?> player, final String[] args,
@@ -274,6 +286,7 @@ public final class FlagCommand extends Command {
                     Stream<String> stream = flag.getTabCompletions().stream();
                     if (flag instanceof ListFlag && args[2].contains(",")) {
                         final String[] split = args[2].split(",");
+                        // Prefix earlier values onto all suggestions
                         StringBuilder prefix = new StringBuilder();
                         for (int i = 0; i < split.length - 1; i++) {
                             prefix.append(split[i]).append(",");
@@ -305,6 +318,7 @@ public final class FlagCommand extends Command {
         }
         return tabOf(player, args, space);
     }
+
     @CommandDeclaration(command = "set",
             aliases = {"s", "set"},
             usage = "/plot flag set <flag> <value>",
@@ -368,6 +382,7 @@ public final class FlagCommand extends Command {
                         .build()
         );
     }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     @CommandDeclaration(command = "add",
             aliases = {"a", "add"},
@@ -442,6 +457,7 @@ public final class FlagCommand extends Command {
                         .build()
         );
     }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     @CommandDeclaration(command = "remove",
             aliases = {"r", "remove", "delete"},
@@ -569,6 +585,7 @@ public final class FlagCommand extends Command {
                         .build()
         );
     }
+
     @CommandDeclaration(command = "list",
             aliases = {"l", "list", "flags"},
             usage = "/plot flag list",
@@ -583,6 +600,7 @@ public final class FlagCommand extends Command {
         if (!checkRequirements(player)) {
             return;
         }
+
         final Map<Component, ArrayList<String>> flags = new HashMap<>();
         for (PlotFlag<?, ?> plotFlag : GlobalFlagContainer.getInstance().getRecognizedPlotFlags()) {
             if (plotFlag instanceof InternalFlag) {
@@ -592,6 +610,7 @@ public final class FlagCommand extends Command {
             final Collection<String> flagList = flags.computeIfAbsent(category, k -> new ArrayList<>());
             flagList.add(plotFlag.getName());
         }
+
         for (final Map.Entry<Component, ArrayList<String>> entry : flags.entrySet()) {
             Collections.sort(entry.getValue());
             Component category =
@@ -616,6 +635,7 @@ public final class FlagCommand extends Command {
             player.sendMessage(StaticCaption.of(MINI_MESSAGE.serialize(builder.build())));
         }
     }
+
     @CommandDeclaration(command = "info",
             aliases = {"i", "info"},
             usage = "/plot flag info <flag>",
@@ -640,10 +660,12 @@ public final class FlagCommand extends Command {
         final PlotFlag<?, ?> plotFlag = getFlag(player, args[0]);
         if (plotFlag != null) {
             player.sendMessage(TranslatableCaption.of("flag.flag_info_header"));
+            // Flag name
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_name"),
                     TagResolver.resolver("flag", Tag.inserting(Component.text(plotFlag.getName())))
             );
+            // Flag category
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_category"),
                     TagResolver.resolver(
@@ -651,8 +673,11 @@ public final class FlagCommand extends Command {
                             Tag.inserting(plotFlag.getFlagCategory().toComponent(player))
                     )
             );
+            // Flag description
+            // TODO maybe merge and \n instead?
             player.sendMessage(TranslatableCaption.of("flag.flag_info_description"));
             player.sendMessage(plotFlag.getFlagDescription());
+            // Flag example
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_example"),
                     TagResolver.builder()
@@ -661,13 +686,16 @@ public final class FlagCommand extends Command {
                             .tag("value", Tag.preProcessParsed(plotFlag.getExample()))
                             .build()
             );
+            // Default value
             final String defaultValue = player.getLocation().getPlotArea().getFlagContainer()
                     .getFlagErased(plotFlag.getClass()).toString();
             player.sendMessage(
                     TranslatableCaption.of("flag.flag_info_default_value"),
                     TagResolver.resolver("value", Tag.inserting(Component.text(defaultValue)))
             );
+            // Footer. Done this way to prevent the duplicate-message-thingy from catching it
             player.sendMessage(TranslatableCaption.of("flag.flag_info_footer"));
         }
     }
+
 }

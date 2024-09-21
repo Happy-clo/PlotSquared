@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.location.Location;
 import com.plotsquared.core.permissions.Permission;
@@ -26,7 +27,9 @@ import com.plotsquared.core.util.StringMan;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 public abstract class SetCommand extends SubCommand {
+
     @Override
     public boolean onCommand(PlotPlayer<?> player, String[] args) {
         Location location = player.getLocation();
@@ -66,5 +69,7 @@ public abstract class SetCommand extends SubCommand {
         }
         return set(player, plot, StringMan.join(args, " "));
     }
+
     public abstract boolean set(PlotPlayer<?> player, Plot plot, String value);
+
 }

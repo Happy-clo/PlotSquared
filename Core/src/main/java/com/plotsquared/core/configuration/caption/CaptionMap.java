@@ -17,14 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
+
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Locale;
 import java.util.Set;
+
 /**
  * Map containing mappings between {@link TranslatableCaption captions} and
  * {@link net.kyori.adventure.text.Component components}
  */
 public interface CaptionMap {
+
     /**
      * Get a message using the server locale
      *
@@ -33,6 +37,7 @@ public interface CaptionMap {
      * @throws NoSuchCaptionException if no caption with the given key exists
      */
     @NonNull String getMessage(final @NonNull TranslatableCaption caption) throws NoSuchCaptionException;
+
     /**
      * Get a message using a specific locale
      *
@@ -43,6 +48,7 @@ public interface CaptionMap {
      */
     @NonNull String getMessage(final @NonNull TranslatableCaption caption, final @NonNull LocaleHolder localeHolder) throws
             NoSuchCaptionException;
+
     /**
      * Check if the map supports a given locale
      *
@@ -50,21 +56,27 @@ public interface CaptionMap {
      * @return {@code true} if the map supports the locale
      */
     boolean supportsLocale(final @NonNull Locale locale);
+
     /**
      * Get the locale of the messages stored in the map
      *
      * @return Message locale
      */
     @NonNull Locale getLocale();
+
     /**
      * Gets a copy of the set of captions stored in the CaptionMap
      *
      * @return An immutable set of TranslatableCaption
      */
     @NonNull Set<TranslatableCaption> getCaptions();
+
     class NoSuchCaptionException extends IllegalArgumentException {
+
         public NoSuchCaptionException(final @NonNull NamespacedCaption caption) {
             super(String.format("No caption with the key '%s:%s' exists in the map", caption.getNamespace(), caption.getKey()));
         }
+
     }
+
 }

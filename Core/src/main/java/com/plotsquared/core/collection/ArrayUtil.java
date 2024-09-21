@@ -17,8 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.collection;
+
 import java.util.Arrays;
+
 public class ArrayUtil {
+
     @SuppressWarnings("unchecked")
     public static <T> T[] concatAll(T[] first, T[]... rest) {
         int totalLength = first.length;
@@ -33,4 +36,5 @@ public class ArrayUtil {
         }
         return result;
     }
+
 }

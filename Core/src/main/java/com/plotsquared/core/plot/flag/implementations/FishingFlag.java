@@ -17,17 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.types.BooleanFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class FishingFlag extends BooleanFlag<FishingFlag> {
+
     public static final FishingFlag FISHING_TRUE = new FishingFlag(true);
     public static final FishingFlag FISHING_FALSE = new FishingFlag(false);
+
     private FishingFlag(boolean value) {
         super(value, TranslatableCaption.of("flags.flag_description_fishing"));
     }
+
     @Override
     protected FishingFlag flagOf(@NonNull final Boolean value) {
         return value ? FISHING_TRUE : FISHING_FALSE;
     }
+
 }

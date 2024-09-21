@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption.load;
+
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,6 +28,7 @@ import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -46,23 +48,29 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 /**
  * This class handles loading and updating of message files.
  */
 public final class CaptionLoader {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + CaptionLoader.class.getSimpleName());
+
     private static final Gson GSON;
+
     static {
         GSON = new GsonBuilder()
                 .setPrettyPrinting()
                 .disableHtmlEscaping()
                 .create();
     }
+
     private final Map<String, String> defaultMessages;
     private final Locale defaultLocale;
     private final Function<Path, Locale> localeExtractor;
     private final DefaultCaptionProvider captionProvider;
     private final String namespace;
+
     private CaptionLoader(
             final @NonNull Locale internalLocale,
             final @NonNull Function<@NonNull Path, @NonNull Locale> localeExtractor,
@@ -82,6 +90,7 @@ public final class CaptionLoader {
         }
         this.defaultMessages = temp;
     }
+
     /**
      * Returns a new CaptionLoader instance. That instance will use the internalLocale to extract default values
      * from the captionProvider
@@ -99,6 +108,7 @@ public final class CaptionLoader {
     ) {
         return new CaptionLoader(internalLocale, localeExtractor, captionProvider, namespace);
     }
+
     /**
      * Returns a function that extracts a locale from a path using the given pattern.
      * The pattern is required to have (at least) one capturing group, as this is used to access the locale
@@ -121,6 +131,7 @@ public final class CaptionLoader {
             }
         };
     }
+
     /**
      * Loads a map of translation keys mapping to their translations from a reader.
      * The format is expected to be a json object:
@@ -141,6 +152,7 @@ public final class CaptionLoader {
         }.getType();
         return new LinkedHashMap<>(GSON.fromJson(reader, type));
     }
+
     private static void save(final Path file, final Map<String, String> content) {
         try (final BufferedWriter writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
             GSON.toJson(content, writer);
@@ -149,6 +161,7 @@ public final class CaptionLoader {
             LOGGER.error("Failed to save caption file '{}'", file.getFileName().toString(), e);
         }
     }
+
     /**
      * Load all message files in the given directory into a new CaptionMap.
      *
@@ -174,6 +187,7 @@ public final class CaptionLoader {
             return new PerUserLocaleCaptionMap(localeMaps);
         }
     }
+
     /**
      * Load a message file into a new CaptionMap. The file name must match
      * the pattern expected by the {@link #localeExtractor}.
@@ -190,11 +204,12 @@ public final class CaptionLoader {
         try (final BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
             Map<String, String> map = loadFromReader(reader);
             if (patch(map, locale)) {
-                save(file, map);
+                save(file, map); // update the file using the modified map
             }
             return new LocalizedCaptionMap(locale, mapToCaptions(map));
         }
     }
+
     /**
      * Load a message file into a new CaptionMap. The file name must match
      * the pattern expected by the {@link #localeExtractor}.
@@ -219,6 +234,7 @@ public final class CaptionLoader {
             return loadSingle(file);
         }
     }
+
     private @NonNull Map<TranslatableCaption, String> mapToCaptions(Map<String, String> map) {
         return map.entrySet().stream().collect(
                 Collectors.toMap(
@@ -226,6 +242,7 @@ public final class CaptionLoader {
                         Map.Entry::getValue
                 ));
     }
+
     /**
      * Add missing entries to the given map.
      * Entries are missing if the key exists in {@link #defaultLocale} but isn't present
@@ -244,7 +261,7 @@ public final class CaptionLoader {
             languageSpecific = this.defaultMessages;
         } else {
             languageSpecific = this.captionProvider.loadDefaults(locale);
-            if (languageSpecific == null) {
+            if (languageSpecific == null) { // fallback for languages not provided
                 languageSpecific = this.defaultMessages;
             }
         }
@@ -257,4 +274,5 @@ public final class CaptionLoader {
         }
         return modified;
     }
+
 }

@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.flag.FlagParseException;
 import com.plotsquared.core.plot.flag.types.TimedFlag;
@@ -24,11 +25,15 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 public class FeedFlag extends TimedFlag<Integer, FeedFlag> {
+
     public static final FeedFlag FEED_NOTHING = new FeedFlag(new Timed<>(0, 0));
+
     public FeedFlag(@NonNull Timed<Integer> value) {
         super(value, 1, TranslatableCaption.of("flags.flag_description_feed"));
     }
+
     @Override
     protected Integer parseValue(String input) throws FlagParseException {
         int parsed;
@@ -52,16 +57,20 @@ public class FeedFlag extends TimedFlag<Integer, FeedFlag> {
         }
         return parsed;
     }
+
     @Override
     protected Integer mergeValue(Integer other) {
         return this.getValue().value() + other;
     }
+
     @Override
     public String getExample() {
         return "10 5";
     }
+
     @Override
     protected FeedFlag flagOf(@NonNull Timed<Integer> value) {
         return new FeedFlag(value);
     }
+
 }

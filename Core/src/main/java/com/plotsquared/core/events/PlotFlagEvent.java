@@ -17,14 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.events;
+
 import com.plotsquared.core.plot.Plot;
 import com.plotsquared.core.plot.flag.PlotFlag;
+
 public abstract class PlotFlagEvent extends PlotEvent {
+
     private final PlotFlag<?, ?> flag;
+
     protected PlotFlagEvent(Plot plot, PlotFlag<?, ?> flag) {
         super(plot);
         this.flag = flag;
     }
+
     /**
      * Get the flag involved
      *
@@ -33,4 +38,5 @@ public abstract class PlotFlagEvent extends PlotEvent {
     public PlotFlag<?, ?> getFlag() {
         return flag;
     }
+
 }

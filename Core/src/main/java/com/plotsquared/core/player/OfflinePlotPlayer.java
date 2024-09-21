@@ -17,25 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.player;
+
 import com.plotsquared.core.permissions.PermissionHolder;
+
 import java.util.UUID;
+
 public interface OfflinePlotPlayer extends PermissionHolder {
+
     /**
      * Returns the UUID of the player.
      *
      * @return the UUID of the player
      */
     UUID getUUID();
+
     /**
      * Gets the time in milliseconds when the player was last seen online.
      *
      * @return the time in milliseconds when last online
      */
     long getLastPlayed();
+
     /**
      * Returns the name of the player.
      *
      * @return the name of the player
      */
     String getName();
+
 }

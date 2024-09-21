@@ -17,19 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
+
 import com.plotsquared.core.configuration.Settings;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
+
 public class Rating {
+
     private static final String LIKE_INTERNAL = "__LIKES__";
+
     /**
      * This is a map of the rating category to the rating value
      */
     private final HashMap<String, Integer> ratingMap;
     private final int initial;
     private boolean changed;
+
     public Rating(int value) {
         this.ratingMap = new HashMap<>();
         if (Settings.Ratings.USE_LIKES) {
@@ -54,12 +60,14 @@ public class Rating {
             }
         }
     }
+
     public List<String> getCategories() {
         if (this.ratingMap.size() == 1) {
             return new ArrayList<>(0);
         }
         return new ArrayList<>(this.ratingMap.keySet());
     }
+
     public double getAverageRating() {
         if (Settings.Ratings.USE_LIKES) {
             return getLike() ? 10 : 1;
@@ -67,13 +75,16 @@ public class Rating {
         double total = this.ratingMap.values().stream().mapToDouble(v -> v).sum();
         return total / this.ratingMap.size();
     }
+
     public boolean getLike() {
         final Integer rating = this.getRating(LIKE_INTERNAL);
         return rating != null && rating == 10;
     }
+
     public Integer getRating(String category) {
         return this.ratingMap.get(category);
     }
+
     public boolean setRating(String category, int value) {
         this.changed = true;
         if (!this.ratingMap.containsKey(category)) {
@@ -81,6 +92,7 @@ public class Rating {
         }
         return this.ratingMap.put(category, value) != null;
     }
+
     public int getAggregate() {
         if (!this.changed) {
             return this.initial;
@@ -95,5 +107,7 @@ public class Rating {
         } else {
             return this.ratingMap.get(null);
         }
+
     }
+
 }

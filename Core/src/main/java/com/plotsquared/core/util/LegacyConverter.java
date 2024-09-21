@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util;
+
 import com.plotsquared.core.PlotSquared;
 import com.plotsquared.core.configuration.ConfigurationSection;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
@@ -29,18 +30,22 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
  * Converts legacy configurations into the new (BlockBucket) format
  */
 @SuppressWarnings("unused")
 public final class LegacyConverter {
+
     public static final String CONFIGURATION_VERSION = "post_flattening";
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + LegacyConverter.class.getSimpleName());
     private static final HashMap<String, ConfigurationType> TYPE_MAP = new HashMap<>();
+
     static {
         TYPE_MAP.put("plot.filling", ConfigurationType.BLOCK_LIST);
         TYPE_MAP.put("plot.floor", ConfigurationType.BLOCK_LIST);
@@ -49,14 +54,18 @@ public final class LegacyConverter {
         TYPE_MAP.put("wall.block", ConfigurationType.BLOCK);
         TYPE_MAP.put("road.block", ConfigurationType.BLOCK);
     }
+
     private final ConfigurationSection configuration;
+
     public LegacyConverter(final @NonNull ConfigurationSection configuration) {
         this.configuration = configuration;
     }
+
     private BlockBucket blockToBucket(final @NonNull String block) {
         final BlockState plotBlock = PlotSquared.platform().worldUtil().getClosestBlock(block).best;
         return BlockBucket.withSingle(plotBlock);
     }
+
     private void setString(
             final @NonNull ConfigurationSection section,
             final @NonNull String string, final @NonNull BlockBucket blocks
@@ -66,6 +75,7 @@ public final class LegacyConverter {
         }
         section.set(string, blocks.toString());
     }
+
     private BlockBucket blockListToBucket(final @NonNull BlockState[] blocks) {
         final Map<BlockState, Integer> counts = new HashMap<>();
         for (final BlockState block : blocks) {
@@ -89,10 +99,12 @@ public final class LegacyConverter {
         }
         return bucket;
     }
+
     private BlockState[] splitBlockList(final @NonNull List<String> list) {
         return list.stream().map(s -> PlotSquared.platform().worldUtil().getClosestBlock(s).best)
                 .toArray(BlockState[]::new);
     }
+
     private void convertBlock(
             final @NonNull ConfigurationSection section,
             final @NonNull String key,
@@ -108,6 +120,7 @@ public final class LegacyConverter {
                         .build()
         );
     }
+
     private void convertBlockList(
             final @NonNull ConfigurationSection section,
             final @NonNull String key,
@@ -125,6 +138,7 @@ public final class LegacyConverter {
                                 .build()
                 );
     }
+
     private String plotBlockArrayString(final @NonNull BlockState[] blocks) {
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < blocks.length; i++) {
@@ -135,7 +149,9 @@ public final class LegacyConverter {
         }
         return builder.toString();
     }
+
     public void convert() {
+        // Section is the "worlds" section
         final Collection<String> worlds = this.configuration.getKeys(false);
         for (final String world : worlds) {
             final ConfigurationSection worldSection = configuration.getConfigurationSection(world);
@@ -154,8 +170,10 @@ public final class LegacyConverter {
             }
         }
     }
+
     private enum ConfigurationType {
         BLOCK,
         BLOCK_LIST
     }
+
 }

@@ -17,17 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag.implementations;
+
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.plot.PlotWeather;
 import com.plotsquared.core.plot.flag.PlotFlag;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.Arrays;
 import java.util.Collection;
+
 public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
+
     public static final WeatherFlag PLOT_WEATHER_FLAG_RAIN = new WeatherFlag(PlotWeather.RAIN);
     public static final WeatherFlag PLOT_WEATHER_FLAG_CLEAR = new WeatherFlag(PlotWeather.CLEAR);
     public static final WeatherFlag PLOT_WEATHER_FLAG_WORLD = new WeatherFlag(PlotWeather.WORLD);
     public static final WeatherFlag PLOT_WEATHER_FLAG_OFF = new WeatherFlag(PlotWeather.OFF);
+
     /**
      * Construct a new flag instance.
      *
@@ -40,6 +45,7 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
                 TranslatableCaption.of("flags.flag_description_weather")
         );
     }
+
     @Override
     public WeatherFlag parse(@NonNull String input) {
         return switch (input.toLowerCase()) {
@@ -49,18 +55,22 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
             default -> flagOf(PlotWeather.OFF);
         };
     }
+
     @Override
     public WeatherFlag merge(@NonNull PlotWeather newValue) {
         return flagOf(newValue);
     }
+
     @Override
     public String toString() {
         return getValue().toString();
     }
+
     @Override
     public String getExample() {
         return "rain";
     }
+
     @Override
     protected WeatherFlag flagOf(@NonNull PlotWeather value) {
         return switch (value) {
@@ -70,9 +80,11 @@ public class WeatherFlag extends PlotFlag<PlotWeather, WeatherFlag> {
             default -> PLOT_WEATHER_FLAG_OFF;
         };
     }
+
     @Override
     public Collection<String> getTabCompletions() {
         return Arrays
                 .asList("clear", "rain");
     }
+
 }

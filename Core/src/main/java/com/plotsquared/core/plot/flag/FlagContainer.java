@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot.flag;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.intellectualsites.annotations.NotPublic;
@@ -25,22 +26,27 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+
 /**
  * Container type for {@link PlotFlag plot flags}.
  */
 public class FlagContainer {
+
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + FlagContainer.class.getSimpleName());
+
     private final Map<String, String> unknownFlags = new HashMap<>();
     private final Map<Class<?>, PlotFlag<?, ?>> flagMap = new HashMap<>();
     private final PlotFlagUpdateHandler plotFlagUpdateHandler;
     private final Collection<PlotFlagUpdateHandler> updateSubscribers = new HashSet<>();
     private final PlotFlagUpdateHandler unknownsRef;
     private FlagContainer parentContainer;
+
     /**
      * Construct a new flag container with an optional parent container and update handler.
      * Default values are inherited from the parent container. At the top
@@ -66,6 +72,7 @@ public class FlagContainer {
             this.unknownsRef = null;
         }
     }
+
     /**
      * Construct a new flag container with an optional parent container.
      * Default values are inherited from the parent container. At the top
@@ -79,6 +86,7 @@ public class FlagContainer {
     public FlagContainer(final @Nullable FlagContainer parentContainer) {
         this(parentContainer, null);
     }
+
     /**
      * Cast a plot flag with wildcard parameters into a parametrized
      * PlotFlag. This is an unsafe operation, and should only be performed
@@ -95,6 +103,7 @@ public class FlagContainer {
     ) {
         return (T) flag;
     }
+
     /**
      * Return the parent container (if the container has a parent)
      *
@@ -103,13 +112,16 @@ public class FlagContainer {
     public @Nullable FlagContainer getParentContainer() {
         return this.parentContainer;
     }
+
     public void setParentContainer(FlagContainer parentContainer) {
         this.parentContainer = parentContainer;
     }
+
     @SuppressWarnings("unused")
     protected Map<Class<?>, PlotFlag<?, ?>> getInternalPlotFlagMap() {
         return this.flagMap;
     }
+
     /**
      * Get an immutable view of the underlying flag map
      *
@@ -118,6 +130,7 @@ public class FlagContainer {
     public Map<Class<?>, PlotFlag<?, ?>> getFlagMap() {
         return ImmutableMap.<Class<?>, PlotFlag<?, ?>>builder().putAll(this.flagMap).build();
     }
+
     /**
      * Add a flag to the container
      *
@@ -154,6 +167,7 @@ public class FlagContainer {
             e.printStackTrace();
         }
     }
+
     /**
      * Remove a flag from the container
      *
@@ -176,6 +190,7 @@ public class FlagContainer {
             return (V) value;
         }
     }
+
     /**
      * Add all flags to the container
      *
@@ -190,15 +205,18 @@ public class FlagContainer {
             this.addFlag(flag);
         }
     }
+
     public void addAll(final FlagContainer container) {
         this.addAll(container.flagMap.values());
     }
+
     /**
      * Clears the local flag map
      */
     public void clearLocal() {
         this.flagMap.clear();
     }
+
     /**
      * Get a collection of all recognized plot flags. Will by
      * default use the values contained in {@link GlobalFlagContainer}.
@@ -208,6 +226,7 @@ public class FlagContainer {
     public Collection<PlotFlag<?, ?>> getRecognizedPlotFlags() {
         return this.getHighestClassContainer().getFlagMap().values();
     }
+
     /**
      * Recursively seek for the highest order flag container.
      * This will by default return {@link GlobalFlagContainer}.
@@ -220,6 +239,7 @@ public class FlagContainer {
         }
         return this;
     }
+
     /**
      * Has the same functionality as {@link #getFlag(Class)}, but
      * with wildcard generic types.
@@ -238,6 +258,7 @@ public class FlagContainer {
         }
         return null;
     }
+
     /**
      * Query all levels of flag containers for a flag. This guarantees that a flag
      * instance is returned, as long as it is registered in the
@@ -259,6 +280,7 @@ public class FlagContainer {
         }
         return null;
     }
+
     /**
      * Check for flag existence in this flag container instance.
      *
@@ -275,6 +297,7 @@ public class FlagContainer {
             return castUnsafe(localFlag);
         }
     }
+
     /**
      * Subscribe to flag updates in this particular flag container instance.
      * Updates are: a flag being removed, a flag being added or a flag
@@ -289,6 +312,7 @@ public class FlagContainer {
     public void subscribe(final @NonNull PlotFlagUpdateHandler plotFlagUpdateHandler) {
         this.updateSubscribers.add(plotFlagUpdateHandler);
     }
+
     private void handleUnknowns(
             final PlotFlag<?, ?> flag,
             final PlotFlagUpdateType plotFlagUpdateType
@@ -305,6 +329,7 @@ public class FlagContainer {
             }
         }
     }
+
     /**
      * Register a flag key-value pair which cannot yet be associated with
      * an existing flag instance (such as when third party flag values are
@@ -319,6 +344,7 @@ public class FlagContainer {
     public void addUnknownFlag(final String flagName, final String value) {
         this.unknownFlags.put(flagName.toLowerCase(Locale.ENGLISH), value);
     }
+
     /**
      * Creates a cleanup hook that is meant to run once this FlagContainer isn't needed anymore.
      * This is to prevent memory leaks. This method is not part of the API.
@@ -330,11 +356,13 @@ public class FlagContainer {
     public Runnable createCleanupHook() {
         return () -> GlobalFlagContainer.getInstance().unsubscribe(unknownsRef);
     }
+
     void unsubscribe(final @Nullable PlotFlagUpdateHandler updateHandler) {
         if (updateHandler != null) {
             this.updateSubscribers.remove(updateHandler);
         }
     }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -346,10 +374,12 @@ public class FlagContainer {
         final FlagContainer that = (FlagContainer) o;
         return flagMap.equals(that.flagMap);
     }
+
     @Override
     public int hashCode() {
         return flagMap.hashCode();
     }
+
     /**
      * Update event types used in {@link PlotFlagUpdateHandler}.
      */
@@ -368,11 +398,14 @@ public class FlagContainer {
          */
         FLAG_UPDATED
     }
+
+
     /**
      * Handler for update events in {@link FlagContainer flag containers}.
      */
     @FunctionalInterface
     public interface PlotFlagUpdateHandler {
+
         /**
          * Act on the flag update event
          *
@@ -380,5 +413,7 @@ public class FlagContainer {
          * @param type     Update type
          */
         void handle(PlotFlag<?, ?> plotFlag, PlotFlagUpdateType type);
+
     }
+
 }

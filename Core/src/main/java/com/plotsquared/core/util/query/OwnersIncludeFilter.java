@@ -17,16 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.util.query;
+
 import com.plotsquared.core.plot.Plot;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
 import java.util.UUID;
+
 class OwnersIncludeFilter implements PlotFilter {
+
     private final UUID owner;
+
     OwnersIncludeFilter(final @NonNull UUID owner) {
         this.owner = owner;
     }
+
     @Override
     public boolean accepts(final @NonNull Plot plot) {
         return plot.isBasePlot() && plot.getOwners().size() > 0 && plot.getOwners().contains(owner);
     }
+
 }

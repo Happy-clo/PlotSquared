@@ -17,14 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.plot;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 public class PlotRangeIteratorTest {
+
     @Test
     public void singlePlotIterator() {
+        // an iterator that should only contain the given plot
         PlotId id = PlotId.of(3, 7);
         PlotId.PlotRangeIterator range = PlotId.PlotRangeIterator.range(id, id);
         Assertions.assertTrue(range.hasNext());
@@ -32,6 +37,10 @@ public class PlotRangeIteratorTest {
         Assertions.assertFalse(range.hasNext());
         Assertions.assertThrows(NoSuchElementException.class, range::next);
     }
+
+    // the tests below assume a specific order (first increasing y, then increasing x)
+    // this is not a written requirement but makes testing easier
+
     @Test
     public void squareAreaPlotIterator() {
         PlotId id00 = PlotId.of(0, 0);
@@ -47,8 +56,10 @@ public class PlotRangeIteratorTest {
         Assertions.assertFalse(range.hasNext());
         Assertions.assertThrows(NoSuchElementException.class, range::next);
     }
+
     @Test
     public void rectangleYAreaPlotIterator() {
+        // max y > max x
         PlotId id00 = PlotId.of(0, 0);
         PlotId id01 = PlotId.of(0, 1);
         PlotId id02 = PlotId.of(0, 2);
@@ -64,8 +75,10 @@ public class PlotRangeIteratorTest {
         Assertions.assertFalse(range.hasNext());
         Assertions.assertThrows(NoSuchElementException.class, range::next);
     }
+
     @Test
     public void rectangleXAreaPlotIterator() {
+        // max x > max y
         PlotId id00 = PlotId.of(0, 0);
         PlotId id01 = PlotId.of(0, 1);
         PlotId id10 = PlotId.of(1, 0);
@@ -81,15 +94,18 @@ public class PlotRangeIteratorTest {
         Assertions.assertFalse(range.hasNext());
         Assertions.assertThrows(NoSuchElementException.class, range::next);
     }
+
     @Test
     public void resetYOfIteratorToStart() {
         PlotId id00 = PlotId.of(0, 1);
         PlotId id01 = PlotId.of(1, 2);
         PlotId.PlotRangeIterator range = PlotId.PlotRangeIterator.range(id00, id01);
+
         for (int i = 0; i < 4; i++) {
             Assertions.assertNotEquals(0, range.next().getY());
         }
         Assertions.assertFalse(range.hasNext());
         Assertions.assertThrows(NoSuchElementException.class, range::next);
     }
+
 }

@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.command;
+
 import com.plotsquared.core.configuration.caption.Caption;
 import com.plotsquared.core.configuration.caption.CaptionHolder;
 import com.plotsquared.core.configuration.caption.StaticCaption;
@@ -33,6 +34,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -45,13 +47,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+
 public abstract class Command {
+
     static final MiniMessage MINI_MESSAGE = MiniMessage.builder().build();
+
+    // May be none
     private final ArrayList<Command> allCommands = new ArrayList<>();
     private final ArrayList<Command> dynamicCommands = new ArrayList<>();
     private final HashMap<String, Command> staticCommands = new HashMap<>();
+
+    // Parent command (may be null)
     private final Command parent;
     private final boolean isStatic;
+    // The command ID
     private String id;
     private List<String> aliases;
     private RequiredType required;
@@ -61,6 +70,7 @@ public abstract class Command {
     private boolean confirmation;
     private CommandCategory category;
     private Argument<?>[] arguments;
+
     public Command(
             Command parent, boolean isStatic, String id, String permission,
             RequiredType required, CommandCategory category
@@ -76,6 +86,7 @@ public abstract class Command {
             this.parent.register(this);
         }
     }
+
     public Command(Command parent, boolean isStatic) {
         this.parent = parent;
         this.isStatic = isStatic;
@@ -86,6 +97,8 @@ public abstract class Command {
         for (final Method method : getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(CommandDeclaration.class)) {
                 Class<?>[] types = method.getParameterTypes();
+                // final PlotPlayer<?> player, String[] args, RunnableVal3<Command,Runnable,Runnable> confirm, RunnableVal2<Command, CommandResult>
+                // whenDone
                 if (types.length == 5 && types[0] == Command.class && types[1] == PlotPlayer.class
                         && types[2] == String[].class && types[3] == RunnableVal3.class
                         && types[4] == RunnableVal2.class) {
@@ -110,18 +123,22 @@ public abstract class Command {
             }
         }
     }
+
     public Command getParent() {
         return this.parent;
     }
+
     public String getId() {
         return this.id;
     }
+
     public String getFullId() {
         if (this.parent != null && this.parent.getParent() != null) {
             return this.parent.getFullId() + "." + this.id;
         }
         return this.id;
     }
+
     public List<Command> getCommands(PlotPlayer<?> player) {
         List<Command> commands = new ArrayList<>();
         for (Command cmd : this.allCommands) {
@@ -131,6 +148,7 @@ public abstract class Command {
         }
         return commands;
     }
+
     public List<Command> getCommands(CommandCategory category, PlotPlayer<?> player) {
         List<Command> commands = getCommands(player);
         if (category != null) {
@@ -138,38 +156,49 @@ public abstract class Command {
         }
         return commands;
     }
+
     public List<Command> getCommands() {
         return this.allCommands;
     }
+
     public boolean hasConfirmation(PermissionHolder player) {
         return this.confirmation && !player.hasPermission(getPermission() + ".confirm.bypass");
     }
+
     public List<String> getAliases() {
         return this.aliases;
     }
+
     public Caption getDescription() {
         return this.description;
     }
+
     public RequiredType getRequiredType() {
         return this.required;
     }
+
     public Argument<?>[] getRequiredArguments() {
         return this.arguments;
     }
+
     public void setRequiredArguments(Argument<?>[] arguments) {
         this.arguments = arguments;
     }
+
     public void init(CommandDeclaration declaration) {
         this.id = declaration.command();
         this.permission = declaration.permission();
         this.required = declaration.requiredType();
         this.category = declaration.category();
+
         List<String> aliasOptions = new ArrayList<>();
         aliasOptions.add(this.id);
         aliasOptions.addAll(Arrays.asList(declaration.aliases()));
+
         this.aliases = aliasOptions;
         if (declaration.description().isEmpty()) {
             Command parent = getParent();
+            // we're collecting the "path" of the command
             List<String> path = new ArrayList<>();
             path.add(this.id);
             while (parent != null && !parent.equals(MainCommand.getInstance())) {
@@ -184,10 +213,12 @@ public abstract class Command {
         }
         this.usage = declaration.usage();
         this.confirmation = declaration.confirmation();
+
         if (this.parent != null) {
             this.parent.register(this);
         }
     }
+
     public void register(Command command) {
         if (command.isStatic) {
             for (String alias : command.aliases) {
@@ -198,6 +229,7 @@ public abstract class Command {
         }
         this.allCommands.add(command);
     }
+
     public String getPermission() {
         if (this.permission != null && !this.permission.isEmpty()) {
             return this.permission;
@@ -207,10 +239,12 @@ public abstract class Command {
         }
         return "plots." + getFullId();
     }
+
     public <T> void paginate(
             PlotPlayer<?> player, List<T> c, int size, int page,
             RunnableVal3<Integer, T, CaptionHolder> add, String baseCommand, Caption header
     ) {
+        // Calculate pages & index
         if (page < 0) {
             page = 0;
         }
@@ -222,6 +256,7 @@ public abstract class Command {
         if (max > c.size()) {
             max = c.size();
         }
+        // Send the header
         player.sendMessage(
                 header,
                 TagResolver.builder()
@@ -230,6 +265,7 @@ public abstract class Command {
                         .tag("amount", Tag.inserting(Component.text(c.size())))
                         .build()
         );
+        // Send the page content
         List<T> subList = c.subList(page * size, max);
         int i = page * size;
         for (T obj : subList) {
@@ -238,6 +274,7 @@ public abstract class Command {
             add.run(i, obj, msg);
             player.sendMessage(msg.get(), msg.getTagResolvers());
         }
+        // Send the footer
         player.sendMessage(
                 TranslatableCaption.of("list.page_turn"),
                 TagResolver.builder()
@@ -254,6 +291,7 @@ public abstract class Command {
                         .build()
         );
     }
+
     /**
      * @param player   Caller
      * @param args     Arguments
@@ -286,14 +324,18 @@ public abstract class Command {
                 sendUsage(player);
                 return CompletableFuture.completedFuture(false);
             }
+            // Help command
             try {
                 if (!MathMan.isInteger(args[0])) {
                     CommandCategory.valueOf(args[0].toUpperCase());
                 }
+                // This will default certain syntax to the help command
+                // e.g. /plot, /plot 1, /plot claiming
                 MainCommand.getInstance().help.execute(player, args, null, null);
                 return CompletableFuture.completedFuture(false);
             } catch (IllegalArgumentException ignored) {
             }
+            // Command recommendation
             player.sendMessage(TranslatableCaption.of("commandconfig.not_valid_subcommand"));
             List<Command> commands = getCommands(player);
             if (commands.isEmpty()) {
@@ -335,6 +377,7 @@ public abstract class Command {
         }
         return CompletableFuture.completedFuture(true);
     }
+
     public boolean checkArgs(PlotPlayer<?> player, String[] args) {
         Argument<?>[] reqArgs = getRequiredArguments();
         if (reqArgs != null && reqArgs.length > 0) {
@@ -351,6 +394,7 @@ public abstract class Command {
                 failed = failed || reqArgs[i].parse(args[i]) == null;
             }
             if (failed) {
+                // TODO improve or remove the Argument system
                 player.sendMessage(
                         TranslatableCaption.of("commandconfig.command_syntax"),
                         TagResolver.resolver("value", Tag.inserting(Component.text(StringMan.join(fullSplit, " "))))
@@ -360,6 +404,7 @@ public abstract class Command {
         }
         return true;
     }
+
     public int getMatch(String[] args, Command cmd, PlotPlayer<?> player) {
         String perm = cmd.getPermission();
         int count = cmd.getAliases().stream().filter(alias -> alias.startsWith(args[0]))
@@ -394,6 +439,7 @@ public abstract class Command {
         count += StringMan.intersection(desc, args);
         return count;
     }
+
     public Command getCommand(String arg) {
         Command cmd = this.staticCommands.get(arg.toLowerCase());
         if (cmd == null) {
@@ -405,6 +451,7 @@ public abstract class Command {
         }
         return cmd;
     }
+
     public Command getCommand(Class<?> clazz) {
         for (Command cmd : this.allCommands) {
             if (cmd.getClass() == clazz) {
@@ -413,6 +460,7 @@ public abstract class Command {
         }
         return null;
     }
+
     public Command getCommandById(String id) {
         Command exact = this.staticCommands.get(id);
         if (exact != null) {
@@ -425,6 +473,7 @@ public abstract class Command {
         }
         return null;
     }
+
     public boolean canExecute(PlotPlayer<?> player, boolean message) {
         if (player == null) {
             return true;
@@ -445,10 +494,12 @@ public abstract class Command {
         }
         return false;
     }
+
     public boolean matches(String arg) {
         arg = arg.toLowerCase();
         return StringMan.isEqual(arg, this.id) || this.aliases.contains(arg);
     }
+
     public String getCommandString() {
         if (this.parent == null) {
             return "/" + toString();
@@ -456,12 +507,14 @@ public abstract class Command {
             return this.parent.getCommandString() + " " + toString();
         }
     }
+
     public void sendUsage(PlotPlayer<?> player) {
         player.sendMessage(
                 TranslatableCaption.of("commandconfig.command_syntax"),
                 TagResolver.resolver("value", Tag.inserting(Component.text(getUsage())))
         );
     }
+
     public String getUsage() {
         if (this.usage != null && !this.usage.isEmpty()) {
             if (this.usage.startsWith("/")) {
@@ -480,6 +533,7 @@ public abstract class Command {
         }
         return getCommandString() + " " + args + "]";
     }
+
     public Collection<Command> tabOf(
             PlotPlayer<?> player, String[] input, boolean space,
             String... args
@@ -502,6 +556,7 @@ public abstract class Command {
         }
         return result;
     }
+
     public Collection<Command> tab(PlotPlayer<?> player, String[] args, boolean space) {
         switch (args.length) {
             case 0 -> {
@@ -537,10 +592,12 @@ public abstract class Command {
             }
         }
     }
+
     @Override
     public String toString() {
         return !this.aliases.isEmpty() ? this.aliases.get(0) : this.id;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -555,36 +612,48 @@ public abstract class Command {
         }
         return this.getFullId().equals(other.getFullId());
     }
+
     @Override
     public int hashCode() {
         return this.getFullId().hashCode();
     }
+
     public void checkTrue(boolean mustBeTrue, Caption message, TagResolver... args) {
         if (!mustBeTrue) {
             throw new CommandException(message, args);
         }
     }
+
     public <T> T check(T object, Caption message, TagResolver... args) {
         if (object == null) {
             throw new CommandException(message, args);
         }
         return object;
     }
+
+
     public enum CommandResult {
         FAILURE,
         SUCCESS
     }
+
+
     public static class CommandException extends RuntimeException {
+
         private final Caption message;
         private final TagResolver[] args;
+
         public CommandException(final @Nullable Caption message, final TagResolver... args) {
             this.message = message;
             this.args = args;
         }
+
         public void perform(final @Nullable PlotPlayer<?> player) {
             if (player != null && message != null) {
                 player.sendMessage(message, args);
             }
         }
+
     }
+
 }

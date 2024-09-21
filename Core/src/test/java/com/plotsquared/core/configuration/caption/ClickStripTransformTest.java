@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package com.plotsquared.core.configuration.caption;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -25,8 +26,12 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import java.util.EnumSet;
+
+
 class ClickStripTransformTest {
+
     @Test
     @DisplayName("Remove click event of specific action correctly")
     void removeClickEvent() {
@@ -41,6 +46,7 @@ class ClickStripTransformTest {
         var transformedComponent = transform.transform(component);
         Assertions.assertNull(transformedComponent.clickEvent());
     }
+
     @Test
     @DisplayName("Don't remove click events of other action types")
     void ignoreClickEvent() {
@@ -55,11 +61,14 @@ class ClickStripTransformTest {
         var transformedComponent = transform.transform(component);
         Assertions.assertEquals(originalClickEvent, transformedComponent.clickEvent());
     }
+
     @Test
     @DisplayName("Remove nested click events correctly")
     void removeNestedClickEvent() {
+        // nested transform is required to apply on children
         var transform = new NestedComponentTransform(new ClickStripTransform(EnumSet.allOf(ClickEvent.Action.class)));
         var inner = Component
+                // some arbitrary values that should remain
                 .text("World")
                 .color(NamedTextColor.AQUA)
                 .hoverEvent(HoverEvent.showText(Component.text("ABC")))
@@ -70,8 +79,9 @@ class ClickStripTransformTest {
                         inner.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "https://example.org"))
                 );
         var transformedComponent = transform.transform(component);
-        Assertions.assertFalse(transformedComponent.children().isEmpty());
-        Assertions.assertEquals(inner, transformedComponent.children().get(0));
+        Assertions.assertFalse(transformedComponent.children().isEmpty()); // child still exists
+        Assertions.assertEquals(inner, transformedComponent.children().get(0)); // only the click event has changed
         Assertions.assertNull(transformedComponent.children().get(0).clickEvent());
     }
+
 }
