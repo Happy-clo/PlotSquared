@@ -1,67 +1,78 @@
-name: build
+name: Java CI with Gradle
+
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
+
 jobs:
-  build:
-    if: github.repository_owner == 'IntellectualSites'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v4
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-      - name: Clean Build
-        run: ./gradlew clean build
-      - name: Determine release status
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          if [ "$(./gradlew properties | awk '/^version:/ { print $2; }' | grep '\-SNAPSHOT')" ]; then
-            echo "STATUS=snapshot" >> $GITHUB_ENV
-          else
-            echo "STATUS=release" >> $GITHUB_ENV
-          fi
-      - name: Publish Release
-        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
-        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
-        env:
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
-      - name: Publish Snapshot
-        if: ${{ runner.os == 'Linux' && env.STATUS != 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        run: ./gradlew publishToSonatype
-        env:
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
-      - name: Publish core javadoc
-        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
-        with:
-          source-directory: 'Core/build/docs/javadoc'
-          destination-github-username: 'IntellectualSites'
-          destination-repository-name: 'plotsquared-javadocs'
-          user-email: ${{ secrets.USER_EMAIL }}
-          target-branch: main
-          target-directory: v7/core
-      - name: Publish bukkit javadoc
-        if: ${{ runner.os == 'Linux' && env.STATUS == 'release' && github.event_name == 'push' && github.ref == 'refs/heads/main'}}
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
-        with:
-          source-directory: 'Bukkit/build/docs/javadoc'
-          destination-github-username: 'IntellectualSites'
-          destination-repository-name: 'plotsquared-javadocs'
-          user-email: ${{ secrets.USER_EMAIL }}
-          target-branch: main
-          target-directory: v7/bukkit
+    build:
+        runs-on: ubuntu-24.04
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@main
+
+            - name: Validate Gradle Wrapper
+              uses: gradle/wrapper-validation-action@main
+
+            - name: Set up JDK
+              uses: actions/setup-java@main
+              with:
+                  distribution: "zulu"
+                  java-version: 21 # 根据需要调整为正确的版本
+                  check-latest: true
+
+            - name: Cache Gradle Dependencies
+              uses: actions/cache@main
+              with:
+                  path: |
+                      ~/.gradle/caches/
+                      ~/.gradle/wrapper/
+                  key: ${{ runner.os }}-gradle-${{ hashFiles('**/build.gradle') }}
+                  restore-keys: |
+                      ${{ runner.os }}-gradle-
+
+            - name: Build with Gradle
+              run: |
+                  ./gradlew :plotsquared-bukkit:spotlessApply
+                  ./gradlew build
+
+            - name: Get timestamp and short SHA
+              id: timestamp
+              run: |
+                  echo "::set-output name=timestamp::$(TZ='Asia/Shanghai' date +%s)"
+                  echo "::set-output name=repo_name::$(echo ${{ github.repository }} | cut -d'/' -f2)"
+                  echo "::set-output name=short_sha::$(git rev-parse --short HEAD)"
+
+            - name: Rename JAR files
+              run: |
+                  short_sha=${{ steps.timestamp.outputs.short_sha }}
+                  for dir in Bukkit Core; do
+                      for jar in $dir/build/libs/*.jar; do
+                          filename=$(basename -- "$jar")
+                          extension="${filename##*.}"
+                          name="${filename%.*}"
+                          new_filename="${name}-${short_sha}.${extension}"
+                          mv "$jar" "$dir/build/libs/$new_filename"
+                      done
+                  done
+
+            - name: Upload plugin artifact
+              uses: actions/upload-artifact@main
+              if: success()
+              with:
+                  name: ${{ steps.timestamp.outputs.repo_name }}-${{ steps.timestamp.outputs.short_sha }}
+                  path: Bukkit/build/libs/*.jar
+
+            - name: Automatic release
+              if: success()
+              uses: marvinpinto/action-automatic-releases@latest
+              with:
+                  repo_token: ${{ secrets.GITHUB_TOKEN }}
+                  automatic_release_tag: ${{ steps.timestamp.outputs.timestamp }}
+                  prerelease: false
+                  title: "${{ steps.timestamp.outputs.repo_name }}-${{ steps.timestamp.outputs.short_sha }} Release"
+                  files: |
+                      Core/build/libs/*.jar
+                      Bukkit/build/libs/*.jar
