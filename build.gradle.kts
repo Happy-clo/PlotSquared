@@ -29,9 +29,10 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.withType<Javadoc> {
-    options.isQuiet = true 
-    options.addBooleanOption("Xdoclint", false)
-    options.addStringOption("Xdoclint", "none")
+    options.encoding = "UTF-8" // 设置编码
+    options.addStringOption("Xdoclint", "none") // 禁用 Javadoc 检查
+    options.memberLevel = JavadocMemberLevel.PROTECTED // 设置可见性
+    options.isFailOnError = false // 不因为错误而失败
 }
 val gitCommitId: String by lazy {
     // 执行 Git 命令获取短 SHA ID
