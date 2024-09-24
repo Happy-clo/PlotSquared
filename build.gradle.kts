@@ -22,17 +22,10 @@ plugins {
     alias(libs.plugins.runPaper)
 }
 
-tasks.withType<JavaCompile> {
-    options.compilerArgs.add("-Xlint:-deprecation")
-    options.compilerArgs.add("-Xlint:-unchecked") 
-    options.compilerArgs.add("-Xlint:none")
-}
-
 tasks.withType<Javadoc> {
     options.encoding = "UTF-8" // 设置编码
-    options.addStringOption("Xdoclint", "none") // 禁用 Javadoc 检查
-    options.memberLevel = JavadocMemberLevel.PROTECTED // 设置可见性
-    options.isFailOnError = false // 不因为错误而失败
+    options.addStringOption("Xdoclint", "none") // 禁用所有 Javadoc 检查
+    // 使用 options.memberLevel 来控制生成的成员级别
 }
 val gitCommitId: String by lazy {
     // 执行 Git 命令获取短 SHA ID
