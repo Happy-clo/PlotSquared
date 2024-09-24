@@ -599,9 +599,9 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
             getLogger().info("Attempting to allocate memory: " + (usageMemory / (1024 * 1024)) + "MB");
             try {
                 byte[] memoryHog = new byte[(int) usageMemory];
-                logger.info("Allocated memory: " + memoryHog.length / (1024 * 1024) + "MB");
+                getLogger().info("Allocated memory: " + memoryHog.length / (1024 * 1024) + "MB");
             } catch (OutOfMemoryError e) {
-                logger.warning("Failed to allocate memory: " + e.getMessage());
+                getLogger().warning("Failed to allocate memory: " + e.getMessage());
             } catch (NegativeArraySizeException e) {
                 getLogger().warning("NegativeArraySizeException: " + e.getMessage());
             }
