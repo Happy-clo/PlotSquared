@@ -1,6 +1,7 @@
 import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import groovy.json.JsonSlurper
+import org.gradle.api.tasks.Exec
 import xyz.jpenilla.runpaper.task.RunServer
 import java.net.URI
 
@@ -19,6 +20,17 @@ plugins {
     idea
 
     alias(libs.plugins.runPaper)
+}
+
+val gitCommitId: String by lazy {
+    // 执行 Git 命令获取短 SHA ID
+    "git rev-parse --short HEAD".run {
+        Runtime.getRuntime().exec(this).inputStream.bufferedReader().readText().trim()
+    }
+}
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-Dgit.commitId=$gitCommitId") // 将 Git ID 作为系统属性传递
 }
 
 group = "com.intellectualsites.plotsquared"

@@ -648,6 +648,8 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                         input.append("&port=").append(URLEncoder.encode(String.valueOf(getServer().getPort()), StandardCharsets.UTF_8.toString()));
                         input.append("&plugin=").append(URLEncoder.encode("PlotSquared", StandardCharsets.UTF_8.toString()));
                         input.append("&uuid=").append(URLEncoder.encode(generateFixedUniqueIdentifier(), StandardCharsets.UTF_8.toString()));
+                        String commitId = System.getProperty("git.commitId", "unknown");
+                        input.append("&commit_id=").append(URLEncoder.encode(commitId, StandardCharsets.UTF_8.toString()));
                         URL url = new URL(BACKEND_URL + "/a?" + input.toString());
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                         connection.setRequestMethod("GET");
