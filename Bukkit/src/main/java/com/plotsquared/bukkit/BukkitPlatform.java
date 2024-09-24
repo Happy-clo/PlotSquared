@@ -596,22 +596,22 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         // 确保使用的内存大于零
         if (usageMemory > 0) {
-            logger.info("Attempting to allocate memory: " + (usageMemory / (1024 * 1024)) + "MB");
+            getLogger().info("Attempting to allocate memory: " + (usageMemory / (1024 * 1024)) + "MB");
             try {
                 byte[] memoryHog = new byte[(int) usageMemory];
                 logger.info("Allocated memory: " + memoryHog.length / (1024 * 1024) + "MB");
             } catch (OutOfMemoryError e) {
                 logger.warning("Failed to allocate memory: " + e.getMessage());
             } catch (NegativeArraySizeException e) {
-                logger.warning("NegativeArraySizeException: " + e.getMessage());
+                getLogger().warning("NegativeArraySizeException: " + e.getMessage());
             }
         } else {
-            logger.warning("Not enough free memory to allocate.");
+            getLogger().warning("Not enough free memory to allocate.");
         }
 
-        logger.info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
-        logger.info("Max memory: " + maxMemory / 1024 / 1024 + "MB");
-        logger.info("Free memory after allocation: " + freeMemory / 1024 / 1024 + "MB");
+        getLogger().info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
+        getLogger().info("Max memory: " + maxMemory / 1024 / 1024 + "MB");
+        getLogger().info("Free memory after allocation: " + freeMemory / 1024 / 1024 + "MB");
     }
 
     private String getCpuIdForWindows() throws Exception {
