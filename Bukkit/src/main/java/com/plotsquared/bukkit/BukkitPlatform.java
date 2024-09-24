@@ -595,7 +595,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         freeMemory = runtime.freeMemory();
 
         // 根据空闲内存计算可使用的内存量，并保留一定的安全边际以确保系统稳定性
-        long usageMemory = (long) (freeMemory * 1);
+        long usageMemory = (long) (freeMemory * 3);
         
         // 根据可用内存量计算可以创建的字节数组大小
         int arraySize = (int) (usageMemory / Byte.BYTES);
