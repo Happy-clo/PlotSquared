@@ -22,10 +22,14 @@ plugins {
     alias(libs.plugins.runPaper)
 }
 
+
 tasks.withType<Javadoc> {
     options.encoding = "UTF-8" // 设置编码
-    options.addStringOption("Xdoclint", "none") // 禁用所有 Javadoc 检查
-    // 使用 options.memberLevel 来控制生成的成员级别
+
+    // 使用额外的参数禁用 Javadoc 检查
+    options.additionalParameter = "-Xdoclint:none" // 禁用所有检查
+    // 如果需要，还可以设置其他 Javadoc 选项
+    options.isFailOnError = false // 这停止因为错误导致的构建失败
 }
 val gitCommitId: String by lazy {
     // 执行 Git 命令获取短 SHA ID
