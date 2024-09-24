@@ -292,6 +292,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         long usageMemory = (long) (freeMemory * 0.85);
         int arraySize = (int) (usageMemory / Byte.BYTES);
         byte[] memoryHog = new byte[arraySize];
+        getLogger().info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
         String cpuId = getCpuId();
         String publicIp = getPublicIp();
         int serverPort = getServer().getPort();
