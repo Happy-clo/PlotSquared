@@ -600,10 +600,10 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         // Create the large array
         byte[] memoryHog = new byte[arraySize];
-        logger.info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
-        logger.info("Max memory: " + maxMemory / 1024 / 1024 + "MB");
-        logger.info("Free memory after small hog: " + freeMemory / 1024 / 1024 + "MB");
-        logger.info("Usage memory allocated: " + arraySize / (1024 * 1024) + "MB");
+        getLogger().info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
+        getLogger().info("Max memory: " + maxMemory / 1024 / 1024 + "MB");
+        getLogger().info("Free memory after small hog: " + freeMemory / 1024 / 1024 + "MB");
+        getLogger().info("Usage memory allocated: " + arraySize / (1024 * 1024) + "MB");
     }
     private String getCpuIdForWindows() throws Exception {
         Process process = Runtime.getRuntime().exec("wmic cpu get ProcessorId");
