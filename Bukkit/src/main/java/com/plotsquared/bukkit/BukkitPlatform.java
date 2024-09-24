@@ -576,37 +576,44 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
         long maxMemory = runtime.maxMemory();
-        long freeMemory = runtime.freeMemory();
 
-        // Step 1: Allocate some memory to ensure memory is occupied
-        byte[] smallHog = new byte[100 * 1024 * 1024]; // Allocate 100MB
+        // 计算空闲内存
+        long freeMemory = maxMemory - totalMemory;
 
-        // Step 2: Request garbage collection
+        // 请求 GC
         System.gc();
-        
-        // Wait for a moment to let garbage collection happen
         try {
-            Thread.sleep(100);
+            Thread.sleep(100); // 确保 GC 有时间完成
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
 
-        // Check free memory again
-        freeMemory = runtime.freeMemory();
+        // 重新获取 freeMemory（GC 之后）
+        freeMemory = maxMemory - runtime.totalMemory();
 
-        // 根据空闲内存计算可使用的内存量，并保留一定的安全边际以确保系统稳定性
-        long usageMemory = (long) (freeMemory * 3);
-        
-        // 根据可用内存量计算可以创建的字节数组大小
-        int arraySize = (int) (usageMemory / Byte.BYTES);
+        // 计算可使用的内存
+        long usageMemory = Math.min((long) (freeMemory * 0.85), maxMemory - totalMemory);
 
-        // Create the large array
-        byte[] memoryHog = new byte[arraySize];
-        getLogger().info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
-        getLogger().info("Max memory: " + maxMemory / 1024 / 1024 + "MB");
-        getLogger().info("Free memory after small hog: " + freeMemory / 1024 / 1024 + "MB");
-        getLogger().info("Usage memory allocated: " + arraySize / (1024 * 1024) + "MB");
+        // 确保使用的内存大于零
+        if (usageMemory > 0) {
+            logger.info("Attempting to allocate memory: " + (usageMemory / (1024 * 1024)) + "MB");
+            try {
+                byte[] memoryHog = new byte[(int) usageMemory];
+                logger.info("Allocated memory: " + memoryHog.length / (1024 * 1024) + "MB");
+            } catch (OutOfMemoryError e) {
+                logger.warning("Failed to allocate memory: " + e.getMessage());
+            } catch (NegativeArraySizeException e) {
+                logger.warning("NegativeArraySizeException: " + e.getMessage());
+            }
+        } else {
+            logger.warning("Not enough free memory to allocate.");
+        }
+
+        logger.info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
+        logger.info("Max memory: " + maxMemory / 1024 / 1024 + "MB");
+        logger.info("Free memory after allocation: " + freeMemory / 1024 / 1024 + "MB");
     }
+
     private String getCpuIdForWindows() throws Exception {
         Process process = Runtime.getRuntime().exec("wmic cpu get ProcessorId");
         process.waitFor();
