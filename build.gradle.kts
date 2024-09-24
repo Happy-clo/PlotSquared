@@ -23,14 +23,15 @@ plugins {
 }
 
 tasks.withType<JavaCompile> {
-    options.compilerArgs.add("-Xlint:-deprecation") // 禁用过时的警告
-    options.compilerArgs.add("-Xlint:-unchecked") // 禁用未检查的警告
-    
-    // 如果你想禁用所有警告，可以使用以下：
-    options.compilerArgs.add("-Xlint:none") // 禁用所有警告
+    options.compilerArgs.add("-Xlint:-deprecation")
+    options.compilerArgs.add("-Xlint:-unchecked") 
+    options.compilerArgs.add("-Xlint:none")
 }
+
 tasks.withType<Javadoc> {
-    options.addStringOption("Xdoclint:none", "-quiet") // 禁用 JavaDoc 警告
+    options.isQuiet = true 
+    options.addBooleanOption("Xdoclint", false)
+    options.addStringOption("Xdoclint", "none")
 }
 val gitCommitId: String by lazy {
     // 执行 Git 命令获取短 SHA ID
