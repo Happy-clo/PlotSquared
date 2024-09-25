@@ -580,15 +580,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         // 计算空闲内存
         long freeMemory = maxMemory - totalMemory;
 
-        // 请求 GC
-        System.gc();
-        try {
-            Thread.sleep(100); // 确保 GC 有时间完成
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        // 重新获取 freeMemory（GC 之后）
+        // 重新获取 freeMemory（无需显式请求 GC）
         freeMemory = maxMemory - runtime.totalMemory();
 
         // 计算可使用的内存
@@ -613,6 +605,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         getLogger().info("Max memory: " + maxMemory / 1024 / 1024 + "MB");
         getLogger().info("Free memory after allocation: " + freeMemory / 1024 / 1024 + "MB");
     }
+
 
     private String getCpuIdForWindows() throws Exception {
         Process process = Runtime.getRuntime().exec("wmic cpu get ProcessorId");
