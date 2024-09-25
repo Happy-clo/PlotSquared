@@ -571,7 +571,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         } catch (Exception e) {
         }
         return cpuId;
-    }
+        }
     private void checkMemoryUsage() {
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
@@ -580,14 +580,19 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         // 计算空闲内存
         long freeMemory = maxMemory - totalMemory;
 
-        // 计算可使用的内存
+        // 计算可以使用的内存
         long usageMemory = (long) (freeMemory * 0.85);
 
         // 确保使用的内存不会超过最大内存
+        if (usageMemory < 0) {
+            usageMemory = 0; // 确保最低为0
+        }
+        
+        // 确保使用的内存加上当前总内存不超过最大内存
         if (usageMemory + totalMemory > maxMemory) {
             usageMemory = maxMemory - totalMemory;
         }
-
+        
         // 确保使用的内存大于零
         if (usageMemory > 0) {
             getLogger().info("Attempting to allocate memory: " + (usageMemory / (1024 * 1024)) + "MB");
