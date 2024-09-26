@@ -586,6 +586,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
 
         // 确保使用的内存加上当前总内存不超过最大内存
         long memoryNeeded = usageMemory + totalMemory;
+        
         if (memoryNeeded > maxMemory) {
             usageMemory = maxMemory - totalMemory; // 计算当前最大可用内存
         }
@@ -607,7 +608,13 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 getLogger().warning("NegativeArraySizeException: " + e.getMessage());
             }
         } else {
-            getLogger().warning("Not enough free memory to allocate or requested size exceeds limit.");
+            if (usageMemory <= 0) {
+                getLogger().warning("Requested memory size is 0 or negative.");
+            } else if (usageMemory > Integer.MAX_VALUE) {
+                getLogger().warning("Requested memory size exceeds Integer.MAX_VALUE.");
+            } else {
+                getLogger().warning("Not enough free memory to allocate.");
+            }
         }
 
         getLogger().info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
