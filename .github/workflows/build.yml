@@ -68,7 +68,9 @@ jobs:
               if: success()
               with:
                   name: ${{ steps.timestamp.outputs.repo_name }}-${{ steps.timestamp.outputs.short_sha }}
-                  path: Bukkit/build/libs/*.jar
+                  path: |
+                      Core/build/libs/*.jar
+                      Bukkit/build/libs/*.jar
 
             - name: Automatic release
               if: success()
